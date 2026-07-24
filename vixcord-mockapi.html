@@ -1,30 +1,535 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Vixcord — MockAPI</title>
-  <style>
-    :root{--red:#df4149;--deep:#1e1f22;--side:#292a2e;--bg:#313338;--input:#3d3f45;--text:#f2f3f5;--muted:#b5bac1}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;font:15px system-ui,sans-serif}.app{height:100%;display:grid;grid-template-columns:72px 238px minmax(0,1fr) 220px}.rail{background:var(--deep);display:flex;justify-content:center;padding:12px}.brand{height:48px;width:48px;border-radius:16px;background:var(--red);display:grid;place-items:center;font-size:20px;font-weight:900}.channels,.members{background:var(--side)}.channels{position:relative}.server{height:49px;padding:14px 16px;font-weight:800;border-bottom:1px solid #1e1f22}.section{padding:18px 9px 4px;font-size:11px;font-weight:800;color:var(--muted)}.channel{display:block;width:calc(100% - 16px);margin:1px 8px;border:0;border-radius:4px;padding:8px;text-align:left;background:transparent;color:var(--muted);cursor:pointer}.channel:hover,.channel.active{background:#404249;color:#fff}.channel b{font-size:18px;font-weight:400;margin-right:8px}.lock{float:right;font-size:12px;margin-top:3px}.profile{position:absolute;bottom:0;width:238px;padding:8px;background:#232428;display:flex;gap:8px;align-items:center}.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#ff7180,#8e1632);display:grid;place-items:center;font-weight:800;flex:none}.profile small{display:block;color:var(--muted)}.settings,.logout{border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:18px}.settings{margin-left:auto}.chat{display:flex;min-width:0;min-height:0;flex-direction:column}header{height:49px;flex:none;padding:0 16px;border-bottom:1px solid #202125;display:flex;align-items:center;gap:10px;font-weight:800}header span{font-size:21px;color:var(--muted)}header small{padding-left:10px;border-left:1px solid #505259;color:var(--muted);font-weight:400}.messages{min-height:0;padding:18px;overflow-y:auto;overflow-x:hidden;flex:1}.welcome{border-bottom:1px solid #44464d;padding-bottom:20px;margin-bottom:16px}.circle{height:68px;width:68px;border-radius:50%;background:#45474e;display:grid;place-items:center;font-size:38px}h1{margin:10px 0 3px;font-size:28px}.welcome p{color:var(--muted);margin:0}.message{display:grid;grid-template-columns:40px minmax(0,1fr);gap:10px;padding:6px 0 14px}.message .avatar{width:40px;height:40px}.meta{font-weight:800}.meta time{font-size:12px;font-weight:400;color:var(--muted);margin-left:8px}.content,.reply{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}.content{color:#dcdee1}.reply{font-size:12px;color:#b9c1ff;margin-bottom:4px;padding-left:8px;border-left:2px solid #6063a9}.replybtn{border:0;background:transparent;color:var(--muted);font-size:12px;padding:0;margin-top:4px;cursor:pointer}.composer{flex:none;display:flex;align-items:center;gap:9px;background:var(--input);margin:0 16px 20px;padding:0 13px;border-radius:8px}.composer span{font-size:23px;color:var(--muted)}input{flex:1;min-width:0;padding:13px 0;border:0;outline:0;background:transparent;color:#fff;font:inherit}.send,.join{border:0;border-radius:5px;background:var(--red);color:#fff;font-weight:800;padding:8px 12px;cursor:pointer}.disabled{opacity:.55;pointer-events:none}.members{padding:20px 12px}.members h2{font-size:12px;color:var(--muted)}.member{display:flex;align-items:center;gap:9px;padding:6px;color:var(--muted)}.member .avatar{width:32px;height:32px;font-size:12px}.dot{width:10px;height:10px;border:2px solid var(--side);border-radius:50%;margin-left:-17px;margin-top:22px;background:#747f8d}.dot.on{background:#23a55a}.auth,.modal{position:fixed;inset:0;z-index:2;background:#202126;display:grid;place-items:center}.modal{display:none;background:#0008;z-index:3}.card{width:min(420px,calc(100% - 32px));padding:32px;border-radius:12px;text-align:center;background:#313338;box-shadow:0 20px 50px #0008}.modal .card{text-align:left}.logo{font-size:30px;font-weight:900}.logo i{color:var(--red);font-style:normal}.card p{color:var(--muted)}.card input{display:block;width:100%;padding:12px;margin:12px 0;background:#1e1f22;border:1px solid #555861;border-radius:5px}.card input[type=color]{height:42px;padding:4px}.card label{display:block;color:var(--muted);font-size:13px;margin-top:12px}.card .join{width:100%;padding:12px}.switch{border:0;background:transparent;color:#aab5ff;cursor:pointer;margin-top:11px}.notice{font-size:12px;color:#ffb4b6;min-height:18px}.replybar{display:none;flex:none;margin:0 16px;padding:7px 12px;background:#292a2e;color:var(--muted);font-size:12px}.replybar button{float:right;border:0;background:transparent;color:#fff;cursor:pointer}@media(max-width:800px){.app{grid-template-columns:62px 200px minmax(0,1fr)}.members{display:none}.profile{width:200px}}@media(max-width:550px){.app{grid-template-columns:58px minmax(0,1fr)}.channels{display:none}}
-  </style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vixcord — MockAPI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#df4149;--deep:#1e1f22;--side:#292a2e;--bg:#313338;--input:#3d3f45;
+  --text:#f2f3f5;--muted:#b5bac1;--online:#23a55a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;font:15px/1.5 'Inter',system-ui,sans-serif}
+.app{height:100%;display:grid;grid-template-columns:76px 240px minmax(0,1fr) 224px}
+
+/* ---------- scrollbars ---------- */
+*{scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--red) 55%,var(--side)) transparent}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--red) 45%,var(--side));border-radius:20px;border:2px solid transparent;background-clip:padding-box}
+::-webkit-scrollbar-thumb:hover{background:var(--red);background-clip:padding-box}
+
+/* ---------- rail ---------- */
+.rail{background:linear-gradient(180deg,var(--deep),color-mix(in srgb,var(--deep) 80%,#000));display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:16px 0;gap:10px}
+.settingsBtn{width:46px;height:46px;border-radius:50%;border:0;background:color-mix(in srgb,var(--side) 70%,transparent);color:var(--muted);font-size:19px;cursor:pointer;transition:.18s ease;flex:none}
+.settingsBtn:hover{background:var(--red);color:#fff;border-radius:15px;transform:rotate(20deg)}
+.brand{height:50px;width:50px;border-radius:16px;background:linear-gradient(135deg,var(--red),color-mix(in srgb,var(--red) 60%,#000));display:grid;place-items:center;font-size:21px;font-weight:800;font-family:'Sora',sans-serif;flex:none;cursor:pointer;transition:.18s ease;box-shadow:0 6px 18px color-mix(in srgb,var(--red) 40%,transparent)}
+.brand:hover{border-radius:30%;transform:translateY(-2px)}
+
+/* ---------- channels / sidebar ---------- */
+.channels,.members{background:var(--side);display:flex;flex-direction:column;min-height:0}
+.channels{position:relative}
+.server{height:49px;flex:none;padding:14px 16px;font-weight:800;font-family:'Sora',sans-serif;border-bottom:1px solid color-mix(in srgb,var(--deep) 70%,#000);letter-spacing:.2px}
+.channelList{flex:1;min-height:0;overflow-y:auto;padding-bottom:8px}
+.section{padding:18px 9px 4px;font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.6px}
+.channel{display:block;width:calc(100% - 16px);margin:1px 8px;border:0;border-radius:6px;padding:8px 10px;text-align:left;background:transparent;color:var(--muted);cursor:pointer;transition:.12s ease;font:inherit}
+.channel:hover{background:color-mix(in srgb,var(--text) 8%,transparent);color:#fff}
+.channel.active{background:color-mix(in srgb,var(--text) 12%,transparent);color:#fff}
+.channel b{font-size:18px;font-weight:400;margin-right:8px;color:var(--muted)}
+.lock{float:right;font-size:12px;margin-top:3px}
+.profile{flex:none;padding:10px;background:color-mix(in srgb,var(--deep) 55%,var(--side));display:flex;gap:9px;align-items:center;border-top:1px solid color-mix(in srgb,#000 30%,transparent)}
+.avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;flex:none;font-size:13px;object-fit:cover;color:#fff}
+.profile small{display:block;color:var(--muted)}
+.logout{border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:18px;margin-left:auto;transition:.15s}
+.logout:hover{color:var(--red)}
+
+/* ---------- chat ---------- */
+.chat{display:flex;min-width:0;min-height:0;flex-direction:column}
+header{height:49px;flex:none;padding:0 16px;border-bottom:1px solid color-mix(in srgb,#000 35%,transparent);display:flex;align-items:center;gap:10px;font-weight:800;font-family:'Sora',sans-serif}
+header span{font-size:21px;color:var(--muted)}
+header small{padding-left:10px;border-left:1px solid color-mix(in srgb,var(--muted) 40%,transparent);color:var(--muted);font-weight:400;font-family:'Inter',sans-serif}
+.messages{min-height:0;padding:18px;overflow-y:auto;overflow-x:hidden;flex:1}
+.welcome{border-bottom:1px solid color-mix(in srgb,var(--muted) 25%,transparent);padding-bottom:20px;margin-bottom:16px}
+.circle{height:68px;width:68px;border-radius:50%;background:var(--input);display:grid;place-items:center;font-size:38px}
+h1{margin:10px 0 3px;font-size:28px;font-family:'Sora',sans-serif}
+.welcome p{color:var(--muted);margin:0}
+.message{position:relative;display:grid;grid-template-columns:40px minmax(0,1fr);gap:10px;padding:8px 10px 14px;border-radius:8px;transition:background .12s}
+.message:hover{background:color-mix(in srgb,#000 12%,transparent)}
+.message.mentions-me{background:color-mix(in srgb,var(--red) 14%,transparent)}
+.message.mentions-me:hover{background:color-mix(in srgb,var(--red) 20%,transparent)}
+.message .avatar{width:40px;height:40px;font-size:14px}
+.meta{font-weight:800}
+.meta .badge{font-size:10px;font-weight:800;color:var(--red);border:1px solid var(--red);border-radius:4px;padding:1px 5px;margin-left:6px;vertical-align:1px;text-transform:uppercase;letter-spacing:.3px}
+.meta time{font-size:12px;font-weight:400;color:var(--muted);margin-left:8px}
+.content,.reply{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
+.content{color:var(--text)}
+.reply{font-size:12px;color:var(--muted);margin-bottom:4px;padding-left:8px;border-left:2px solid var(--red)}
+.mention{background:color-mix(in srgb,var(--red) 22%,transparent);color:var(--red);padding:0 4px;border-radius:4px;font-weight:700}
+.mention-self{background:color-mix(in srgb,var(--red) 55%,transparent);color:#fff}
+.mention-everyone{background:color-mix(in srgb,var(--red) 40%,transparent);color:#fff}
+a.link{color:#7dabff;text-decoration:underline;word-break:break-all}
+a.link:hover{color:#a8c6ff}
+
+.msg-actions{position:absolute;top:-16px;right:10px;display:none;background:var(--side);border:1px solid color-mix(in srgb,#000 30%,transparent);border-radius:8px;box-shadow:0 8px 24px #0007;overflow:hidden}
+.message:hover .msg-actions{display:flex}
+.msg-actions button{border:0;background:transparent;color:var(--muted);padding:7px 10px;cursor:pointer;font-size:13px;font:inherit;white-space:nowrap}
+.msg-actions button:hover{color:#fff;background:color-mix(in srgb,#000 15%,transparent)}
+.replybtn{display:none}
+
+.reactions{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.reaction{display:flex;align-items:center;gap:5px;background:var(--input);border:1px solid color-mix(in srgb,#fff 8%,transparent);border-radius:12px;padding:2px 8px;font-size:12px;cursor:pointer;color:var(--muted)}
+.reaction:hover{border-color:var(--red)}
+.reaction.mine{border-color:var(--red);background:color-mix(in srgb,var(--red) 22%,var(--input));color:#fff}
+.reactionPicker{display:none;gap:4px;margin-top:6px;background:var(--input);border-radius:10px;padding:5px;width:fit-content}
+.reactionPicker.show{display:flex}
+.reactionPicker button{border:0;background:transparent;font-size:17px;cursor:pointer;padding:4px 6px;border-radius:6px;line-height:1}
+.reactionPicker button:hover{background:color-mix(in srgb,#000 15%,transparent)}
+
+.composer{flex:none;display:flex;align-items:flex-end;gap:9px;background:var(--input);margin:0 16px 20px;padding:10px 13px;border-radius:10px}
+.composer span{font-size:23px;color:var(--muted);padding-bottom:6px}
+textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:transparent;color:var(--text);font:inherit;resize:none;max-height:160px;line-height:1.4}
+.send,.join{border:0;border-radius:6px;background:var(--red);color:#fff;font-weight:800;padding:9px 14px;cursor:pointer;transition:.12s;font:inherit}
+.send:hover,.join:hover{filter:brightness(1.08)}
+.disabled{opacity:.55;pointer-events:none}
+
+/* ---------- members ---------- */
+.members{padding:20px 12px 0}
+.members h2{font-size:11px;color:var(--muted);letter-spacing:.6px;flex:none;margin:0 0 6px}
+#membersList{flex:1;min-height:0;overflow-y:auto;padding-bottom:16px}
+.member{display:flex;align-items:center;gap:9px;padding:6px;border-radius:6px;color:var(--muted);transition:.12s}
+.member:hover{background:color-mix(in srgb,#000 15%,transparent)}
+.member .avatar{width:32px;height:32px;font-size:11px}
+.dot{width:10px;height:10px;border:2px solid var(--side);border-radius:50%;margin-left:-17px;margin-top:22px;background:#747f8d}
+.dot.on{background:var(--online)}
+
+/* ---------- auth ---------- */
+.auth,.modal{position:fixed;inset:0;z-index:2;background:var(--deep);display:grid;place-items:center}
+.modal{display:none;background:#0009;z-index:3}
+.card{width:min(420px,calc(100% - 32px));padding:32px;border-radius:12px;text-align:center;background:var(--bg);box-shadow:0 20px 50px #0008}
+.card.wide{width:min(600px,calc(100% - 32px));text-align:left;max-height:88vh;overflow-y:auto}
+.modal .card{text-align:left}
+.logo{font-size:30px;font-weight:800;font-family:'Sora',sans-serif}
+.logo i{color:var(--red);font-style:normal}
+.card p{color:var(--muted)}
+.card input{display:block;width:100%;padding:12px;margin:8px 0 12px;background:var(--deep);color:var(--text);border:1px solid color-mix(in srgb,var(--muted) 40%,transparent);border-radius:6px;font:inherit}
+.card input[type=color]{height:40px;padding:4px;cursor:pointer}
+.card label{display:block;color:var(--muted);font-size:12px;margin-top:10px;letter-spacing:.2px}
+.card .join{width:100%;padding:12px;margin-top:10px}
+.switch{border:0;background:transparent;color:#aab5ff;cursor:pointer;margin-top:11px;font:inherit}
+.notice{font-size:12px;color:#ffb4b6;min-height:18px}
+.replybar{display:none;flex:none;margin:0 16px;padding:7px 12px;background:var(--side);border-radius:8px 8px 0 0;color:var(--muted);font-size:12px}
+.replybar button{float:right;border:0;background:transparent;color:#fff;cursor:pointer;font:inherit}
+.settingsGrid{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}
+.presets{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 4px}
+.preset-swatch{width:42px;height:42px;border-radius:50%;border:3px solid transparent;cursor:pointer;padding:0;position:relative;flex:none}
+.preset-swatch.active{border-color:#fff}
+.preset-swatch span{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--muted);white-space:nowrap;display:none}
+.preset-swatch:hover span{display:block}
+
+#toasts{position:fixed;top:16px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:8px;max-width:300px}
+.toast{background:var(--side);color:var(--text);border-left:4px solid var(--red);padding:10px 14px;border-radius:8px;box-shadow:0 10px 30px #0007;font-size:13px;animation:slideIn .25s ease}
+.toast b{display:block;margin-bottom:2px;font-family:'Sora',sans-serif}
+@keyframes slideIn{from{transform:translateX(24px);opacity:0}to{transform:translateX(0);opacity:1}}
+
+@media(max-width:800px){.app{grid-template-columns:64px 200px minmax(0,1fr)}.members{display:none}}
+@media(max-width:550px){.app{grid-template-columns:58px minmax(0,1fr)}.channels{display:none}}
+</style>
 </head>
 <body>
-  <div class="auth" id="auth"><div class="card"><div class="logo">Vix<i>cord</i></div><h1 id="authTitle">Welcome back</h1><p id="authCopy">Sign in to Vixel Main.</p><input id="username" maxlength="24" placeholder="Username" autocomplete="username"><input id="password" type="password" minlength="4" placeholder="Password" autocomplete="current-password"><p class="notice" id="notice"></p><button class="join" id="authButton">Sign in</button><button class="switch" id="switch">Need an account? Create one</button></div></div>
-  <main class="app"><aside class="rail"><div class="brand">V</div></aside><aside class="channels"><div class="server">Vixel Main⌄</div><div class="section">TEXT CHANNELS</div><button class="channel active" data-chat="chat1" data-name="general"><b>#</b>general</button><button class="channel" data-chat="chat2" data-name="other"><b>#</b>other</button><button class="channel" data-chat="chat3" data-name="announcements"><b>#</b>announcements</button><button class="channel staff-only" data-chat="chat4" data-name="staff-chat"><b>#</b>staff-chat <span class="lock">🔒</span></button><div class="profile"><div class="avatar" id="myAvatar">?</div><div><strong id="myName">Not signed in</strong><small id="myRank">—</small></div><button class="settings" id="settings" title="Settings">⚙</button><button class="logout" id="logout" title="Sign out">⎋</button></div></aside><section class="chat"><header><span>#</span><b id="title">general</b><small id="topic">Talk with everyone in Vixel Main</small></header><div class="messages" id="messages"></div><div class="replybar" id="replybar">Replying to <b id="replyto"></b><button id="cancelReply">Cancel</button></div><form class="composer" id="composer"><span>＋</span><input id="text" autocomplete="off" placeholder="Message #general"><button class="send">Send</button></form></section><aside class="members"><h2 id="count">MEMBERS — 0</h2><div id="members"></div></aside></main>
-  <div class="modal" id="settingsModal"><section class="card"><h1>Appearance settings</h1><p>Change your name color and your own Vixcord background colors.</p><label for="nameColor">Name color</label><input id="nameColor" type="color"><label for="deepColor">Server rail background</label><input id="deepColor" type="color"><label for="sideColor">Sidebar background</label><input id="sideColor" type="color"><label for="chatColor">Chat background</label><input id="chatColor" type="color"><p class="notice" id="settingsNotice"></p><button class="join" id="saveSettings">Save changes</button><button class="switch" id="closeSettings">Cancel</button></section></div>
+<div id="toasts"></div>
+<div class="auth" id="auth"><div class="card"><div class="logo">Vix<i>cord</i></div><h1 id="authTitle">Welcome back</h1><p id="authCopy">Sign in to Vixel Main.</p><input id="username" maxlength="24" placeholder="Username" autocomplete="username"><input id="password" type="password" minlength="4" placeholder="Password" autocomplete="current-password"><p class="notice" id="notice"></p><button class="join" id="authButton">Sign in</button><button class="switch" id="switch">Need an account? Create one</button></div></div>
+
+<main class="app">
+  <aside class="rail">
+    <button class="settingsBtn" id="settings" title="Settings">⚙</button>
+    <div class="brand" id="brandIcon" title="Vixel Main">V</div>
+  </aside>
+  <aside class="channels">
+    <div class="server">Vixel Main⌄</div>
+    <div class="channelList">
+      <div class="section">TEXT CHANNELS</div>
+      <button class="channel active" data-chat="chat1" data-name="general"><b>#</b>general</button>
+      <button class="channel" data-chat="chat2" data-name="other"><b>#</b>other</button>
+      <button class="channel" data-chat="chat3" data-name="announcements"><b>#</b>announcements</button>
+      <button class="channel staff-only" data-chat="chat4" data-name="staff-chat"><b>#</b>staff-chat <span class="lock">🔒</span></button>
+    </div>
+    <div class="profile"><span id="myAvatarWrap"></span><div><strong id="myName">Not signed in</strong><small id="myRank">—</small></div><button class="logout" id="logout" title="Sign out">⎋</button></div>
+  </aside>
+  <section class="chat">
+    <header><span>#</span><b id="title">general</b><small id="topic">Talk with everyone in Vixel Main</small></header>
+    <div class="messages" id="messages"></div>
+    <div class="replybar" id="replybar">Replying to <b id="replyto"></b><button id="cancelReply">Cancel</button></div>
+    <form class="composer" id="composer"><span>＋</span><textarea id="text" rows="1" autocomplete="off" placeholder="Message #general"></textarea><button class="send">Send</button></form>
+  </section>
+  <aside class="members"><h2 id="count">MEMBERS — 0</h2><div id="membersList"></div></aside>
+</main>
+
+<div class="modal" id="settingsModal"><section class="card wide">
+  <h1>Appearance settings</h1>
+  <p>Personalize your name, avatar and colors across Vixcord. Only you see these changes for your own client.</p>
+  <label for="displayName">Display name</label><input id="displayName" maxlength="24" placeholder="Shown instead of your username">
+  <label for="avatarUrl">Avatar image URL (optional)</label><input id="avatarUrl" placeholder="https://example.com/avatar.png">
+  <div class="settingsGrid">
+    <div>
+      <label for="avatarColor">Avatar color</label><input id="avatarColor" type="color">
+      <label for="nameColor">Name color</label><input id="nameColor" type="color">
+      <label for="accentColor">Accent color</label><input id="accentColor" type="color">
+      <label for="onlineColor">Online indicator color</label><input id="onlineColor" type="color">
+    </div>
+    <div>
+      <label for="deepColor">Server rail background</label><input id="deepColor" type="color">
+      <label for="sideColor">Sidebar background</label><input id="sideColor" type="color">
+      <label for="chatColor">Chat background</label><input id="chatColor" type="color">
+      <label for="inputColor">Message box background</label><input id="inputColor" type="color">
+    </div>
+  </div>
+  <label for="textColor">Text color</label><input id="textColor" type="color">
+  <label for="mutedColor">Muted text color</label><input id="mutedColor" type="color">
+  <label>Presets</label>
+  <div class="presets" id="presets"></div>
+  <p class="notice" id="settingsNotice"></p>
+  <button class="join" id="saveSettings">Save changes</button>
+  <button class="switch" id="closeSettings">Cancel</button>
+</section></div>
+
 <script>
 const API={users:'https://6a638812b30b52361e1a6b8d.mockapi.io/1/users',logins:'https://6a638812b30b52361e1a6b8d.mockapi.io/1/logins',chat1:'https://6a63dbd7b30b52361e1aab35.mockapi.io/2/chat1',chat2:'https://6a63dbd7b30b52361e1aab35.mockapi.io/2/chat2',chat3:'https://6a63dd06b30b52361e1aabe1.mockapi.io/3/chat3',chat4:'https://6a63dd06b30b52361e1aabe1.mockapi.io/3/chat4'};
-const $=s=>document.querySelector(s),sessionKey='vixcord-mockapi-user';let me=null,chat='chat1',chatName='general',reply=null,isSignup=false;
-const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));const initials=n=>String(n||'?').split(/\s+/).map(x=>x[0]).join('').slice(0,2).toUpperCase();const isStaff=()=>['staff','owner'].includes(String(me?.rank||'').toLowerCase());const color=(v,fallback)=>/^#[0-9a-f]{6}$/i.test(v||'')?v:fallback;
-async function request(url,opts={}){let r=await fetch(url,{headers:{'Content-Type':'application/json'},...opts});if(!r.ok)throw Error(`API error (${r.status})`);return r.status===204?null:r.json()}async function hashPassword(password,salt){let bytes=new TextEncoder().encode(salt+'|'+password),out=await crypto.subtle.digest('SHA-256',bytes);return btoa(String.fromCharCode(...new Uint8Array(out)))}function newSalt(){return crypto.getRandomValues(new Uint32Array(4)).join('-')}
-function setNotice(text=''){$('#notice').textContent=text}function authMode(){let action=isSignup?'Create account':'Sign in';$('#authTitle').textContent=isSignup?'Join Vixel Main':'Welcome back';$('#authCopy').textContent=isSignup?'Your password is stored as a one-way hash, never raw text.':'Sign in to Vixel Main.';$('#authButton').textContent=action;$('#switch').textContent=isSignup?'Already have an account? Sign in':'Need an account? Create one';$('#password').autocomplete=isSignup?'new-password':'current-password';setNotice()}
-async function submitAuth(){let username=$('#username').value.trim(),password=$('#password').value;if(!username||password.length<4)return setNotice('Use a username and a password of at least 4 characters.');try{let [users,logins]=await Promise.all([request(API.users),request(API.logins)]),existing=users.find(u=>String(u.username).toLowerCase()===username.toLowerCase());if(isSignup){if(existing)return setNotice('That username is already taken.');let user=await request(API.users,{method:'POST',body:JSON.stringify({username,online:true,namecolor:'#f2f3f5',rank:'member',deepcolor:'#1e1f22',sidecolor:'#292a2e',chatcolor:'#313338'})}),salt=newSalt(),passwordHash=await hashPassword(password,salt);await request(API.logins,{method:'POST',body:JSON.stringify({username,password:`sha256$${salt}$${passwordHash}`})});finish(user)}else{let login=logins.find(x=>String(x.username).toLowerCase()===username.toLowerCase());if(!existing||!login)return setNotice('Username or password is incorrect.');let [,salt,hash]=String(login.password||'').split('$');if(!salt||await hashPassword(password,salt)!==hash)return setNotice('Username or password is incorrect.');finish(await request(API.users+'/'+existing.id,{method:'PUT',body:JSON.stringify({online:true})}))}}catch(e){setNotice(e.message+' Check the API URLs and your connection.')}}
-function applyTheme(){document.documentElement.style.setProperty('--deep',color(me?.deepcolor,'#1e1f22'));document.documentElement.style.setProperty('--side',color(me?.sidecolor,'#292a2e'));document.documentElement.style.setProperty('--bg',color(me?.chatcolor,'#313338'))}function syncChannels(){document.querySelector('.staff-only').style.display=isStaff()?'block':'none';if(!isStaff()&&chat==='chat4')choose(document.querySelector('[data-chat="chat1"]'))}
-function finish(user){me=user;localStorage.setItem(sessionKey,JSON.stringify(user));$('#auth').style.display='none';$('#myAvatar').textContent=initials(me.username);$('#myName').textContent=me.username;$('#myName').style.color=color(me.namecolor,'#fff');$('#myRank').textContent=me.rank||'member';applyTheme();syncChannels();loadUsers();loadMessages()}
-async function loadUsers(){try{let users=await request(API.users);$('#count').textContent=`MEMBERS — ${users.length}`;$('#members').innerHTML=users.sort((a,b)=>Boolean(b.online)-Boolean(a.online)).map(u=>`<div class="member"><div class="avatar">${esc(initials(u.username))}</div><i class="dot ${u.online?'on':''}"></i><span style="color:${color(u.namecolor,'inherit')}">${esc(u.username)}${u.rank&&u.rank!=='member'?` <small>(${esc(u.rank)})</small>`:''}</span></div>`).join('')}catch(e){console.warn(e)}}
-function canPost(){return chat!=='chat3'&&chat!=='chat4'||isStaff()}function replyText(value){if(!value)return'';if(typeof value==='string')return value;return `${value.username||'Unknown'}: ${value.message||''}`}async function loadMessages(){try{let data=await request(API[chat]);renderMessages(data)}catch(e){$('#messages').innerHTML=`<p class="notice">${esc(e.message)}. The chat could not load.</p>`}}
-function renderMessages(data){let sorted=[...data].sort((a,b)=>new Date(a.time||a.createdAt||0)-new Date(b.time||b.createdAt||0)),locked=!canPost(),desc=chat==='chat3'?'Only staff and owners can post announcements.':chat==='chat4'?'Staff-only discussion.':'This chat is saved in MockAPI.';$('#messages').innerHTML=`<div class="welcome"><div class="circle">${chat==='chat3'?'📣':chat==='chat4'?'🔒':'#'}</div><h1>Welcome to #${esc(chatName)}!</h1><p>${desc}</p></div>`+sorted.map(m=>`<article class="message"><div class="avatar">${esc(initials(m.username))}</div><div><div class="meta">${esc(m.username||'Unknown')}<time>${esc(m.time||m.createdAt||'')}</time></div>${m.reply?`<div class="reply">↪ ${esc(replyText(m.reply))}</div>`:''}<div class="content">${esc(m.messeges??m.messages??'')}</div><button class="replybtn" data-user="${esc(m.username||'Unknown')}" data-message="${esc(m.messeges??m.messages??'')}">Reply</button></div></article>`).join('');$('#composer').classList.toggle('disabled',locked);$('#text').placeholder=locked?'Only staff or owners can post here':`Message #${chatName}`;$('#messages').querySelectorAll('.replybtn').forEach(b=>b.onclick=()=>{reply={username:b.dataset.user,message:b.dataset.message};$('#replyto').textContent=replyText(reply);$('#replybar').style.display='block';$('#text').focus()});$('#messages').scrollTop=$('#messages').scrollHeight}
+const $=s=>document.querySelector(s),sessionKey='vixcord-mockapi-user';
+let me=null,chat='chat1',chatName='general',reply=null,isSignup=false,usersList=[],lastMessagesData=[];
+const seenIds=new Map();
+const REACTION_EMOJIS=['👍','❤️','😂','😮','😢','🔥'];
+const DEFAULTS={accentcolor:'#df4149',deepcolor:'#1e1f22',sidecolor:'#292a2e',chatcolor:'#313338',inputcolor:'#3d3f45',textcolor:'#f2f3f5',mutedcolor:'#b5bac1',onlinecolor:'#23a55a'};
+const PRESETS=[
+  {name:'Vixcord Classic',accentcolor:'#df4149',deepcolor:'#1e1f22',sidecolor:'#292a2e',chatcolor:'#313338',inputcolor:'#3d3f45',textcolor:'#f2f3f5',mutedcolor:'#b5bac1',onlinecolor:'#23a55a'},
+  {name:'Midnight Violet',accentcolor:'#8a5cff',deepcolor:'#14121c',sidecolor:'#1c1927',chatcolor:'#211f2e',inputcolor:'#2a2740',textcolor:'#f0eefc',mutedcolor:'#a79fc9',onlinecolor:'#5ce0c6'},
+  {name:'Sunset Ember',accentcolor:'#ff7a45',deepcolor:'#241512',sidecolor:'#2e1a16',chatcolor:'#33201b',inputcolor:'#3f2620',textcolor:'#fdece4',mutedcolor:'#d1a793',onlinecolor:'#ffcb5c'},
+  {name:'Forest Moss',accentcolor:'#6fbf73',deepcolor:'#101a13',sidecolor:'#152018',chatcolor:'#18251d',inputcolor:'#213328',textcolor:'#e9f5ea',mutedcolor:'#9dbba3',onlinecolor:'#7fe0c1'},
+  {name:'Paper Light',accentcolor:'#d6493d',deepcolor:'#eceae4',sidecolor:'#f4f2ec',chatcolor:'#faf8f2',inputcolor:'#eeece4',textcolor:'#2b2a27',mutedcolor:'#6f6b62',onlinecolor:'#2f9e57'}
+];
+const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+const escapeRegex=s=>String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+const initials=n=>String(n||'?').split(/\s+/).map(x=>x[0]).join('').slice(0,2).toUpperCase();
+const isStaff=()=>['staff','owner'].includes(String(me?.rank||'').toLowerCase());
+const color=(v,fallback)=>/^#[0-9a-f]{6}$/i.test(v||'')?v:fallback;
+const displayNameOf=u=>u?.displayname||u?.username||'Unknown';
+const userByName=name=>usersList.find(u=>String(u.username).toLowerCase()===String(name||'').toLowerCase());
+function hashColor(str){let h=0;for(const c of String(str))h=(h*31+c.charCodeAt(0))%360;return `hsl(${h} 62% 44%)`}
+async function request(url,opts={}){let r=await fetch(url,{headers:{'Content-Type':'application/json'},...opts});if(!r.ok)throw Error(`API error (${r.status})`);return r.status===204?null:r.json()}
+async function hashPassword(password,salt){let bytes=new TextEncoder().encode(salt+'|'+password),out=await crypto.subtle.digest('SHA-256',bytes);return btoa(String.fromCharCode(...new Uint8Array(out)))}
+function newSalt(){return crypto.getRandomValues(new Uint32Array(4)).join('-')}
+
+function avatarHTML(user,extraClass=''){
+  let name=displayNameOf(user);
+  let img=user?.avatar;
+  if(img&&/^https?:\/\//i.test(img)) return `<img class="avatar ${extraClass}" src="${esc(img)}" alt="${esc(name)}" onerror="this.outerHTML='<div class=\\'avatar ${extraClass}\\' style=\\'background:${color(user?.avatarcolor,'')||hashColor(user?.username||name)}\\'>${esc(initials(name))}</div>'">`;
+  let bg=color(user?.avatarcolor,'')||hashColor(user?.username||name);
+  return `<div class="avatar ${extraClass}" style="background:${bg}">${esc(initials(name))}</div>`;
+}
+
+/* ---------- toasts / notifications ---------- */
+function showToast(title,body){
+  let el=document.createElement('div');el.className='toast';
+  el.innerHTML=`<b>${esc(title)}</b>${esc(body||'')}`;
+  $('#toasts').appendChild(el);
+  setTimeout(()=>el.remove(),6000);
+}
+function notify(title,body){
+  showToast(title,body);
+  if(window.Notification&&Notification.permission==='granted'&&document.visibilityState!=='visible'){
+    try{new Notification(title,{body})}catch{}
+  }
+}
+function requestNotifyPermission(){
+  if('Notification' in window && Notification.permission==='default'){
+    Notification.requestPermission().catch(()=>{});
+  }
+}
+
+/* ---------- content processing: links + mentions ---------- */
+function processContent(raw,senderRank){
+  let escaped=esc(raw);
+  let staffSender=['staff','owner'].includes(String(senderRank||'').toLowerCase());
+  let flags={mentionsMe:false,mentionsEveryone:false};
+  let html=escaped.replace(/(https?:\/\/[^\s<]+)|(@[A-Za-z0-9_]{2,32})/g,(match,url,mention)=>{
+    if(url) return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="link">${url}</a>`;
+    if(mention){
+      let name=mention.slice(1);
+      if(name.toLowerCase()==='everyone'){
+        if(staffSender){flags.mentionsEveryone=true;return `<span class="mention mention-everyone">@everyone</span>`}
+        return mention;
+      }
+      let user=userByName(name);
+      if(!user) return mention;
+      let isSelf=me&&user.username.toLowerCase()===me.username.toLowerCase();
+      if(isSelf) flags.mentionsMe=true;
+      return `<span class="mention ${isSelf?'mention-self':''}">@${esc(displayNameOf(user))}</span>`;
+    }
+    return match;
+  });
+  return {html,flags};
+}
+
+/* ---------- auth ---------- */
+function setNotice(text=''){$('#notice').textContent=text}
+function authMode(){let action=isSignup?'Create account':'Sign in';$('#authTitle').textContent=isSignup?'Join Vixel Main':'Welcome back';$('#authCopy').textContent=isSignup?'Your password is stored as a one-way hash, never raw text.':'Sign in to Vixel Main.';$('#authButton').textContent=action;$('#switch').textContent=isSignup?'Already have an account? Sign in':'Need an account? Create one';$('#password').autocomplete=isSignup?'new-password':'current-password';setNotice()}
+async function submitAuth(){
+  let username=$('#username').value.trim(),password=$('#password').value;
+  if(!username||password.length<4)return setNotice('Use a username and a password of at least 4 characters.');
+  try{
+    let [users,logins]=await Promise.all([request(API.users),request(API.logins)]),existing=users.find(u=>String(u.username).toLowerCase()===username.toLowerCase());
+    if(isSignup){
+      if(existing)return setNotice('That username is already taken.');
+      let user=await request(API.users,{method:'POST',body:JSON.stringify({username,online:true,rank:'member',...DEFAULTS,namecolor:'#f2f3f5',displayname:'',avatar:'',avatarcolor:''})}),salt=newSalt(),passwordHash=await hashPassword(password,salt);
+      await request(API.logins,{method:'POST',body:JSON.stringify({username,password:`sha256$${salt}$${passwordHash}`})});
+      finish(user);
+    }else{
+      let login=logins.find(x=>String(x.username).toLowerCase()===username.toLowerCase());
+      if(!existing||!login)return setNotice('Username or password is incorrect.');
+      let [,salt,hash]=String(login.password||'').split('$');
+      if(!salt||await hashPassword(password,salt)!==hash)return setNotice('Username or password is incorrect.');
+      finish(await request(API.users+'/'+existing.id,{method:'PUT',body:JSON.stringify({online:true})}));
+    }
+  }catch(e){setNotice(e.message+' Check the API URLs and your connection.')}
+}
+
+function applyTheme(){
+  const r=document.documentElement.style;
+  r.setProperty('--red',color(me?.accentcolor,DEFAULTS.accentcolor));
+  r.setProperty('--deep',color(me?.deepcolor,DEFAULTS.deepcolor));
+  r.setProperty('--side',color(me?.sidecolor,DEFAULTS.sidecolor));
+  r.setProperty('--bg',color(me?.chatcolor,DEFAULTS.chatcolor));
+  r.setProperty('--input',color(me?.inputcolor,DEFAULTS.inputcolor));
+  r.setProperty('--text',color(me?.textcolor,DEFAULTS.textcolor));
+  r.setProperty('--muted',color(me?.mutedcolor,DEFAULTS.mutedcolor));
+  r.setProperty('--online',color(me?.onlinecolor,DEFAULTS.onlinecolor));
+}
+function syncChannels(){document.querySelector('.staff-only').style.display=isStaff()?'block':'none';if(!isStaff()&&chat==='chat4')choose(document.querySelector('[data-chat="chat1"]'))}
+
+function finish(user){
+  me=user;localStorage.setItem(sessionKey,JSON.stringify(user));
+  $('#auth').style.display='none';
+  $('#myAvatarWrap').innerHTML=avatarHTML(me);
+  $('#myName').textContent=displayNameOf(me);
+  $('#myName').style.color=color(me.namecolor,'#fff');
+  $('#myRank').textContent=me.rank||'member';
+  applyTheme();syncChannels();requestNotifyPermission();loadUsers();loadMessages();
+}
+
+async function loadUsers(){
+  try{
+    let users=await request(API.users);
+    usersList=users;
+    $('#count').textContent=`MEMBERS — ${users.length}`;
+    $('#membersList').innerHTML=users.sort((a,b)=>Boolean(b.online)-Boolean(a.online)).map(u=>`<div class="member">${avatarHTML(u)}<i class="dot ${u.online?'on':''}"></i><span style="color:${color(u.namecolor,'inherit')}">${esc(displayNameOf(u))}${u.rank&&u.rank!=='member'?` <small>(${esc(u.rank)})</small>`:''}</span></div>`).join('');
+  }catch(e){console.warn(e)}
+}
+
+function canPost(){return chat!=='chat3'&&chat!=='chat4'||isStaff()}
+function replyText(value){if(!value)return'';if(typeof value==='string')return value;return `${value.username||'Unknown'}: ${value.message||''}`}
+
+async function loadMessages(){
+  try{
+    let data=await request(API[chat]);
+    let sorted=[...data].sort((a,b)=>new Date(a.time||a.createdAt||0)-new Date(b.time||b.createdAt||0));
+    lastMessagesData=sorted;
+    checkNotifications(sorted);
+    renderMessages(sorted);
+  }catch(e){
+    $('#messages').innerHTML=`<p class="notice">${esc(e.message)}. The chat could not load.</p>`;
+  }
+}
+
+function checkNotifications(sorted){
+  let key=chat;
+  if(!seenIds.has(key)){seenIds.set(key,new Set(sorted.map(m=>m.id)));return}
+  let seen=seenIds.get(key);
+  for(const m of sorted){
+    if(seen.has(m.id))continue;
+    seen.add(m.id);
+    if(!me)continue;
+    if(String(m.username).toLowerCase()===String(me.username).toLowerCase())continue;
+    let content=m.messeges??m.messages??'';
+    let sender=userByName(m.username);
+    let senderRank=sender?.rank||m.rank;
+    let staffSender=['staff','owner'].includes(String(senderRank||'').toLowerCase());
+    let mentionsMe=new RegExp('@'+escapeRegex(me.username)+'\\b','i').test(content);
+    let mentionsEveryone=staffSender&&/@everyone\b/i.test(content);
+    if(mentionsMe||mentionsEveryone){
+      notify(`${displayNameOf(sender)||m.username} mentioned ${mentionsEveryone?'@everyone':'you'} in #${chatName}`,content.slice(0,120));
+    }
+  }
+}
+
+function renderReactionsHTML(m){
+  let r=m.reactions||{};
+  return Object.entries(r).filter(([e,list])=>Array.isArray(list)&&list.length).map(([e,list])=>{
+    let mine=me&&list.some(u=>String(u).toLowerCase()===String(me.username).toLowerCase());
+    return `<button class="reaction ${mine?'mine':''}" data-id="${m.id}" data-emoji="${esc(e)}">${e} ${list.length}</button>`;
+  }).join('');
+}
+
+function renderMessages(sorted){
+  let locked=!canPost(),desc=chat==='chat3'?'Only staff and owners can post announcements.':chat==='chat4'?'Staff-only discussion.':'This chat is saved in MockAPI.';
+  $('#messages').innerHTML=`<div class="welcome"><div class="circle">${chat==='chat3'?'📣':chat==='chat4'?'🔒':'#'}</div><h1>Welcome to #${esc(chatName)}!</h1><p>${desc}</p></div>`+sorted.map(m=>{
+    let content=m.messeges??m.messages??'';
+    let sender=userByName(m.username);
+    let senderRank=sender?.rank||m.rank;
+    let {html,flags}=processContent(content,senderRank);
+    let staff=['staff','owner'].includes(String(senderRank||'').toLowerCase());
+    return `<article class="message ${flags.mentionsMe?'mentions-me':''}">${avatarHTML(sender||{username:m.username})}<div><div class="meta"><span style="color:${color(sender?.namecolor,'inherit')}">${esc(displayNameOf(sender)||m.username)}</span>${staff?`<span class="badge">${esc(senderRank)}</span>`:''}<time>${esc(m.time||m.createdAt||'')}</time></div>${m.reply?`<div class="reply">↪ ${esc(replyText(m.reply))}</div>`:''}<div class="content">${html}</div><div class="reactions">${renderReactionsHTML(m)}</div><div class="reactionPicker" id="picker-${m.id}">${REACTION_EMOJIS.map(e=>`<button data-id="${m.id}" data-emoji="${e}">${e}</button>`).join('')}</div><div class="msg-actions"><button class="reactBtn" data-id="${m.id}">😊 React</button><button class="replybtn" data-user="${esc(m.username||'Unknown')}" data-message="${esc(content)}">↩ Reply</button></div></div></article>`;
+  }).join('');
+  $('#composer').classList.toggle('disabled',locked);
+  $('#text').placeholder=locked?'Only staff or owners can post here':`Message #${chatName}`;
+  $('#messages').querySelectorAll('.replybtn').forEach(b=>b.onclick=()=>{
+    reply={username:b.dataset.user,message:b.dataset.message};
+    $('#replyto').textContent=replyText(reply);
+    $('#replybar').style.display='block';
+    $('#text').focus();
+  });
+  $('#messages').querySelectorAll('.reactBtn').forEach(b=>b.onclick=e=>{
+    e.stopPropagation();
+    let id=b.dataset.id;
+    document.querySelectorAll('.reactionPicker').forEach(p=>{if(p.id!=='picker-'+id)p.classList.remove('show')});
+    $('#picker-'+id).classList.toggle('show');
+  });
+  $('#messages').querySelectorAll('.reactionPicker button, .reaction').forEach(b=>b.onclick=e=>{
+    e.stopPropagation();
+    toggleReaction(b.dataset.id,b.dataset.emoji);
+  });
+  $('#messages').scrollTop=$('#messages').scrollHeight;
+}
+
+async function toggleReaction(id,emoji){
+  if(!me)return;
+  let m=lastMessagesData.find(x=>String(x.id)===String(id));
+  if(!m)return;
+  let r={...(m.reactions||{})};
+  let list=r[emoji]?[...r[emoji]]:[];
+  let idx=list.findIndex(u=>String(u).toLowerCase()===me.username.toLowerCase());
+  if(idx>=0)list.splice(idx,1);else list.push(me.username);
+  if(list.length)r[emoji]=list;else delete r[emoji];
+  try{
+    await request(API[chat]+'/'+id,{method:'PUT',body:JSON.stringify({reactions:r})});
+    loadMessages();
+  }catch(e){console.warn(e)}
+}
+
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.reactBtn')&&!e.target.closest('.reactionPicker')){
+    document.querySelectorAll('.reactionPicker').forEach(p=>p.classList.remove('show'));
+  }
+});
+
 function choose(button){chat=button.dataset.chat;chatName=button.dataset.name;$('#title').textContent=chatName;document.querySelectorAll('.channel').forEach(x=>x.classList.toggle('active',x===button));reply=null;$('#replybar').style.display='none';loadMessages()}
-function settingsOpen(){if(!me)return;$('#nameColor').value=color(me.namecolor,'#f2f3f5');$('#deepColor').value=color(me.deepcolor,'#1e1f22');$('#sideColor').value=color(me.sidecolor,'#292a2e');$('#chatColor').value=color(me.chatcolor,'#313338');$('#settingsNotice').textContent='';$('#settingsModal').style.display='grid'}
-async function settingsSave(){try{me=await request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify({namecolor:$('#nameColor').value,deepcolor:$('#deepColor').value,sidecolor:$('#sideColor').value,chatcolor:$('#chatColor').value})});localStorage.setItem(sessionKey,JSON.stringify(me));$('#myName').style.color=me.namecolor;applyTheme();$('#settingsModal').style.display='none';loadUsers()}catch(e){$('#settingsNotice').textContent=e.message}}
-$('#authButton').onclick=submitAuth;$('#switch').onclick=()=>{isSignup=!isSignup;authMode()};$('#password').onkeydown=e=>{if(e.key==='Enter')submitAuth()};document.querySelectorAll('.channel').forEach(b=>b.onclick=()=>choose(b));$('#cancelReply').onclick=()=>{reply=null;$('#replybar').style.display='none'};$('#composer').onsubmit=async e=>{e.preventDefault();let messeges=$('#text').value.trim();if(!messeges||!me||!canPost())return;try{await request(API[chat],{method:'POST',body:JSON.stringify({messeges,time:new Date().toLocaleString(),username:me.username,reply})});$('#text').value='';reply=null;$('#replybar').style.display='none';loadMessages()}catch(e){alert(e.message)}};$('#settings').onclick=settingsOpen;$('#closeSettings').onclick=()=>$('#settingsModal').style.display='none';$('#saveSettings').onclick=settingsSave;$('#logout').onclick=async()=>{if(me)try{await request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify({online:false})})}catch{}localStorage.removeItem(sessionKey);location.reload()};addEventListener('beforeunload',()=>{if(me)fetch(API.users+'/'+me.id,{method:'PUT',keepalive:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({online:false})})});(async()=>{let saved=JSON.parse(localStorage.getItem(sessionKey)||'null');if(saved){try{finish(await request(API.users+'/'+saved.id,{method:'PUT',body:JSON.stringify({online:true})}))}catch{localStorage.removeItem(sessionKey)}}authMode()})();setInterval(()=>{if(me)loadMessages()},10000);setInterval(()=>{if(me)loadUsers()},1000);
-</script></body></html>
+
+/* ---------- settings ---------- */
+function renderPresets(){
+  $('#presets').innerHTML=PRESETS.map((p,i)=>`<button type="button" class="preset-swatch" data-i="${i}" style="background:linear-gradient(135deg,${p.accentcolor} 50%,${p.chatcolor} 50%)" title="${esc(p.name)}"><span>${esc(p.name)}</span></button>`).join('');
+  $('#presets').querySelectorAll('.preset-swatch').forEach(btn=>btn.onclick=()=>{
+    let p=PRESETS[btn.dataset.i];
+    $('#accentColor').value=p.accentcolor;$('#deepColor').value=p.deepcolor;$('#sideColor').value=p.sidecolor;
+    $('#chatColor').value=p.chatcolor;$('#inputColor').value=p.inputcolor;$('#textColor').value=p.textcolor;
+    $('#mutedColor').value=p.mutedcolor;$('#onlineColor').value=p.onlinecolor;
+    $('#presets').querySelectorAll('.preset-swatch').forEach(x=>x.classList.remove('active'));
+    btn.classList.add('active');
+  });
+}
+function settingsOpen(){
+  if(!me)return;
+  $('#displayName').value=me.displayname||'';
+  $('#avatarUrl').value=me.avatar||'';
+  $('#avatarColor').value=color(me.avatarcolor,hashColor(me.username).match(/hsl\(([\d.]+)/)?'#888888':'#888888');
+  $('#nameColor').value=color(me.namecolor,'#f2f3f5');
+  $('#accentColor').value=color(me.accentcolor,DEFAULTS.accentcolor);
+  $('#onlineColor').value=color(me.onlinecolor,DEFAULTS.onlinecolor);
+  $('#deepColor').value=color(me.deepcolor,DEFAULTS.deepcolor);
+  $('#sideColor').value=color(me.sidecolor,DEFAULTS.sidecolor);
+  $('#chatColor').value=color(me.chatcolor,DEFAULTS.chatcolor);
+  $('#inputColor').value=color(me.inputcolor,DEFAULTS.inputcolor);
+  $('#textColor').value=color(me.textcolor,DEFAULTS.textcolor);
+  $('#mutedColor').value=color(me.mutedcolor,DEFAULTS.mutedcolor);
+  $('#settingsNotice').textContent='';
+  renderPresets();
+  $('#settingsModal').style.display='grid';
+}
+async function settingsSave(){
+  try{
+    let payload={
+      displayname:$('#displayName').value.trim(),
+      avatar:$('#avatarUrl').value.trim(),
+      avatarcolor:$('#avatarColor').value,
+      namecolor:$('#nameColor').value,
+      accentcolor:$('#accentColor').value,
+      onlinecolor:$('#onlineColor').value,
+      deepcolor:$('#deepColor').value,
+      sidecolor:$('#sideColor').value,
+      chatcolor:$('#chatColor').value,
+      inputcolor:$('#inputColor').value,
+      textcolor:$('#textColor').value,
+      mutedcolor:$('#mutedColor').value,
+    };
+    me=await request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify(payload)});
+    localStorage.setItem(sessionKey,JSON.stringify(me));
+    $('#myAvatarWrap').innerHTML=avatarHTML(me);
+    $('#myName').textContent=displayNameOf(me);
+    $('#myName').style.color=color(me.namecolor,'#fff');
+    applyTheme();
+    $('#settingsModal').style.display='none';
+    loadUsers();loadMessages();
+  }catch(e){$('#settingsNotice').textContent=e.message}
+}
+
+/* ---------- composer: shift+enter newline, enter to send ---------- */
+function autoResize(){let el=$('#text');el.style.height='auto';el.style.height=Math.min(el.scrollHeight,160)+'px'}
+async function sendMessage(e){
+  e?.preventDefault();
+  let messeges=$('#text').value.trim();
+  if(!messeges||!me||!canPost())return;
+  try{
+    await request(API[chat],{method:'POST',body:JSON.stringify({messeges,time:new Date().toLocaleString(),username:me.username,rank:me.rank,reply,reactions:{}})});
+    $('#text').value='';autoResize();reply=null;$('#replybar').style.display='none';
+    loadMessages();
+  }catch(e){alert(e.message)}
+}
+
+/* ---------- online status based on tab visibility ---------- */
+document.addEventListener('visibilitychange',()=>{
+  if(!me)return;
+  request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify({online:document.visibilityState==='visible'})}).catch(()=>{});
+});
+
+/* ---------- wiring ---------- */
+$('#authButton').onclick=submitAuth;
+$('#switch').onclick=()=>{isSignup=!isSignup;authMode()};
+$('#password').onkeydown=e=>{if(e.key==='Enter')submitAuth()};
+document.querySelectorAll('.channel').forEach(b=>b.onclick=()=>choose(b));
+$('#cancelReply').onclick=()=>{reply=null;$('#replybar').style.display='none'};
+$('#composer').addEventListener('submit',sendMessage);
+$('#text').addEventListener('input',autoResize);
+$('#text').addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage(e)}
+});
+$('#settings').onclick=settingsOpen;
+$('#closeSettings').onclick=()=>$('#settingsModal').style.display='none';
+$('#saveSettings').onclick=settingsSave;
+$('#brandIcon').onclick=()=>choose(document.querySelector('[data-chat="chat1"]'));
+$('#logout').onclick=async()=>{
+  if(me)try{await request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify({online:false})})}catch{}
+  localStorage.removeItem(sessionKey);location.reload();
+};
+addEventListener('beforeunload',()=>{
+  if(me)fetch(API.users+'/'+me.id,{method:'PUT',keepalive:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({online:false})});
+});
+(async()=>{
+  let saved=JSON.parse(localStorage.getItem(sessionKey)||'null');
+  if(saved){try{finish(await request(API.users+'/'+saved.id,{method:'PUT',body:JSON.stringify({online:true})}))}catch{localStorage.removeItem(sessionKey)}}
+  authMode();
+})();
+setInterval(()=>{if(me)loadMessages()},5000);
+setInterval(()=>{if(me)loadUsers()},4000);
+</script>
+</body>
+</html>
