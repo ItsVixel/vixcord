@@ -262,7 +262,7 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
 </section></div>
 
 <script>
-const API={users:'https://6a638812b30b52361e1a6b8d.mockapi.io/1/users',logins:'https://6a638812b30b52361e1a6b8d.mockapi.io/1/logins',chat1:'https://6a63dbd7b30b52361e1aab35.mockapi.io/2/chat1',chat2:'https://6a63dbd7b30b52361e1aab35.mockapi.io/2/chat2',chat3:'https://6a63dbd7b30b52361e1aab35.mockapi.io/2/chat3',chat4:'https://6a63dbd7b30b52361e1aab35.mockapi.io/2/chat4'};
+const API={users:'https://6a638812b30b52361e1a6b8d.mockapi.io/1/users',logins:'https://6a638812b30b52361e1a6b8d.mockapi.io/1/logins',chat1:'https://6a63dbd7b30b52361e1aab35.mockapi.io/2/chat1',chat2:'https://6a63dbd7b30b52361e1aab35.mockapi.io/2/chat2',chat3:'https://6a63dd06b30b52361e1aabe1.mockapi.io/3/chat3',chat4:'https://6a63dd06b30b52361e1aabe1.mockapi.io/3/chat4'};
 const $=s=>document.querySelector(s),sessionKey='vixcord-mockapi-user';
 let me=null,chat='chat1',chatName='general',reply=null,isSignup=false,usersList=[],lastMessagesData=[];
 const seenIds=new Map();
@@ -284,7 +284,11 @@ const PRESETS=[
   {name:'Neon Cyber',accentcolor:'#00ffff',deepcolor:'#0a0a0a',sidecolor:'#1a1a1a',chatcolor:'#0f0f0f',inputcolor:'#1f1f1f',textcolor:'#00ffff',mutedcolor:'#00aa88',onlinecolor:'#ff00ff'}
 ];
 const SHOP_ITEMS=[
-  {name:'Red Theme',description:'A bold all-red themed interface',cost:100},
+  {name:'Vixel+',description:'Add Vixel+ to your profile',cost:50},
+  {name:'Vixel++',description:'Add Vixel++ to your profile',cost:125},
+  {name:'Aura Vixel',description:'Glowing nickname effect',cost:200},
+  {name:'Aura Vixel+',description:'Enhanced glowing nickname',cost:250},
+  {name:'MEGA VIXEL',description:'Ultimate profile upgrade',cost:500},
   {name:'Custom Badge',description:'Display a custom badge next to your name',cost:250},
   {name:'Premium Emoji Pack',description:'Access to exclusive emojis',cost:150},
   {name:'Glow Effect',description:'Glowing nickname effect',cost:200}
