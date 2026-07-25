@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --red:#df4149;--deep:#1e1f22;--side:#292a2e;--bg:#313338;--input:#3d3f45;
+  --red:#e8343d;--deep:#1e1f22;--side:#292a2e;--bg:#313338;--input:#3d3f45;
   --text:#f2f3f5;--muted:#b5bac1;--online:#23a55a;
 }
 *{box-sizing:border-box}
@@ -32,12 +32,12 @@ body{margin:0;background:var(--bg);color:var(--text);height:100vh;overflow:hidde
 /* ---------- channels / sidebar ---------- */
 .channels,.members{background:var(--side);display:flex;flex-direction:column;min-height:0}
 .channels{position:relative}
-.server{height:49px;flex:none;padding:14px 16px;font-weight:800;font-family:'Sora',sans-serif;border-bottom:1px solid color-mix(in srgb,var(--deep) 70%,#000);letter-spacing:.2px}
+.server{height:49px;flex:none;padding:14px 16px;font-weight:800;font-family:'Sora',sans-serif;border-bottom:1px solid color-mix(in srgb,var(--red) 25%,#000 65%);letter-spacing:.2px}
 .channelList{flex:1;min-height:0;overflow-y:auto;padding-bottom:8px}
 .section{padding:18px 9px 4px;font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.6px}
 .channel{display:block;width:calc(100% - 16px);margin:1px 8px;border:0;border-radius:6px;padding:8px 10px;text-align:left;background:transparent;color:var(--muted);cursor:pointer;transition:.12s ease;font:inherit}
-.channel:hover{background:color-mix(in srgb,var(--text) 8%,transparent);color:#fff}
-.channel.active{background:color-mix(in srgb,var(--text) 12%,transparent);color:#fff}
+.channel:hover{background:color-mix(in srgb,var(--red) 10%,transparent);color:#fff}
+.channel.active{background:color-mix(in srgb,var(--red) 22%,transparent);color:#fff;box-shadow:inset 3px 0 0 var(--red)}
 .channel b{font-size:18px;font-weight:400;margin-right:8px;color:var(--muted)}
 .lock{float:right;font-size:12px;margin-top:3px}
 .profile{flex:none;padding:10px;background:color-mix(in srgb,var(--deep) 55%,var(--side));display:flex;gap:9px;align-items:center;border-top:1px solid color-mix(in srgb,#000 30%,transparent)}
@@ -48,7 +48,7 @@ body{margin:0;background:var(--bg);color:var(--text);height:100vh;overflow:hidde
 
 /* ---------- chat ---------- */
 .chat{display:flex;min-width:0;min-height:0;flex-direction:column}
-header{height:49px;flex:none;padding:0 16px;border-bottom:1px solid color-mix(in srgb,#000 35%,transparent);display:flex;align-items:center;gap:10px;font-weight:800;font-family:'Sora',sans-serif}
+header{height:49px;flex:none;padding:0 16px;border-bottom:1px solid color-mix(in srgb,var(--red) 20%,#000 55%);display:flex;align-items:center;gap:10px;font-weight:800;font-family:'Sora',sans-serif}
 header span{font-size:21px;color:var(--muted)}
 header small{padding-left:10px;border-left:1px solid color-mix(in srgb,var(--muted) 40%,transparent);color:var(--muted);font-weight:400;font-family:'Inter',sans-serif}
 .messages{min-height:0;padding:18px;overflow-y:auto;overflow-x:hidden;flex:1}
@@ -88,9 +88,16 @@ a.link:hover{color:#a8c6ff}
 .reactionPicker button{border:0;background:transparent;font-size:17px;cursor:pointer;padding:4px 6px;border-radius:6px;line-height:1}
 .reactionPicker button:hover{background:color-mix(in srgb,#000 15%,transparent)}
 
-.composer{flex:none;display:flex;align-items:flex-end;gap:9px;background:var(--input);margin:0 16px 20px;padding:10px 13px;border-radius:10px}
+.composer{flex:none;display:flex;align-items:flex-end;gap:9px;background:var(--input);margin:0 16px 6px;padding:10px 13px;border-radius:10px;border:1px solid transparent;transition:.12s}
+.composer:focus-within{border-color:var(--red);box-shadow:0 0 0 2px color-mix(in srgb,var(--red) 30%,transparent)}
 .composer span{font-size:23px;color:var(--muted);padding-bottom:6px}
+#attachBtn{border:0;background:transparent;cursor:pointer;padding:0}
+#attachBtn:hover{color:var(--red)}
 textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:transparent;color:var(--text);font:inherit;resize:none;max-height:160px;line-height:1.4}
+.composerFoot{display:flex;justify-content:flex-end;margin:0 16px 16px;font-size:11px;color:var(--muted)}
+.composerFoot.over{color:var(--red);font-weight:700}
+.attachments{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.attachment-img{max-width:280px;max-height:220px;border-radius:8px;display:block;object-fit:cover;border:1px solid color-mix(in srgb,#fff 8%,transparent)}
 .send,.join{border:0;border-radius:6px;background:var(--red);color:#fff;font-weight:800;padding:9px 14px;cursor:pointer;transition:.12s;font:inherit}
 .send:hover,.join:hover{filter:brightness(1.08)}
 .disabled{opacity:.55;pointer-events:none}
@@ -120,6 +127,7 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
 .card .join{width:100%;padding:12px;margin-top:10px}
 .switch{border:0;background:transparent;color:#aab5ff;cursor:pointer;margin-top:11px;font:inherit}
 .notice{font-size:12px;color:#ffb4b6;min-height:18px}
+.notice.ok{color:#8fe0a8}
 .replybar{display:none;flex:none;margin:0 16px;padding:7px 12px;background:var(--side);border-radius:8px 8px 0 0;color:var(--muted);font-size:12px}
 .replybar button{float:right;border:0;background:transparent;color:#fff;cursor:pointer;font:inherit}
 .settingsGrid{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}
@@ -144,15 +152,15 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
 
 <main class="app">
   <aside class="rail">
-    <button class="settingsBtn" id="settings" title="Settings">⚙</button>
     <div class="brand" id="brandIcon" title="Vixel Main">V</div>
+    <button class="settingsBtn" id="settings" title="Settings">⚙</button>
   </aside>
   <aside class="channels">
     <div class="server">Vixel Main⌄</div>
     <div class="channelList">
       <div class="section">TEXT CHANNELS</div>
       <button class="channel active" data-chat="chat1" data-name="general"><b>#</b>general</button>
-      <button class="channel" data-chat="chat2" data-name="other"><b>#</b>other</button>
+      <button class="channel" data-chat="chat2" data-name="photos-files"><b>🖼</b>photos-files</button>
       <button class="channel" data-chat="chat3" data-name="announcements"><b>#</b>announcements</button>
       <button class="channel staff-only" data-chat="chat4" data-name="staff-chat"><b>#</b>staff-chat <span class="lock">🔒</span></button>
     </div>
@@ -162,7 +170,8 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
     <header><span>#</span><b id="title">general</b><small id="topic">Talk with everyone in Vixel Main</small></header>
     <div class="messages" id="messages"></div>
     <div class="replybar" id="replybar">Replying to <b id="replyto"></b><button id="cancelReply">Cancel</button></div>
-    <form class="composer" id="composer"><span>＋</span><textarea id="text" rows="1" autocomplete="off" placeholder="Message #general"></textarea><button class="send">Send</button></form>
+    <form class="composer" id="composer"><button type="button" id="attachBtn" title="Attach an image or file link"><span>＋</span></button><textarea id="text" rows="1" autocomplete="off" placeholder="Message #general"></textarea><button class="send">Send</button></form>
+    <div class="composerFoot" id="composerFoot"></div>
   </section>
   <aside class="members"><h2 id="count">MEMBERS — 0</h2><div id="membersList"></div></aside>
 </main>
@@ -193,6 +202,23 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
   <p class="notice" id="settingsNotice"></p>
   <button class="join" id="saveSettings">Save changes</button>
   <button class="switch" id="closeSettings">Cancel</button>
+
+  <h1 style="margin-top:28px">Account</h1>
+  <p>Change your password or username. Both require your current password.</p>
+  <div class="settingsGrid">
+    <div>
+      <label for="curPasswordPw">Current password</label><input id="curPasswordPw" type="password" autocomplete="current-password">
+      <label for="newPassword">New password</label><input id="newPassword" type="password" autocomplete="new-password">
+      <label for="confirmPassword">Confirm new password</label><input id="confirmPassword" type="password" autocomplete="new-password">
+      <button class="join" id="changePasswordBtn" type="button">Change password</button>
+    </div>
+    <div>
+      <label for="curPasswordUn">Current password</label><input id="curPasswordUn" type="password" autocomplete="current-password">
+      <label for="newUsername">New username</label><input id="newUsername" maxlength="24" placeholder="New username">
+      <button class="join" id="changeUsernameBtn" type="button">Change username</button>
+    </div>
+  </div>
+  <p class="notice" id="accountNotice"></p>
 </section></div>
 
 <script>
@@ -201,9 +227,10 @@ const $=s=>document.querySelector(s),sessionKey='vixcord-mockapi-user';
 let me=null,chat='chat1',chatName='general',reply=null,isSignup=false,usersList=[],lastMessagesData=[];
 const seenIds=new Map();
 const REACTION_EMOJIS=['👍','❤️','😂','😮','😢','🔥'];
-const DEFAULTS={accentcolor:'#df4149',deepcolor:'#1e1f22',sidecolor:'#292a2e',chatcolor:'#313338',inputcolor:'#3d3f45',textcolor:'#f2f3f5',mutedcolor:'#b5bac1',onlinecolor:'#23a55a'};
+const DEFAULTS={accentcolor:'#e8343d',deepcolor:'#1e1f22',sidecolor:'#292a2e',chatcolor:'#313338',inputcolor:'#3d3f45',textcolor:'#f2f3f5',mutedcolor:'#b5bac1',onlinecolor:'#23a55a'};
+const CHAR_LIMIT=500;
 const PRESETS=[
-  {name:'Vixcord Classic',accentcolor:'#df4149',deepcolor:'#1e1f22',sidecolor:'#292a2e',chatcolor:'#313338',inputcolor:'#3d3f45',textcolor:'#f2f3f5',mutedcolor:'#b5bac1',onlinecolor:'#23a55a'},
+  {name:'Vixcord Classic',accentcolor:'#e8343d',deepcolor:'#1e1f22',sidecolor:'#292a2e',chatcolor:'#313338',inputcolor:'#3d3f45',textcolor:'#f2f3f5',mutedcolor:'#b5bac1',onlinecolor:'#23a55a'},
   {name:'Midnight Violet',accentcolor:'#8a5cff',deepcolor:'#14121c',sidecolor:'#1c1927',chatcolor:'#211f2e',inputcolor:'#2a2740',textcolor:'#f0eefc',mutedcolor:'#a79fc9',onlinecolor:'#5ce0c6'},
   {name:'Sunset Ember',accentcolor:'#ff7a45',deepcolor:'#241512',sidecolor:'#2e1a16',chatcolor:'#33201b',inputcolor:'#3f2620',textcolor:'#fdece4',mutedcolor:'#d1a793',onlinecolor:'#ffcb5c'},
   {name:'Forest Moss',accentcolor:'#6fbf73',deepcolor:'#101a13',sidecolor:'#152018',chatcolor:'#18251d',inputcolor:'#213328',textcolor:'#e9f5ea',mutedcolor:'#9dbba3',onlinecolor:'#7fe0c1'},
@@ -248,6 +275,17 @@ function requestNotifyPermission(){
   }
 }
 
+/* ---------- attachments: image previews for pasted links ---------- */
+function extractImageUrls(raw){
+  let re=/https?:\/\/[^\s]+\.(?:png|jpe?g|gif|webp|svg)(?:\?[^\s]*)?/gi;
+  return [...new Set((String(raw||'').match(re))||[])];
+}
+function renderAttachmentsHTML(raw){
+  let imgs=extractImageUrls(raw);
+  if(!imgs.length)return'';
+  return `<div class="attachments">${imgs.map(u=>`<a href="${esc(u)}" target="_blank" rel="noopener noreferrer"><img class="attachment-img" src="${esc(u)}" alt="attachment" loading="lazy"></a>`).join('')}</div>`;
+}
+
 /* ---------- content processing: links + mentions ---------- */
 function processContent(raw,senderRank){
   let escaped=esc(raw);
@@ -282,7 +320,7 @@ async function submitAuth(){
     let [users,logins]=await Promise.all([request(API.users),request(API.logins)]),existing=users.find(u=>String(u.username).toLowerCase()===username.toLowerCase());
     if(isSignup){
       if(existing)return setNotice('That username is already taken.');
-      let user=await request(API.users,{method:'POST',body:JSON.stringify({username,online:true,rank:'member',...DEFAULTS,namecolor:'#f2f3f5',displayname:'',avatar:'',avatarcolor:''})}),salt=newSalt(),passwordHash=await hashPassword(password,salt);
+      let user=await request(API.users,{method:'POST',body:JSON.stringify({username,online:true,rank:'member',...DEFAULTS,namecolor:'#f2f3f5',displayname:'',avatar:'',avatarcolor:'',usernamechangedat:''})}),salt=newSalt(),passwordHash=await hashPassword(password,salt);
       await request(API.logins,{method:'POST',body:JSON.stringify({username,password:`sha256$${salt}$${passwordHash}`})});
       finish(user);
     }else{
@@ -315,7 +353,7 @@ function finish(user){
   $('#myName').textContent=displayNameOf(me);
   $('#myName').style.color=color(me.namecolor,'#fff');
   $('#myRank').textContent=me.rank||'member';
-  applyTheme();syncChannels();requestNotifyPermission();loadUsers();loadMessages();
+  applyTheme();syncChannels();applyCharLimit();requestNotifyPermission();loadUsers();loadMessages();
 }
 
 async function loadUsers(){
@@ -357,8 +395,11 @@ function checkNotifications(sorted){
     let staffSender=['staff','owner'].includes(String(senderRank||'').toLowerCase());
     let mentionsMe=new RegExp('@'+escapeRegex(me.username)+'\\b','i').test(content);
     let mentionsEveryone=staffSender&&/@everyone\b/i.test(content);
+    let repliedToMe=m.reply&&typeof m.reply==='object'&&String(m.reply.username||'').toLowerCase()===me.username.toLowerCase();
     if(mentionsMe||mentionsEveryone){
       notify(`${displayNameOf(sender)||m.username} mentioned ${mentionsEveryone?'@everyone':'you'} in #${chatName}`,content.slice(0,120));
+    }else if(repliedToMe){
+      notify(`${displayNameOf(sender)||m.username} replied to you in #${chatName}`,content.slice(0,120));
     }
   }
 }
@@ -372,14 +413,15 @@ function renderReactionsHTML(m){
 }
 
 function renderMessages(sorted){
-  let locked=!canPost(),desc=chat==='chat3'?'Only staff and owners can post announcements.':chat==='chat4'?'Staff-only discussion.':'This chat is saved in MockAPI.';
-  $('#messages').innerHTML=`<div class="welcome"><div class="circle">${chat==='chat3'?'📣':chat==='chat4'?'🔒':'#'}</div><h1>Welcome to #${esc(chatName)}!</h1><p>${desc}</p></div>`+sorted.map(m=>{
+  let locked=!canPost(),desc=chat==='chat3'?'Only staff and owners can post announcements.':chat==='chat4'?'Staff-only discussion.':chat==='chat2'?'Paste an image or file link — images preview automatically.':'This chat is saved in MockAPI.';
+  let welcomeIcon=chat==='chat3'?'📣':chat==='chat4'?'🔒':chat==='chat2'?'🖼️':'#';
+  $('#messages').innerHTML=`<div class="welcome"><div class="circle">${welcomeIcon}</div><h1>Welcome to #${esc(chatName)}!</h1><p>${desc}</p></div>`+sorted.map(m=>{
     let content=m.messeges??m.messages??'';
     let sender=userByName(m.username);
     let senderRank=sender?.rank||m.rank;
     let {html,flags}=processContent(content,senderRank);
     let staff=['staff','owner'].includes(String(senderRank||'').toLowerCase());
-    return `<article class="message ${flags.mentionsMe?'mentions-me':''}">${avatarHTML(sender||{username:m.username})}<div><div class="meta"><span style="color:${color(sender?.namecolor,'inherit')}">${esc(displayNameOf(sender)||m.username)}</span>${staff?`<span class="badge">${esc(senderRank)}</span>`:''}<time>${esc(m.time||m.createdAt||'')}</time></div>${m.reply?`<div class="reply">↪ ${esc(replyText(m.reply))}</div>`:''}<div class="content">${html}</div><div class="reactions">${renderReactionsHTML(m)}</div><div class="reactionPicker" id="picker-${m.id}">${REACTION_EMOJIS.map(e=>`<button data-id="${m.id}" data-emoji="${e}">${e}</button>`).join('')}</div><div class="msg-actions"><button class="reactBtn" data-id="${m.id}">😊 React</button><button class="replybtn" data-user="${esc(m.username||'Unknown')}" data-message="${esc(content)}">↩ Reply</button></div></div></article>`;
+    return `<article class="message ${flags.mentionsMe?'mentions-me':''}">${avatarHTML(sender||{username:m.username})}<div><div class="meta"><span style="color:${color(sender?.namecolor,'inherit')}">${esc(displayNameOf(sender)||m.username)}</span>${staff?`<span class="badge">${esc(senderRank)}</span>`:''}<time>${esc(m.time||m.createdAt||'')}</time></div>${m.reply?`<div class="reply">↪ ${esc(replyText(m.reply))}</div>`:''}<div class="content">${html}</div>${renderAttachmentsHTML(content)}<div class="reactions">${renderReactionsHTML(m)}</div><div class="reactionPicker" id="picker-${m.id}">${REACTION_EMOJIS.map(e=>`<button data-id="${m.id}" data-emoji="${e}">${e}</button>`).join('')}</div><div class="msg-actions"><button class="reactBtn" data-id="${m.id}">😊 React</button><button class="replybtn" data-user="${esc(m.username||'Unknown')}" data-message="${esc(content)}">↩ Reply</button></div></div></article>`;
   }).join('');
   $('#composer').classList.toggle('disabled',locked);
   $('#text').placeholder=locked?'Only staff or owners can post here':`Message #${chatName}`;
@@ -423,7 +465,10 @@ document.addEventListener('click',e=>{
   }
 });
 
-function choose(button){chat=button.dataset.chat;chatName=button.dataset.name;$('#title').textContent=chatName;document.querySelectorAll('.channel').forEach(x=>x.classList.toggle('active',x===button));reply=null;$('#replybar').style.display='none';loadMessages()}
+function topicFor(name){
+  return {general:'Talk with everyone in Vixel Main','photos-files':'Share images and files — paste a link and it previews automatically',announcements:'Official announcements from staff and owners','staff-chat':'Private discussion for staff and owners'}[name]||'';
+}
+function choose(button){chat=button.dataset.chat;chatName=button.dataset.name;$('#title').textContent=chatName;$('#topic').textContent=topicFor(chatName);$('#text').placeholder=`Message #${chatName}`;document.querySelectorAll('.channel').forEach(x=>x.classList.toggle('active',x===button));reply=null;$('#replybar').style.display='none';loadMessages()}
 
 /* ---------- settings ---------- */
 function renderPresets(){
@@ -452,8 +497,57 @@ function settingsOpen(){
   $('#textColor').value=color(me.textcolor,DEFAULTS.textcolor);
   $('#mutedColor').value=color(me.mutedcolor,DEFAULTS.mutedcolor);
   $('#settingsNotice').textContent='';
+  $('#accountNotice').textContent='';$('#accountNotice').classList.remove('ok');
+  $('#curPasswordPw').value='';$('#newPassword').value='';$('#confirmPassword').value='';
+  $('#curPasswordUn').value='';$('#newUsername').value='';
   renderPresets();
   $('#settingsModal').style.display='grid';
+}
+function setAccountNotice(text,ok=false){
+  $('#accountNotice').textContent=text;
+  $('#accountNotice').classList.toggle('ok',ok);
+}
+async function changePassword(){
+  let cur=$('#curPasswordPw').value,next=$('#newPassword').value,confirmPw=$('#confirmPassword').value;
+  if(!cur||!next||!confirmPw)return setAccountNotice('Fill in your current password, new password, and confirmation.');
+  if(next.length<4)return setAccountNotice('New password must be at least 4 characters.');
+  if(next!==confirmPw)return setAccountNotice('New password and confirmation do not match.');
+  try{
+    let logins=await request(API.logins);
+    let login=logins.find(x=>String(x.username).toLowerCase()===me.username.toLowerCase());
+    if(!login)return setAccountNotice('Could not find your login record.');
+    let [,salt,hash]=String(login.password||'').split('$');
+    if(!salt||await hashPassword(cur,salt)!==hash)return setAccountNotice('Current password is incorrect.');
+    let salt2=newSalt(),hash2=await hashPassword(next,salt2);
+    await request(API.logins+'/'+login.id,{method:'PUT',body:JSON.stringify({password:`sha256$${salt2}$${hash2}`})});
+    $('#curPasswordPw').value='';$('#newPassword').value='';$('#confirmPassword').value='';
+    setAccountNotice('Password updated.',true);
+  }catch(e){setAccountNotice(e.message)}
+}
+async function changeUsername(){
+  let cur=$('#curPasswordUn').value,newUsername=$('#newUsername').value.trim();
+  if(!cur||!newUsername)return setAccountNotice('Fill in your current password and a new username.');
+  if(newUsername.length<2)return setAccountNotice('Username must be at least 2 characters.');
+  let weekMs=7*24*60*60*1000,last=me.usernamechangedat?new Date(me.usernamechangedat).getTime():0;
+  if(last&&Date.now()-last<weekMs){
+    let daysLeft=Math.ceil((weekMs-(Date.now()-last))/(24*60*60*1000));
+    return setAccountNotice(`You can change your username again in ${daysLeft} day${daysLeft===1?'':'s'}.`);
+  }
+  try{
+    let [users,logins]=await Promise.all([request(API.users),request(API.logins)]);
+    if(users.some(u=>u.id!==me.id&&String(u.username).toLowerCase()===newUsername.toLowerCase()))return setAccountNotice('That username is already taken.');
+    let login=logins.find(x=>String(x.username).toLowerCase()===me.username.toLowerCase());
+    if(!login)return setAccountNotice('Could not find your login record.');
+    let [,salt,hash]=String(login.password||'').split('$');
+    if(!salt||await hashPassword(cur,salt)!==hash)return setAccountNotice('Current password is incorrect.');
+    await request(API.logins+'/'+login.id,{method:'PUT',body:JSON.stringify({username:newUsername})});
+    me=await request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify({username:newUsername,usernamechangedat:new Date().toISOString()})});
+    localStorage.setItem(sessionKey,JSON.stringify(me));
+    $('#myName').textContent=displayNameOf(me);
+    $('#curPasswordUn').value='';$('#newUsername').value='';
+    setAccountNotice('Username updated. Note: your name on past messages stays as it was when you sent them.',true);
+    loadUsers();loadMessages();
+  }catch(e){setAccountNotice(e.message)}
 }
 async function settingsSave(){
   try{
@@ -482,15 +576,26 @@ async function settingsSave(){
   }catch(e){$('#settingsNotice').textContent=e.message}
 }
 
-/* ---------- composer: shift+enter newline, enter to send ---------- */
+/* ---------- composer: shift+enter newline, enter to send, char limit ---------- */
 function autoResize(){let el=$('#text');el.style.height='auto';el.style.height=Math.min(el.scrollHeight,160)+'px'}
+function applyCharLimit(){
+  if(isStaff()){$('#text').removeAttribute('maxlength');$('#composerFoot').style.display='none'}
+  else{$('#text').setAttribute('maxlength',CHAR_LIMIT);$('#composerFoot').style.display='flex';updateCharCount()}
+}
+function updateCharCount(){
+  if(isStaff())return;
+  let len=$('#text').value.length;
+  $('#composerFoot').textContent=`${len}/${CHAR_LIMIT}`;
+  $('#composerFoot').classList.toggle('over',len>CHAR_LIMIT);
+}
 async function sendMessage(e){
   e?.preventDefault();
   let messeges=$('#text').value.trim();
   if(!messeges||!me||!canPost())return;
+  if(!isStaff()&&messeges.length>CHAR_LIMIT){updateCharCount();return}
   try{
     await request(API[chat],{method:'POST',body:JSON.stringify({messeges,time:new Date().toLocaleString(),username:me.username,rank:me.rank,reply,reactions:{}})});
-    $('#text').value='';autoResize();reply=null;$('#replybar').style.display='none';
+    $('#text').value='';autoResize();reply=null;$('#replybar').style.display='none';updateCharCount();
     loadMessages();
   }catch(e){alert(e.message)}
 }
@@ -508,14 +613,24 @@ $('#password').onkeydown=e=>{if(e.key==='Enter')submitAuth()};
 document.querySelectorAll('.channel').forEach(b=>b.onclick=()=>choose(b));
 $('#cancelReply').onclick=()=>{reply=null;$('#replybar').style.display='none'};
 $('#composer').addEventListener('submit',sendMessage);
-$('#text').addEventListener('input',autoResize);
+$('#text').addEventListener('input',()=>{autoResize();updateCharCount()});
 $('#text').addEventListener('keydown',e=>{
   if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage(e)}
 });
 $('#settings').onclick=settingsOpen;
 $('#closeSettings').onclick=()=>$('#settingsModal').style.display='none';
 $('#saveSettings').onclick=settingsSave;
+$('#changePasswordBtn').onclick=changePassword;
+$('#changeUsernameBtn').onclick=changeUsername;
 $('#brandIcon').onclick=()=>choose(document.querySelector('[data-chat="chat1"]'));
+$('#attachBtn').onclick=()=>{
+  let url=prompt('Paste an image or file URL (https://...)');
+  if(!url)return;
+  let el=$('#text');
+  el.value=(el.value?el.value+' ':'')+url.trim();
+  autoResize();el.focus();
+  updateCharCount();
+};
 $('#logout').onclick=async()=>{
   if(me)try{await request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify({online:false})})}catch{}
   localStorage.removeItem(sessionKey);location.reload();
@@ -529,7 +644,7 @@ addEventListener('beforeunload',()=>{
   authMode();
 })();
 setInterval(()=>{if(me)loadMessages()},5000);
-setInterval(()=>{if(me)loadUsers()},4000);
+setInterval(()=>{if(me)loadUsers()},5000);
 </script>
 </body>
 </html>
