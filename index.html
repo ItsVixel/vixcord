@@ -25,8 +25,8 @@ body{margin:0;background:var(--bg);color:var(--text);height:100vh;overflow:hidde
 /* ---------- rail ---------- */
 .rail{background:linear-gradient(180deg,var(--deep),color-mix(in srgb,var(--deep) 80%,#000));display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:16px 0;gap:10px}
 .topRailSection{display:flex;flex-direction:column;gap:10px;align-items:center}
-.settingsBtn,.shopBtn{width:46px;height:46px;border-radius:50%;border:0;background:color-mix(in srgb,var(--side) 70%,transparent);color:var(--muted);font-size:19px;cursor:pointer;transition:.18s ease;flex:none}
-.settingsBtn:hover,.shopBtn:hover{background:var(--red);color:#fff;border-radius:15px;transform:rotate(20deg)}
+.settingsBtn,.shopBtn,.inventoryBtn{width:46px;height:46px;border-radius:50%;border:0;background:color-mix(in srgb,var(--side) 70%,transparent);color:var(--muted);font-size:19px;cursor:pointer;transition:.18s ease;flex:none}
+.settingsBtn:hover,.shopBtn:hover,.inventoryBtn:hover{background:var(--red);color:#fff;border-radius:15px;transform:rotate(20deg)}
 .brand{height:50px;width:50px;border-radius:16px;background:linear-gradient(135deg,var(--red),color-mix(in srgb,var(--red) 60%,#000));display:grid;place-items:center;font-size:21px;font-weight:800;font-family:'Sora',sans-serif;cursor:pointer;transition:.15s}
 .brand:hover{border-radius:30%;transform:translateY(-2px)}
 
@@ -47,7 +47,7 @@ body{margin:0;background:var(--bg);color:var(--text);height:100vh;overflow:hidde
 .profileBadges{display:flex;gap:4px;font-size:9px}
 .badge-staff{background:var(--red);color:#fff;padding:1px 4px;border-radius:3px;font-weight:700}
 .badge-owner{background:var(--red);color:#fff;padding:1px 4px;border-radius:3px;font-weight:700;filter:brightness(1.2)}
-.badge-crown{background:#d4af37;color:#000;padding:1px 4px;border-radius:3px;font-weight:700}
+.badge-crown,.crown-icon{color:#67b7ff;font-weight:800}
 .coins-display{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--red);font-weight:700}
 .avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;flex:none;font-size:13px;object-fit:cover;color:#fff}
 .profile small{display:block;color:var(--muted);font-size:11px}
@@ -71,7 +71,8 @@ h1{margin:10px 0 3px;font-size:28px;font-family:'Sora',sans-serif}
 .message .avatar{width:40px;height:40px;font-size:14px}
 .meta{font-weight:800;display:flex;align-items:center;gap:6px}
 .meta .badge{font-size:10px;font-weight:800;color:var(--red);border:1px solid var(--red);border-radius:4px;padding:1px 5px;text-transform:uppercase;letter-spacing:.3px}
-.meta .badge-crown{font-size:10px;font-weight:800;color:#d4af37;border:1px solid #d4af37;border-radius:4px;padding:1px 5px;text-transform:uppercase;letter-spacing:.3px}
+.meta .badge-crown,.meta .crown-icon{font-size:14px}
+.rank-badge{font-size:10px;font-weight:800;border:1px solid currentColor;border-radius:4px;padding:1px 5px;text-transform:uppercase;letter-spacing:.3px}
 .meta time{font-size:12px;font-weight:400;color:var(--muted)}
 .content,.reply{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
 .content{color:var(--text)}
@@ -86,7 +87,6 @@ a.link:hover{color:#a8c6ff}
 .message:hover .msg-actions{display:flex}
 .msg-actions button{border:0;background:transparent;color:var(--muted);padding:7px 10px;cursor:pointer;font-size:13px;font:inherit;white-space:nowrap}
 .msg-actions button:hover{color:#fff;background:color-mix(in srgb,#000 15%,transparent)}
-.replybtn{display:none}
 
 .reactions{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 .reaction{display:flex;align-items:center;gap:5px;background:var(--input);border:1px solid color-mix(in srgb,#fff 8%,transparent);border-radius:12px;padding:2px 8px;font-size:12px;cursor:pointer;color:var(--muted);transition:.12s}
@@ -158,6 +158,7 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
 .shop-item strong{color:var(--text);display:block;margin-bottom:4px}
 .shop-item small{color:var(--muted);display:block}
 .shop-price{color:var(--red);font-weight:700;margin-top:8px}
+.inventory-empty{color:var(--muted);padding:12px 0}.inventory-item{display:flex;align-items:center;justify-content:space-between;gap:12px}.inventory-item .join{width:auto;margin:0;padding:7px 11px}.equipped{font-size:11px;color:var(--online);font-weight:700}
 
 #toasts{position:fixed;top:16px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:8px;max-width:300px}
 .toast{background:var(--side);color:var(--text);border-left:4px solid var(--red);padding:10px 14px;border-radius:8px;box-shadow:0 10px 30px #0007;font-size:13px;animation:slideIn .25s ease}
@@ -177,6 +178,7 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
     <div class="topRailSection">
       <div class="brand" id="brandIcon" title="Vixcord">V</div>
       <button class="shopBtn" id="shop" title="Shop">🛒</button>
+      <button class="inventoryBtn" id="inventory" title="Inventory">🎒</button>
     </div>
     <button class="settingsBtn" id="settings" title="Settings">⚙</button>
   </aside>
@@ -196,7 +198,7 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
           <strong id="myName">Not signed in</strong>
           <div class="profileBadges" id="profileBadges"></div>
         </div>
-        <div class="coins-display">💎 <span id="myCoins">0</span></div>
+        <div class="coins-display">🪙 <span id="myCoins">0</span></div>
         <small id="myRank">—</small>
       </div>
       <button class="logout" id="logout" title="Sign out">⎋</button>
@@ -207,7 +209,7 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
     <div class="messages" id="messages"></div>
     <div class="replybar" id="replybar">Replying to <b id="replyto"></b><button id="cancelReply">Cancel</button></div>
     <form class="composer" id="composer"><button type="button" id="attachBtn" title="Attach a URL">+</button><textarea id="text" rows="1" autocomplete="off" placeholder="Message #general"></textarea><button type="submit" class="send">Send</button></form>
-    <div class="composerFoot" id="composerFoot"><span id="charCount">0/500</span><span id="coinReward">+2💎</span></div>
+    <div class="composerFoot" id="composerFoot"><span id="charCount">0/500</span><span id="coinReward">+2 🪙</span></div>
   </section>
   <aside class="members"><h2 id="count">MEMBERS — 0</h2><div id="membersList"></div></aside>
 </main>
@@ -264,6 +266,13 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
   <button class="switch" id="closeShop">Close</button>
 </section></div>
 
+<div class="modal" id="inventoryModal"><section class="card wide">
+  <h1>Rank Inventory 🎒</h1>
+  <p>Choose one owned rank to display next to your name.</p>
+  <div class="shop-container" id="inventoryContainer"></div>
+  <button class="switch" id="closeInventory">Close</button>
+</section></div>
+
 <script>
 const API={users:'https://6a638812b30b52361e1a6b8d.mockapi.io/1/users',logins:'https://6a638812b30b52361e1a6b8d.mockapi.io/1/logins',chat1:'https://6a63dbd7b30b52361e1aab35.mockapi.io/2/chat1',chat2:'https://6a63dbd7b30b52361e1aab35.mockapi.io/2/chat2',chat3:'https://6a63dd06b30b52361e1aabe1.mockapi.io/3/chat3',chat4:'https://6a63dd06b30b52361e1aabe1.mockapi.io/3/chat4'};
 const $=s=>document.querySelector(s),sessionKey='vixcord-mockapi-user';
@@ -287,20 +296,25 @@ const PRESETS=[
   {name:'Neon Cyber',accentcolor:'#00ffff',deepcolor:'#0a0a0a',sidecolor:'#1a1a1a',chatcolor:'#0f0f0f',inputcolor:'#1f1f1f',textcolor:'#00ffff',mutedcolor:'#00aa88',onlinecolor:'#ff00ff'}
 ];
 const SHOP_ITEMS=[
-  {name:'Vixel+',description:'Add Vixel+ to your profile',cost:50},
-  {name:'Vixel++',description:'Add Vixel++ to your profile',cost:125},
-  {name:'Aura Vixel',description:'Glowing nickname effect',cost:200},
-  {name:'Aura Vixel+',description:'Enhanced glowing nickname',cost:250},
-  {name:'MEGA VIXEL',description:'Ultimate profile upgrade',cost:500},
-  {name:'Custom Badge',description:'Display a custom badge next to your name',cost:250},
-  {name:'👑 Crown Badge',description:'Display a golden crown badge next to your name',cost:150}
+  {id:'vixel',name:'Vixel',description:'A classic Vixel rank',cost:50,color:'#D63636'},
+  {id:'vixel-plus',name:'Vixel+',description:'An upgraded Vixel rank',cost:125,color:'#B01C1C'},
+  {id:'aura-vixel',name:'Aura Vixel',description:'A vivid Aura Vixel rank',cost:200,color:'#A11B4F'},
+  {id:'aura-vixel-plus',name:'Aura Vixel+',description:'An enhanced Aura Vixel rank',cost:250,color:'#800635'},
+  {id:'mega-vixel',name:'Mega Vixel',description:'The ultimate Vixel rank',cost:500,color:'#2568DB'},
+  {id:'crown',name:'💎 Badge',description:'Display a diamond badge next to your name',cost:150}
 ];
+const RANKS=Object.fromEntries(SHOP_ITEMS.filter(item=>item.color).map(item=>[item.id,item]));
 const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const escapeRegex=s=>String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 const initials=n=>String(n||'?').split(/\s+/).map(x=>x[0]).join('').slice(0,2).toUpperCase();
 const isStaff=()=>['staff','owner'].includes(String(me?.rank||'').toLowerCase());
 const color=(v,fallback)=>/^#[0-9a-f]{6}$/i.test(v||'')?v:fallback;
-const displayNameOf=u=>u?.displayname||u?.username||'Unknown';
+const safeText=v=>typeof v==='string'?v.trim():'';
+const displayNameOf=u=>safeText(u?.displayname)||safeText(u?.username)||'Unknown';
+const ownedRanks=u=>Array.isArray(u?.inventory)?u.inventory.filter(id=>RANKS[id]):[];
+const equippedRank=u=>RANKS[u?.equippedrank]||null;
+const rankBadgeHTML=u=>{let rank=equippedRank(u);return rank?`<span class="rank-badge" style="color:${rank.color}">${esc(rank.name)}</span>`:''};
+const crownHTML=u=>Array.isArray(u?.badges)&&u.badges.includes('crown')?'<span class="crown-icon" title="Diamond badge">💎</span>':'';
 const userByName=name=>usersList.find(u=>String(u.username).toLowerCase()===String(name||'').toLowerCase());
 function hashColor(str){let h=0;for(const c of String(str))h=(h*31+c.charCodeAt(0))%360;return `hsl(${h} 62% 44%)`}
 async function request(url,opts={}){let r=await fetch(url,{headers:{'Content-Type':'application/json'},...opts});if(!r.ok)throw Error(`API error (${r.status})`);return r.status===204?null:r.json()}
@@ -405,7 +419,7 @@ async function submitAuth(){
     if(isSignup){
       if(existing)return setNotice('That username is already taken.');
       let salt=newSalt(),passwordHash=await hashPassword(password,salt);
-      let user=await request(API.users,{method:'POST',body:JSON.stringify({username,online:true,rank:'member',...DEFAULTS,namecolor:'#f2f3f5',displayname:'',avatar:'',avatarcolor:'',usernamechangedat:null,badges:[]})});
+      let user=await request(API.users,{method:'POST',body:JSON.stringify({username,online:true,rank:'member',...DEFAULTS,namecolor:'#f2f3f5',displayname:'',avatar:'',avatarcolor:'',usernamechangedat:null,badges:[],inventory:[],equippedrank:''})});
       await request(API.logins,{method:'POST',body:JSON.stringify({username,password:`sha256$${salt}$${passwordHash}`})});
       finish(user);
     }else{
@@ -444,11 +458,9 @@ function finish(user){
 
 function updateProfileBadges(){
   let badges='';
-  if(me?.rank==='owner')badges+='<span class="badge-owner">👑 Owner</span>';
+  if(me?.rank==='owner')badges+='<span class="badge-owner">💎 Owner</span>';
   else if(me?.rank==='staff')badges+='<span class="badge-staff">⭐ Staff</span>';
-  if(me?.badges&&Array.isArray(me.badges)){
-    if(me.badges.includes('crown'))badges+='<span class="badge-crown">👑 Crown</span>';
-  }
+  badges+=rankBadgeHTML(me)+crownHTML(me);
   $('#profileBadges').innerHTML=badges;
 }
 
@@ -458,11 +470,8 @@ async function loadUsers(){
     usersList=users;
     $('#count').textContent=`MEMBERS — ${users.length}`;
     $('#membersList').innerHTML=users.sort((a,b)=>Boolean(b.online)-Boolean(a.online)).map(u=>{
-      let badges='';
-      if(u.badges&&Array.isArray(u.badges)){
-        if(u.badges.includes('crown'))badges=' 👑';
-      }
-      return `<div class="member">${avatarHTML(u)}<i class="dot ${u.online?'on':''}"></i><div class="member-info"><div class="member-name">${esc(displayNameOf(u))}${badges}</div><div class="member-coins">💎 ${u.coins||0}</div><small>${u.rank||'member'}</small></div></div>`;
+      let rank=equippedRank(u);
+      return `<div class="member">${avatarHTML(u)}<i class="dot ${u.online?'on':''}"></i><div class="member-info"><div class="member-name" style="color:${color(u.namecolor,'var(--text)')}">${esc(displayNameOf(u))} ${crownHTML(u)}</div><div class="member-coins">🪙 ${u.coins||0}</div><small style="color:${rank?.color||'var(--muted)'}">${esc(rank?.name||u.rank||'member')}</small></div></div>`;
     }).join('');
   }catch(e){console.warn(e)}
 }
@@ -522,12 +531,11 @@ function renderMessages(sorted){
     let sender=userByName(m.username);
     let senderRank=sender?.rank||m.rank;
     let {html,flags}=processContent(content,senderRank);
+    let messageUser=sender||{username:m.username,equippedrank:m.equippedrank,badges:m.badges,namecolor:m.namecolor};
     let staff=['staff','owner'].includes(String(senderRank||'').toLowerCase());
-    let badges='';
-    if(sender?.badges&&Array.isArray(sender.badges)){
-      if(sender.badges.includes('crown'))badges+=`<span class="badge-crown">👑 Crown</span>`;
-    }
-    return `<article class="message ${flags.mentionsMe?'mentions-me':''}">${avatarHTML(sender||{username:m.username})}<div><div class="meta"><span style="color:${color(sender?.namecolor,'inherit')}">${esc(displayNameOf(sender||{username:m.username}))}</span>${staff?`<span class="badge">${sender?.rank==='owner'?'👑 Owner':'⭐ Staff'}</span>`:''}${badges}<time>${new Date(m.time||m.createdAt).toLocaleTimeString(navigator.language,{hour:'2-digit',minute:'2-digit'})}</time></div>${m.reply?`<div class="reply">↳ ${replyText(m.reply)}</div>`:''}<div class="content">${html}</div>${renderAttachmentsHTML(content)}<div class="reactions">${renderReactionsHTML(m)}</div><div class="reactionPicker" id="picker-${m.id}">${REACTION_EMOJIS.map(e=>`<button data-id="${m.id}" data-emoji="${e}">${e}</button>`).join('')}</div><div class="msg-actions"><button class="replybtn" data-user="${esc(m.username)}" data-message="${esc(content)}">Reply</button><button class="reactBtn" data-id="${m.id}">React</button></div></div></article>`;
+    let when=new Date(m.time||m.createdAt);
+    let dateLabel=Number.isNaN(when.getTime())?'Unknown date':when.toLocaleString(navigator.language,{dateStyle:'medium',timeStyle:'short'});
+    return `<article class="message ${flags.mentionsMe?'mentions-me':''}">${avatarHTML(messageUser)}<div><div class="meta"><span style="color:${color(messageUser.namecolor,'inherit')}">${esc(displayNameOf(messageUser))}</span>${rankBadgeHTML(messageUser)}${staff?`<span class="badge">${sender?.rank==='owner'?'💎 Owner':'⭐ Staff'}</span>`:''}${crownHTML(messageUser)}<time title="${esc(dateLabel)}">${esc(dateLabel)}</time></div>${m.reply?`<div class="reply">↳ ${replyText(m.reply)}</div>`:''}<div class="content">${html}</div>${renderAttachmentsHTML(content)}<div class="reactions">${renderReactionsHTML(m)}</div><div class="reactionPicker" id="picker-${m.id}">${REACTION_EMOJIS.map(e=>`<button data-id="${m.id}" data-emoji="${e}">${e}</button>`).join('')}</div><div class="msg-actions"><button class="reactBtn" data-id="${m.id}">React</button><button class="replybtn" data-user="${esc(m.username)}" data-message="${esc(content)}">Reply</button></div></div></article>`;
   }).join('');
   $('#composer').classList.toggle('disabled',locked);
   $('#text').placeholder=locked?'Only staff or owners can post here':`Message #${chatName}`;
@@ -684,7 +692,7 @@ async function settingsSave(){
 
 /* ---------- shop ---------- */
 function renderShop(){
-  $('#shopContainer').innerHTML=SHOP_ITEMS.map((item,i)=>`<div class="shop-item" onclick="purchaseItem(${i})"><strong>${esc(item.name)}</strong><small>${esc(item.description)}</small><div class="shop-price">💎 ${item.cost}</div></div>`).join('');
+  $('#shopContainer').innerHTML=SHOP_ITEMS.map((item,i)=>`<div class="shop-item" onclick="purchaseItem(${i})"><strong style="color:${item.color||'inherit'}">${esc(item.name)}</strong><small>${esc(item.description)}</small><div class="shop-price">🪙 ${item.cost}</div></div>`).join('');
 }
 function openShop(){
   renderShop();
@@ -693,28 +701,35 @@ function openShop(){
 async function purchaseItem(index){
   if(!me)return;
   let item=SHOP_ITEMS[index];
+  let inventory=ownedRanks(me),badges=Array.isArray(me.badges)?[...me.badges]:[];
+  if(item.color&&inventory.includes(item.id))return showToast('Already owned','Open your inventory to equip this rank.');
+  if(item.id==='crown'&&badges.includes('crown'))return showToast('Already owned','Your 💎 badge is already equipped.');
   if(me.coins<item.cost){
     showToast('Not enough coins','You need '+item.cost+' coins to buy this item');
     return;
   }
   try{
-    let badges=me.badges?[...me.badges]:[];
-    if(item.name==='👑 Crown Badge'){
-      if(badges.includes('crown')){
-        badges=badges.filter(b=>b!=='crown');
-        showToast('Removed!','Crown badge removed from your profile');
-      } else {
-        badges.push('crown');
-        showToast('Purchase complete!','You bought the Crown Badge');
-      }
-    } else {
-      showToast('Purchase complete!','You bought '+item.name);
-    }
-    me=await request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify({coins:(me.coins||0)-item.cost,badges})});
+    if(item.color)inventory.push(item.id);else badges.push('crown');
+    me=await request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify({coins:(me.coins||0)-item.cost,badges,inventory})});
     localStorage.setItem(sessionKey,JSON.stringify(me));
     $('#myCoins').textContent=me.coins||0;
     updateProfileBadges();
+    showToast('Purchase complete!',item.color?'Rank added to your inventory.':'You bought the 💎 badge.');
     loadUsers();
+  }catch(e){showToast('Error',e.message)}
+}
+
+function renderInventory(){
+  let items=ownedRanks(me).map(id=>RANKS[id]);
+  $('#inventoryContainer').innerHTML=items.length?items.map(item=>`<div class="shop-item inventory-item"><div><strong style="color:${item.color}">${esc(item.name)}</strong><small>${me.equippedrank===item.id?'<span class="equipped">Equipped</span>':esc(item.description)}</small></div><button class="join" type="button" onclick="equipRank('${item.id}')">${me.equippedrank===item.id?'Unequip':'Equip'}</button></div>`).join(''):'<p class="inventory-empty">You do not own any ranks yet. Buy one in the shop to add it here.</p>';
+}
+function openInventory(){renderInventory();$('#inventoryModal').style.display='grid'}
+async function equipRank(id){
+  if(!ownedRanks(me).includes(id))return;
+  try{
+    me=await request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify({equippedrank:me.equippedrank===id?'':id})});
+    localStorage.setItem(sessionKey,JSON.stringify(me));
+    updateProfileBadges();renderInventory();loadUsers();loadMessages();
   }catch(e){showToast('Error',e.message)}
 }
 
@@ -737,7 +752,7 @@ async function sendMessage(e){
   if(!isStaff()&&messeges.length>CHAR_LIMIT){updateCharCount();return}
   if(checkSpam())return;
   try{
-    await request(API[chat],{method:'POST',body:JSON.stringify({messeges,time:new Date().toLocaleString(),username:me.username,rank:me.rank,reply,reactions:{}})});
+    await request(API[chat],{method:'POST',body:JSON.stringify({messeges,time:new Date().toISOString(),username:me.username,rank:me.rank,equippedrank:me.equippedrank||'',namecolor:color(me.namecolor,''),badges:Array.isArray(me.badges)?me.badges:[],reply,reactions:{}})});
     let newCoins=(me.coins||0)+COIN_REWARD;
     me=await request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify({coins:newCoins})});
     localStorage.setItem(sessionKey,JSON.stringify(me));
@@ -772,6 +787,8 @@ $('#changePasswordBtn').onclick=changePassword;
 $('#changeUsernameBtn').onclick=changeUsername;
 $('#shop').onclick=openShop;
 $('#closeShop').onclick=()=>$('#shopModal').style.display='none';
+$('#inventory').onclick=openInventory;
+$('#closeInventory').onclick=()=>$('#inventoryModal').style.display='none';
 $('#brandIcon').onclick=()=>choose(document.querySelector('[data-chat="chat1"]'));
 $('#attachBtn').onclick=()=>{
   let url=prompt('Paste an image or file URL (https://...)');
