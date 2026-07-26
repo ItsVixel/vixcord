@@ -113,13 +113,16 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
 .send,.join{border:0;border-radius:6px;background:var(--red);color:#fff;font-weight:800;padding:9px 14px;cursor:pointer;transition:.12s;font:inherit}
 .send:hover,.join:hover{filter:brightness(1.08)}
 .disabled{opacity:.55;pointer-events:none}
+.send-options{position:relative;flex:none}.send-options summary{list-style:none;cursor:pointer;color:var(--muted);font-size:18px;padding:5px}.send-options summary::-webkit-details-marker{display:none}.send-options[open] summary{color:var(--red)}.send-options-panel{position:absolute;right:0;bottom:34px;width:220px;padding:10px;background:var(--side);border:1px solid color-mix(in srgb,var(--red) 35%,transparent);border-radius:8px;box-shadow:0 10px 30px #0008;color:var(--text);font-size:12px;z-index:4}.send-options-panel label{display:flex;gap:7px;align-items:center;cursor:pointer}.send-options-panel select{width:100%;margin-top:8px;background:var(--input);color:var(--text);border:1px solid var(--muted);border-radius:5px;padding:6px}
+.command-menu{display:none;position:absolute;left:16px;right:16px;bottom:70px;max-width:620px;max-height:270px;overflow:auto;background:var(--side);border:1px solid color-mix(in srgb,var(--red) 45%,transparent);border-radius:10px;box-shadow:0 14px 36px #0009;z-index:5;padding:6px}.command-menu.show{display:block}.command-item{display:block;width:100%;border:0;border-radius:7px;background:transparent;color:var(--text);padding:9px 11px;text-align:left;cursor:pointer}.command-item:hover,.command-item.active{background:color-mix(in srgb,var(--red) 18%,transparent)}.command-item b{font-family:'Sora',sans-serif}.command-item small{display:block;color:var(--muted);margin-top:2px}.command-item .command-role{float:right;color:var(--red);font-size:10px;text-transform:uppercase}
 
 /* ---------- members ---------- */
 .members{padding:20px 12px 0}
 .members h2{font-size:11px;color:var(--muted);letter-spacing:.6px;flex:none;margin:0 0 6px}
 #membersList{flex:1;min-height:0;overflow-y:auto;padding-bottom:16px}
-.member{display:flex;align-items:center;gap:9px;padding:6px;border-radius:6px;color:var(--muted);transition:.12s;font-size:12px}
+.member{display:flex;align-items:center;gap:9px;padding:6px;border-radius:6px;color:var(--muted);transition:.12s;font-size:12px;position:relative}
 .member:hover{background:color-mix(in srgb,#000 15%,transparent)}
+.member:hover::after{content:attr(data-username);position:absolute;right:8px;top:-27px;background:#090909;color:#fff;border:1px solid #333;border-radius:5px;padding:3px 6px;font-size:11px;z-index:5;box-shadow:0 4px 12px #0008}
 .member .avatar{width:32px;height:32px;font-size:11px}
 .member-info{flex:1;min-width:0}
 .member-name{color:var(--text);font-weight:600}
@@ -212,7 +215,8 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
     <header><span>#</span><b id="title">general</b><small id="topic">Talk with everyone in Vixcord</small></header>
     <div class="messages" id="messages"></div>
     <div class="replybar" id="replybar">Replying to <b id="replyto"></b><button id="cancelReply">Cancel</button></div>
-    <form class="composer" id="composer"><div class="attachment-controls"><button type="button" id="messageUrlBtn">URL</button><button type="button" id="messageUploadBtn">Upload</button></div><input id="messageFileInput" type="file" hidden><textarea id="text" rows="1" autocomplete="off" placeholder="Message #general"></textarea><button type="submit" class="send">Send</button></form>
+    <div class="command-menu" id="commandMenu" role="listbox" aria-label="Chat commands"></div>
+    <form class="composer" id="composer"><div class="attachment-controls"><button type="button" id="messageUrlBtn">URL</button><button type="button" id="messageUploadBtn">Upload</button></div><input id="messageFileInput" type="file" hidden><textarea id="text" rows="1" autocomplete="off" placeholder="Message #general"></textarea><details class="send-options"><summary title="Send options">⚙</summary><div class="send-options-panel"><label><input id="notifyMentions" type="checkbox"> Notify people you mention</label><select id="sendFormat" aria-label="Message format"><option value="normal">Normal message</option><option value="plain">Plain text</option></select></div></details><button type="submit" class="send">Send</button></form>
     <div class="composerFoot" id="composerFoot"><span id="charCount">0/500</span><span id="coinReward">+2 🪙</span></div>
   </section>
   <aside class="members"><h2 id="count">MEMBERS — 0</h2><div id="membersList"></div></aside>
@@ -302,6 +306,17 @@ const REACTION_EMOJIS=['👍','❤️','😂','😮','😢','🔥','🤓','🐦�
 const DEFAULTS={accentcolor:'#c4454a',deepcolor:'#0a0a0a',sidecolor:'#1a1a1d',chatcolor:'#131317',inputcolor:'#1f1f23',textcolor:'#f2f3f5',mutedcolor:'#9a9aad',onlinecolor:'#23a55a',coins:0};
 const CHAR_LIMIT=500;
 const COIN_REWARD=2;
+const CHAT_MESSAGE_LIMIT=90;
+const COMMANDS=[
+  {name:'/msg',usage:'/msg [username] [message]',description:'Send a private message to a member.',role:'everyone',template:'/msg '},
+  {name:'/vanish',usage:'/vanish',description:'Appear offline to other members.',role:'staff',template:'/vanish'},
+  {name:'/unvanish',usage:'/unvanish',description:'Appear online to other members.',role:'staff',template:'/unvanish'},
+  {name:'/mute',usage:'/mute [username] [minutes] [reason]',description:'Mute a member for a set time.',role:'staff',template:'/mute '},
+  {name:'/unmute',usage:'/unmute [username]',description:'Remove a member mute.',role:'staff',template:'/unmute '},
+  {name:'/staff',usage:'/staff [username]',description:'Grant staff rank to a member.',role:'owner',template:'/staff '},
+  {name:'/unstaff',usage:'/unstaff [username]',description:'Remove staff rank from a member.',role:'owner',template:'/unstaff '}
+];
+let muteRefreshTimer=null;
 const PRESETS=[
   {name:'Vixcord Classic',accentcolor:'#c4454a',deepcolor:'#0a0a0a',sidecolor:'#1a1a1d',chatcolor:'#131317',inputcolor:'#1f1f23',textcolor:'#f2f3f5',mutedcolor:'#9a9aad',onlinecolor:'#23a55a'},
   {name:'Deep Red',accentcolor:'#b33a3a',deepcolor:'#330000',sidecolor:'#4d0000',chatcolor:'#660000',inputcolor:'#800000',textcolor:'#ffcccc',mutedcolor:'#ff6666',onlinecolor:'#ff3333'},
@@ -333,6 +348,7 @@ const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const escapeRegex=s=>String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 const initials=n=>String(n||'?').split(/\s+/).map(x=>x[0]).join('').slice(0,2).toUpperCase();
 const isStaff=()=>['staff','owner'].includes(String(me?.rank||'').toLowerCase());
+const isOwner=()=>String(me?.rank||'').toLowerCase()==='owner';
 const isMuted=u=>new Date(u?.muteduntil||0).getTime()>Date.now();
 const color=(v,fallback)=>/^#[0-9a-f]{6}$/i.test(v||'')?v:fallback;
 const safeText=v=>typeof v==='string'?v.trim():'';
@@ -487,7 +503,25 @@ function finish(user){
   $('#myName').style.color=color(me.namecolor,'#fff');
   $('#myCoins').textContent=me.coins||0;
   updateProfileBadges();
-  applyTheme();syncChannels();applyCharLimit();requestNotifyPermission();loadUsers();loadMessages();showGiftClaim();
+  applyTheme();syncChannels();applyCharLimit();requestNotifyPermission();scheduleMuteRefresh();loadUsers();loadMessages();showGiftClaim();
+}
+
+function scheduleMuteRefresh(){
+  clearTimeout(muteRefreshTimer);
+  if(!me)return;
+  let delay=isMuted(me)?Math.max(500,new Date(me.muteduntil).getTime()-Date.now()+250):60000;
+  muteRefreshTimer=setTimeout(refreshCurrentUser,delay);
+}
+async function refreshCurrentUser(){
+  if(!me)return;
+  try{
+    me=await request(API.users+'/'+me.id);
+    localStorage.setItem(sessionKey,JSON.stringify(me));
+    $('#myAvatarWrap').innerHTML=avatarHTML(me);updateProfileBadges();
+    if(chat!=='rules')renderMessages(lastMessagesData);loadUsers();
+    if(!isMuted(me))showToast('Mute status updated','You can send messages again.');
+  }catch(e){console.warn(e)}
+  scheduleMuteRefresh();
 }
 
 function updateProfileBadges(){
@@ -502,10 +536,16 @@ async function loadUsers(){
   try{
     let users=await request(API.users);
     usersList=users;
+    let current=users.find(u=>String(u.id)===String(me?.id));
+    if(current){
+      let wasMuted=isMuted(me);me=current;localStorage.setItem(sessionKey,JSON.stringify(me));scheduleMuteRefresh();
+      if(wasMuted&&!isMuted(me))showToast('Mute expired','You can send messages again.');
+      showNewDirectMessages(current);
+    }
     $('#count').textContent=`MEMBERS — ${users.length}`;
     $('#membersList').innerHTML=users.sort((a,b)=>Boolean(b.online)-Boolean(a.online)).map(u=>{
       let rank=equippedRank(u);
-      return `<div class="member" title="@${esc(safeText(u.username)||'unknown')}">${avatarHTML(u)}<i class="dot ${u.online?'on':''}"></i><div class="member-info"><div class="member-name" style="color:${color(u.namecolor,'var(--text)')}">${esc(displayNameOf(u))} ${roleBadgeHTML(u)} ${rankBadgeHTML(u)} ${crownHTML(u)}</div><div class="member-coins">🪙 ${u.coins||0}</div><small style="color:${rank?.color||'var(--muted)'}">${esc(rank?.name||u.rank||'member')}</small></div></div>`;
+      return `<div class="member" data-username="@${esc(safeText(u.username)||'unknown')}" title="@${esc(safeText(u.username)||'unknown')}">${avatarHTML(u)}<i class="dot ${u.online&&!u.vanished?'on':''}"></i><div class="member-info"><div class="member-name" style="color:${color(u.namecolor,'var(--text)')}">${esc(displayNameOf(u))} ${roleBadgeHTML(u)} ${rankBadgeHTML(u)} ${crownHTML(u)}</div><div class="member-coins">🪙 ${u.coins||0}</div><small style="color:${rank?.color||'var(--muted)'}">${esc(rank?.name||u.rank||'member')}</small></div></div>`;
     }).join('');
   }catch(e){console.warn(e)}
 }
@@ -842,24 +882,90 @@ function updateCharCount(){
   $('#charCount').textContent=`${len}/${CHAR_LIMIT}`;
   $('#composerFoot').classList.toggle('over',len>CHAR_LIMIT);
 }
+
+function showNewDirectMessages(user){
+  let key='vixcord-seen-dms-'+user.id,seen=new Set(JSON.parse(localStorage.getItem(key)||'[]'));
+  let messages=Array.isArray(user.directmessages)?user.directmessages:[];
+  let fresh=messages.filter(m=>!seen.has(m.id));
+  if(!localStorage.getItem(key))fresh=[];
+  fresh.forEach(m=>notify(`Private message from ${m.from}`,m.message));
+  localStorage.setItem(key,JSON.stringify(messages.map(m=>m.id).slice(-100)));
+}
+function commandAllowed(command){return command.role==='everyone'||(command.role==='staff'&&isStaff())||(command.role==='owner'&&isOwner())}
+function renderCommandMenu(){
+  let value=$('#text').value.trimStart().toLowerCase();
+  let matches=COMMANDS.filter(c=>!value||c.name.startsWith(value.split(/\s+/)[0]||'/'));
+  let menu=$('#commandMenu');
+  if(!$('#text').value.trimStart().startsWith('/')||!matches.length){menu.classList.remove('show');return}
+  menu.innerHTML=matches.map(c=>`<button type="button" class="command-item ${commandAllowed(c)?'':'disabled'}" data-command="${c.name}"><b>${c.usage}</b><span class="command-role">${c.role}</span><small>${c.description}</small></button>`).join('');
+  menu.classList.add('show');
+  menu.querySelectorAll('.command-item').forEach(b=>b.onclick=()=>{
+    let c=COMMANDS.find(item=>item.name===b.dataset.command);if(!commandAllowed(c))return showToast('Permission denied',`You don't have permission for ${c.name}.`);
+    $('#text').value=c.template;autoResize();updateCharCount();renderCommandMenu();$('#text').focus();
+  });
+}
+function clearComposer(){
+  $('#text').value='';pendingUploads=[];autoResize();reply=null;$('#replybar').style.display='none';updateCharCount();renderCommandMenu();
+}
+async function runCommand(input){
+  let [commandName,...args]=input.trim().split(/\s+/),command=COMMANDS.find(c=>c.name===commandName.toLowerCase());
+  if(!command){showToast('Unknown command',`\"${commandName}\" is not a recognized command.`);return true}
+  if(!commandAllowed(command)){showToast('Permission denied',`You don't have permission for ${command.name}.`);return true}
+  try{
+    if(command.name==='/msg'){
+      let username=args.shift(),message=args.join(' ');
+      if(!username||!message){showToast('Usage',command.usage);return true}
+      let target=(await request(API.users)).find(u=>String(u.username).toLowerCase()===username.toLowerCase());
+      if(!target){showToast('Not found','That username does not exist.');return true}
+      let directmessages=Array.isArray(target.directmessages)?target.directmessages:[];
+      directmessages.push({id:crypto.randomUUID?.()||String(Date.now()),from:me.username,message,time:new Date().toISOString()});
+      await request(API.users+'/'+target.id,{method:'PUT',body:JSON.stringify({directmessages})});
+      notify('Private message sent',`Your message was sent to ${displayNameOf(target)}.`);clearComposer();return true;
+    }
+    if(command.name==='/vanish'||command.name==='/unvanish'){
+      let vanish=command.name==='/vanish';
+      me=await request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify({vanished:vanish,online:!vanish})});
+      localStorage.setItem(sessionKey,JSON.stringify(me));loadUsers();showToast(vanish?'You vanished':'You are visible',vanish?'You now appear offline.':'You now appear online.');clearComposer();return true;
+    }
+    let username=args.shift();
+    if(!username){showToast('Usage',command.usage);return true}
+    let target=(await request(API.users)).find(u=>String(u.username).toLowerCase()===username.toLowerCase());
+    if(!target){showToast('Not found','That username does not exist.');return true}
+    if(command.name==='/mute'){
+      let minutes=Number(args.shift()),reason=args.join(' ');
+      if(!Number.isInteger(minutes)||minutes<1||!reason){showToast('Usage',command.usage);return true}
+      if(['staff','owner'].includes(String(target.rank).toLowerCase())){showToast('Not allowed','Staff and owners cannot be muted.');return true}
+      minutes=Math.min(10080,minutes);let until=new Date(Date.now()+minutes*60000).toISOString();
+      await request(API.users+'/'+target.id,{method:'PUT',body:JSON.stringify({muteduntil:until,mutereason:reason})});
+      showToast('Member muted',`${displayNameOf(target)} was muted for ${minutes} minute${minutes===1?'':'s'}.`);
+    }
+    if(command.name==='/unmute'){
+      await request(API.users+'/'+target.id,{method:'PUT',body:JSON.stringify({muteduntil:null,mutereason:''})});showToast('Member unmuted',`${displayNameOf(target)} can send messages again.`);
+    }
+    if(command.name==='/staff'){
+      if(String(target.rank).toLowerCase()==='owner'){showToast('Not allowed','The owner rank cannot be changed.');return true}
+      await request(API.users+'/'+target.id,{method:'PUT',body:JSON.stringify({rank:'staff'})});showToast('Staff granted',`${displayNameOf(target)} is now staff.`);
+    }
+    if(command.name==='/unstaff'){
+      if(String(target.rank).toLowerCase()!=='staff'){showToast('Not allowed','Only staff members can be unstaffed.');return true}
+      await request(API.users+'/'+target.id,{method:'PUT',body:JSON.stringify({rank:'member'})});showToast('Staff removed',`${displayNameOf(target)} is now a member.`);
+    }
+    clearComposer();loadUsers();return true;
+  }catch(err){showToast('Command failed',err.message);return true}
+}
+async function trimChatMessages(){
+  if(!API[chat])return;
+  let messages=await request(API[chat]);
+  if(messages.length<CHAT_MESSAGE_LIMIT)return;
+  await Promise.all(messages.map(m=>request(API[chat]+'/'+m.id,{method:'DELETE'})));
+  showToast('Chat cleared',`#${chatName} reached ${CHAT_MESSAGE_LIMIT} messages and was cleared.`);
+}
 async function sendMessage(e){
   e?.preventDefault();
   let messeges=$('#text').value.trim();
-  if((!messeges&&!pendingUploads.length)||!me||!canPost())return;
-  if(messeges.toLowerCase().startsWith('/mute ')){
-    if(!isStaff())return showToast('Staff only','Only staff and owners can mute members.');
-    let match=messeges.match(/^\/mute\s+(\S+)\s+(\d+)\s*$/i);
-    if(!match)return showToast('Usage','/mute [username] [number of minutes]');
-    try{
-      let users=await request(API.users),target=users.find(u=>String(u.username).toLowerCase()===match[1].toLowerCase());
-      if(!target)return showToast('Not found','That username does not exist.');
-      if(['staff','owner'].includes(String(target.rank).toLowerCase()))return showToast('Not allowed','Staff and owners cannot be muted.');
-      let minutes=Math.min(10080,Math.max(1,Number(match[2]))),until=new Date(Date.now()+minutes*60000).toISOString();
-      await request(API.users+'/'+target.id,{method:'PUT',body:JSON.stringify({muteduntil:until})});
-      $('#text').value='';autoResize();updateCharCount();showToast('Member muted',`${displayNameOf(target)} was muted for ${minutes} minute${minutes===1?'':'s'}.`);loadUsers();
-    }catch(err){showToast('Mute failed',err.message)}
-    return;
-  }
+  if(!messeges&&!pendingUploads.length||!me)return;
+  if(messeges.startsWith('/')){await runCommand(messeges);return}
+  if(!canPost()){showToast('Cannot send',isMuted(me)?'You are muted.':'You cannot send messages in this channel.');return}
   if(!isStaff()&&messeges.length>CHAR_LIMIT){updateCharCount();return}
   if(checkSpam())return;
   try{
@@ -868,8 +974,9 @@ async function sendMessage(e){
     me=await request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify({coins:newCoins})});
     localStorage.setItem(sessionKey,JSON.stringify(me));
     $('#myCoins').textContent=me.coins||0;
-    $('#text').value='';pendingUploads=[];autoResize();reply=null;$('#replybar').style.display='none';updateCharCount();
+    clearComposer();
     showToast('Message sent!',`+${COIN_REWARD} coins`);
+    await trimChatMessages();
     loadMessages();
   }catch(e){alert(e.message)}
 }
@@ -877,7 +984,7 @@ async function sendMessage(e){
 /* ---------- online status based on tab visibility ---------- */
 document.addEventListener('visibilitychange',()=>{
   if(!me)return;
-  request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify({online:document.visibilityState==='visible'})}).catch(()=>{});
+  request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify({online:!me.vanished&&document.visibilityState==='visible'})}).catch(()=>{});
 });
 
 /* ---------- wiring ---------- */
@@ -887,8 +994,9 @@ $('#password').onkeydown=e=>{if(e.key==='Enter')submitAuth()};
 document.querySelectorAll('.channel').forEach(b=>b.onclick=()=>choose(b));
 $('#cancelReply').onclick=()=>{reply=null;$('#replybar').style.display='none'};
 $('#composer').addEventListener('submit',sendMessage);
-$('#text').addEventListener('input',()=>{autoResize();updateCharCount()});
+$('#text').addEventListener('input',()=>{autoResize();updateCharCount();renderCommandMenu()});
 $('#text').addEventListener('keydown',e=>{
+  if(e.key==='Escape'){$('#commandMenu').classList.remove('show');return}
   if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage(e)}
 });
 $('#settings').onclick=settingsOpen;
@@ -934,7 +1042,7 @@ addEventListener('beforeunload',()=>{
 });
 (async()=>{
   let saved=JSON.parse(localStorage.getItem(sessionKey)||'null');
-  if(saved){try{finish(await request(API.users+'/'+saved.id,{method:'PUT',body:JSON.stringify({online:true})}))}catch{localStorage.removeItem(sessionKey)}}
+  if(saved){try{finish(await request(API.users+'/'+saved.id,{method:'PUT',body:JSON.stringify({online:!saved.vanished})}))}catch{localStorage.removeItem(sessionKey)}}
   authMode();
 })();
 setInterval(()=>{if(me)loadMessages()},5000);
