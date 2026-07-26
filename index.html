@@ -45,7 +45,7 @@ body{margin:0;background:var(--bg);color:var(--text);height:100vh;overflow:hidde
 .profileInfo{flex:1;min-width:0}
 .profileTop{display:flex;gap:8px;align-items:center;margin-bottom:4px}
 .profileBadges{display:flex;gap:4px;font-size:9px}
-.badge-staff{background:var(--red);color:#fff;padding:1px 4px;border-radius:3px;font-weight:700}
+.badge-staff{background:#1FF516;color:#081008;padding:1px 4px;border-radius:3px;font-weight:800}
 .badge-owner{background:var(--red);color:#fff;padding:1px 4px;border-radius:3px;font-weight:700;filter:brightness(1.2)}
 .badge-crown,.crown-icon{color:#67b7ff;font-weight:800}
 .coins-display{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--red);font-weight:700}
@@ -73,6 +73,7 @@ h1{margin:10px 0 3px;font-size:28px;font-family:'Sora',sans-serif}
 .meta .badge{font-size:10px;font-weight:800;color:var(--red);border:1px solid var(--red);border-radius:4px;padding:1px 5px;text-transform:uppercase;letter-spacing:.3px}
 .meta .badge-crown,.meta .crown-icon{font-size:14px}
 .rank-badge{font-size:10px;font-weight:800;border:1px solid currentColor;border-radius:4px;padding:1px 5px;text-transform:uppercase;letter-spacing:.3px}
+.role-badge{font-size:10px;font-weight:800;border:1px solid currentColor;border-radius:4px;padding:1px 5px;text-transform:uppercase;letter-spacing:.3px}.role-badge.staff{color:#1FF516}.role-badge.owner{color:#67b7ff}.badge-stack{font-size:10px;margin-left:1px;vertical-align:top}
 .meta time{font-size:12px;font-weight:400;color:var(--muted)}
 .content,.reply{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
 .content{color:var(--text)}
@@ -159,8 +160,7 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
 .shop-item small{color:var(--muted);display:block}
 .shop-price{color:var(--red);font-weight:700;margin-top:8px}
 .inventory-empty{color:var(--muted);padding:12px 0}.inventory-item{display:flex;align-items:center;justify-content:space-between;gap:12px}.inventory-item .join{width:auto;margin:0;padding:7px 11px}.equipped{font-size:11px;color:var(--online);font-weight:700}
-.upload-wrap{display:inline-block;position:relative;margin-left:6px}.upload-wrap>button{border:0;border-radius:50%;width:20px;height:20px;background:var(--red);color:#fff;cursor:pointer;font-weight:800;line-height:1}.upload-menu{display:none;position:absolute;z-index:5;top:24px;left:0;background:var(--side);border:1px solid #0006;border-radius:6px;box-shadow:0 7px 18px #0008;overflow:hidden}.upload-wrap:hover .upload-menu,.upload-wrap:focus-within .upload-menu{display:grid}.upload-menu button{border:0;background:transparent;color:var(--text);text-align:left;padding:7px 11px;cursor:pointer;font:inherit;font-size:12px}.upload-menu button:hover{background:var(--input)}
-.gift-option{margin:7px 0}.gift-option label{display:inline;margin-left:5px;color:var(--text)}.gift-option select,.gift-option input{width:100%;margin:5px 0}.claim-card{max-width:370px}.claim-card h1{font-size:22px}
+.attachment-controls,.avatar-controls{display:flex;gap:5px;align-items:center}.attachment-controls button,.avatar-controls button{border:0;border-radius:6px;background:var(--side);color:var(--text);cursor:pointer;padding:6px 9px;font:600 12px 'Inter',sans-serif}.attachment-controls button:hover,.avatar-controls button:hover{background:var(--red)}.avatar-controls{margin:5px 0}.gift-panel{display:none;margin-top:10px;padding:10px;border:1px solid color-mix(in srgb,var(--red) 28%,transparent);border-radius:8px}.gift-panel.active{display:block}.gift-panel select,.gift-panel input{width:100%;margin-top:5px}.claim-card{max-width:370px}.claim-card h1{font-size:22px}
 
 #toasts{position:fixed;top:16px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:8px;max-width:300px}
 .toast{background:var(--side);color:var(--text);border-left:4px solid var(--red);padding:10px 14px;border-radius:8px;box-shadow:0 10px 30px #0007;font-size:13px;animation:slideIn .25s ease}
@@ -212,7 +212,7 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
     <header><span>#</span><b id="title">general</b><small id="topic">Talk with everyone in Vixcord</small></header>
     <div class="messages" id="messages"></div>
     <div class="replybar" id="replybar">Replying to <b id="replyto"></b><button id="cancelReply">Cancel</button></div>
-    <form class="composer" id="composer"><span class="upload-wrap"><button type="button" id="attachBtn" title="Add attachment">+</button><span class="upload-menu"><button type="button" id="messageUrlBtn">URL</button><button type="button" id="messageUploadBtn">Upload</button></span></span><input id="messageFileInput" type="file" hidden><textarea id="text" rows="1" autocomplete="off" placeholder="Message #general"></textarea><button type="submit" class="send">Send</button></form>
+    <form class="composer" id="composer"><div class="attachment-controls"><button type="button" id="messageUrlBtn">URL</button><button type="button" id="messageUploadBtn">Upload</button></div><input id="messageFileInput" type="file" hidden><textarea id="text" rows="1" autocomplete="off" placeholder="Message #general"></textarea><button type="submit" class="send">Send</button></form>
     <div class="composerFoot" id="composerFoot"><span id="charCount">0/500</span><span id="coinReward">+2 🪙</span></div>
   </section>
   <aside class="members"><h2 id="count">MEMBERS — 0</h2><div id="membersList"></div></aside>
@@ -222,7 +222,7 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
   <h1>Appearance settings</h1>
   <p>Personalize your name, avatar and colors across Vixcord. Only you see these changes for your own client.</p>
   <label for="displayName">Display name</label><input id="displayName" maxlength="24" placeholder="Shown instead of your username">
-  <label for="avatarUrl">Avatar image <span class="upload-wrap"><button type="button" title="Choose avatar source">+</button><span class="upload-menu"><button type="button" id="avatarUrlBtn">URL</button><button type="button" id="avatarUploadBtn">Upload</button></span></span></label><input id="avatarUrl" placeholder="https://example.com/avatar.png or uploaded image"><input id="avatarFileInput" type="file" accept="image/*" hidden>
+  <label for="avatarUrl">Avatar image</label><div class="avatar-controls"><button type="button" id="avatarUrlBtn">Use URL</button><button type="button" id="avatarUploadBtn">Upload image</button></div><input id="avatarUrl" placeholder="https://example.com/avatar.png or uploaded image"><input id="avatarFileInput" type="file" accept="image/*" hidden>
   <div class="settingsGrid">
     <div>
       <label for="avatarColor">Avatar color</label><input id="avatarColor" type="color">
@@ -280,9 +280,10 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
 <div class="modal" id="giftModal"><section class="card wide">
   <h1>Send a gift 🎁</h1><p>Gift coins, an owned rank, or an owned badge. You earn 10 🪙 for every gift sent.</p>
   <label for="giftRecipient">Recipient username</label><input id="giftRecipient" maxlength="24" placeholder="Username">
-  <div class="gift-option"><input type="radio" id="giftCoins" name="giftType" value="coins" checked><label for="giftCoins">Coins</label><input id="giftCoinsAmount" type="number" min="1" placeholder="Amount"></div>
-  <div class="gift-option"><input type="radio" id="giftRank" name="giftType" value="rank"><label for="giftRank">Rank</label><select id="giftRankSelect"></select></div>
-  <div class="gift-option"><input type="radio" id="giftBadge" name="giftType" value="badge"><label for="giftBadge">Badge</label><select id="giftBadgeSelect"></select></div>
+  <label for="giftKind">What would you like to send?</label><select id="giftKind"><option value="coins">Coins</option><option value="rank">Rank</option><option value="badge">Badge</option></select>
+  <div class="gift-panel active" id="giftCoinsPanel"><b>Send coins</b><small>Minimum gift: 20 🪙</small><input id="giftCoinsAmount" type="number" min="20" placeholder="20 or more coins"></div>
+  <div class="gift-panel" id="giftRankPanel"><b>Send a rank</b><small>The selected rank leaves your inventory.</small><select id="giftRankSelect"></select></div>
+  <div class="gift-panel" id="giftBadgePanel"><b>Send a badge</b><small>The selected badge leaves your inventory.</small><select id="giftBadgeSelect"></select></div>
   <label><input id="giftAnonymous" type="checkbox"> Send anonymously</label><p class="notice" id="giftNotice"></p>
   <button class="join" id="sendGiftBtn" type="button">Send gift</button><button class="switch" id="closeGift" type="button">Close</button>
 </section></div>
@@ -332,6 +333,7 @@ const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const escapeRegex=s=>String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 const initials=n=>String(n||'?').split(/\s+/).map(x=>x[0]).join('').slice(0,2).toUpperCase();
 const isStaff=()=>['staff','owner'].includes(String(me?.rank||'').toLowerCase());
+const isMuted=u=>new Date(u?.muteduntil||0).getTime()>Date.now();
 const color=(v,fallback)=>/^#[0-9a-f]{6}$/i.test(v||'')?v:fallback;
 const safeText=v=>typeof v==='string'?v.trim():'';
 const displayNameOf=u=>safeText(u?.displayname)||safeText(u?.username)||'Unknown';
@@ -339,8 +341,10 @@ const ownedRanks=u=>Array.isArray(u?.inventory)?u.inventory.filter(id=>RANKS[id]
 const equippedRank=u=>RANKS[u?.equippedrank]||null;
 const rankBadgeHTML=u=>{let rank=equippedRank(u);return rank?`<span class="rank-badge" style="color:${rank.color}">${esc(rank.name)}</span>`:''};
 const ownedBadges=u=>[...(Array.isArray(u?.badgeinventory)?u.badgeinventory:[]),...(Array.isArray(u?.badges)&&u.badges.includes('crown')?['💎']:[])];
-const equippedBadges=u=>Array.isArray(u?.equippedbadges)?u.equippedbadges:((Array.isArray(u?.badges)&&u.badges.includes('crown'))?['💎']:[]);
-const crownHTML=u=>equippedBadges(u).map(b=>`<span class="crown-icon" title="Equipped badge">${esc(b)}</span>`).join('');
+const equippedBadges=u=>(Array.isArray(u?.equippedbadges)?u.equippedbadges:((Array.isArray(u?.badges)&&u.badges.includes('crown'))?['💎']:[])).slice(0,3);
+const countItems=list=>list.reduce((out,item)=>(out[item]=(out[item]||0)+1,out),{});
+const crownHTML=u=>Object.entries(countItems(equippedBadges(u))).map(([badge,count])=>`<span class="crown-icon" title="Equipped badge">${esc(badge)}${count>1?`<sup class="badge-stack">×${count}</sup>`:''}</span>`).join('');
+const roleBadgeHTML=u=>u?.rank==='owner'?'<span class="role-badge owner">💎 Owner</span>':u?.rank==='staff'?'<span class="role-badge staff">Staff</span>':'';
 const userByName=name=>usersList.find(u=>String(u.username).toLowerCase()===String(name||'').toLowerCase());
 function hashColor(str){let h=0;for(const c of String(str))h=(h*31+c.charCodeAt(0))%360;return `hsl(${h} 62% 44%)`}
 async function request(url,opts={}){let r=await fetch(url,{headers:{'Content-Type':'application/json'},...opts});if(!r.ok)throw Error(`API error (${r.status})`);return r.status===204?null:r.json()}
@@ -487,10 +491,7 @@ function finish(user){
 }
 
 function updateProfileBadges(){
-  let badges='';
-  if(me?.rank==='owner')badges+='<span class="badge-owner">💎 Owner</span>';
-  else if(me?.rank==='staff')badges+='<span class="badge-staff">⭐ Staff</span>';
-  badges+=rankBadgeHTML(me)+crownHTML(me);
+  let badges=roleBadgeHTML(me)+rankBadgeHTML(me)+crownHTML(me);
   $('#profileBadges').innerHTML=badges;
   let rank=equippedRank(me);
   $('#myRank').textContent=rank?.name||me?.rank||'member';
@@ -504,12 +505,12 @@ async function loadUsers(){
     $('#count').textContent=`MEMBERS — ${users.length}`;
     $('#membersList').innerHTML=users.sort((a,b)=>Boolean(b.online)-Boolean(a.online)).map(u=>{
       let rank=equippedRank(u);
-      return `<div class="member">${avatarHTML(u)}<i class="dot ${u.online?'on':''}"></i><div class="member-info"><div class="member-name" style="color:${color(u.namecolor,'var(--text)')}">${esc(displayNameOf(u))} ${crownHTML(u)}</div><div class="member-coins">🪙 ${u.coins||0}</div><small style="color:${rank?.color||'var(--muted)'}">${esc(rank?.name||u.rank||'member')}</small></div></div>`;
+      return `<div class="member" title="@${esc(safeText(u.username)||'unknown')}">${avatarHTML(u)}<i class="dot ${u.online?'on':''}"></i><div class="member-info"><div class="member-name" style="color:${color(u.namecolor,'var(--text)')}">${esc(displayNameOf(u))} ${roleBadgeHTML(u)} ${rankBadgeHTML(u)} ${crownHTML(u)}</div><div class="member-coins">🪙 ${u.coins||0}</div><small style="color:${rank?.color||'var(--muted)'}">${esc(rank?.name||u.rank||'member')}</small></div></div>`;
     }).join('');
   }catch(e){console.warn(e)}
 }
 
-function canPost(){return chat!=='rules'&&(chat!=='chat3'&&chat!=='chat4'||isStaff())}
+function canPost(){return !isMuted(me)&&chat!=='rules'&&(chat!=='chat3'&&chat!=='chat4'||isStaff())}
 function replyText(value){if(!value)return'';if(typeof value==='string')return value;return `${value.username||'Unknown'}: ${value.message||''}`}
 
 async function loadMessages(){
@@ -569,7 +570,7 @@ function renderMessages(sorted){
     let staff=['staff','owner'].includes(String(senderRank||'').toLowerCase());
     let when=new Date(m.time||m.createdAt);
     let dateLabel=Number.isNaN(when.getTime())?'Unknown date':when.toLocaleString(navigator.language,{dateStyle:'medium',timeStyle:'short'});
-    return `<article class="message ${flags.mentionsMe?'mentions-me':''}">${avatarHTML(messageUser)}<div><div class="meta"><span style="color:${color(messageUser.namecolor,'inherit')}">${esc(displayNameOf(messageUser))}</span>${rankBadgeHTML(messageUser)}${staff?`<span class="badge">${sender?.rank==='owner'?'💎 Owner':'⭐ Staff'}</span>`:''}${crownHTML(messageUser)}<time title="${esc(dateLabel)}">${esc(dateLabel)}</time></div>${m.reply?`<div class="reply">↳ ${replyText(m.reply)}</div>`:''}<div class="content">${html}</div>${renderAttachmentsHTML(content,m.attachments)}<div class="reactions">${renderReactionsHTML(m)}</div><div class="reactionPicker" id="picker-${m.id}">${REACTION_EMOJIS.map(e=>`<button data-id="${m.id}" data-emoji="${e}">${e}</button>`).join('')}</div><div class="msg-actions"><button class="reactBtn" data-id="${m.id}">React</button><button class="replybtn" data-user="${esc(m.username)}" data-message="${esc(content)}">Reply</button></div></div></article>`;
+    return `<article class="message ${flags.mentionsMe?'mentions-me':''}">${avatarHTML(messageUser)}<div><div class="meta"><span style="color:${color(messageUser.namecolor,'inherit')}">${esc(displayNameOf(messageUser))}</span>${roleBadgeHTML(sender||{rank:m.rank})}${rankBadgeHTML(messageUser)}${crownHTML(messageUser)}<time title="${esc(dateLabel)}">${esc(dateLabel)}</time></div>${m.reply?`<div class="reply">↳ ${replyText(m.reply)}</div>`:''}<div class="content">${html}</div>${renderAttachmentsHTML(content,m.attachments)}<div class="reactions">${renderReactionsHTML(m)}</div><div class="reactionPicker" id="picker-${m.id}">${REACTION_EMOJIS.map(e=>`<button data-id="${m.id}" data-emoji="${e}">${e}</button>`).join('')}</div><div class="msg-actions"><button class="reactBtn" data-id="${m.id}">React</button><button class="replybtn" data-user="${esc(m.username)}" data-message="${esc(content)}">Reply</button></div></div></article>`;
   }).join('');
   $('#composer').classList.toggle('disabled',locked);
   $('#text').placeholder=locked?'Only staff or owners can post here':`Message #${chatName}`;
@@ -766,9 +767,9 @@ async function purchaseItem(index){
 function renderInventory(){
   let items=ownedRanks(me).map(id=>RANKS[id]);
   let ranks=items.length?items.map(item=>`<div class="shop-item inventory-item"><div><strong style="color:${item.color}">${esc(item.name)}</strong><small>${me.equippedrank===item.id?'<span class="equipped">Equipped</span>':esc(item.description)}</small></div><button class="join" type="button" onclick="equipRank('${item.id}')">${me.equippedrank===item.id?'Unequip':'Equip'}</button></div>`).join(''):'<p class="inventory-empty">No ranks owned yet.</p>';
-  let badges=ownedBadges(me),equipped=equippedBadges(me);
-  let badgeList=badges.length?badges.map((badge,i)=>`<div class="shop-item inventory-item"><div><strong>${esc(badge)}</strong><small>${equipped.includes(badge)?'<span class="equipped">Equipped</span>':'Badge'}</small></div><button class="join" type="button" onclick="toggleBadge(${i})">${equipped.includes(badge)?'Unequip':'Equip'}</button></div>`).join(''):'<p class="inventory-empty">Open badge eggs in the shop to collect badges.</p>';
-  $('#inventoryContainer').innerHTML=`<h2>Ranks</h2>${ranks}<h2 style="margin-top:24px">Badges</h2>${badgeList}`;
+  let badges=ownedBadges(me),equipped=equippedBadges(me),counts=countItems(badges),equippedCounts=countItems(equipped);
+  let badgeList=badges.length?Object.entries(counts).map(([badge,total])=>{let active=equippedCounts[badge]||0,key=encodeURIComponent(badge);return `<div class="shop-item inventory-item"><div><strong>${esc(badge)} ×${total}</strong><small>${active?`<span class="equipped">Equipped ${active}/${total}</span>`:'Badge'}</small></div><div><button class="join" type="button" onclick="changeBadge('${key}',1)" ${active>=total||equipped.length>=3?'disabled':''}>Equip</button><button class="join" type="button" onclick="changeBadge('${key}',-1)" ${active?'':'disabled'}>Unequip</button></div></div>`}).join(''):'<p class="inventory-empty">Open badge eggs in the shop to collect badges.</p>';
+  $('#inventoryContainer').innerHTML=`<h2>Ranks</h2>${ranks}<h2 style="margin-top:24px">Badges (${equipped.length}/3 equipped)</h2>${badgeList}`;
 }
 function openInventory(){renderInventory();$('#inventoryModal').style.display='grid'}
 async function equipRank(id){
@@ -779,10 +780,11 @@ async function equipRank(id){
     updateProfileBadges();renderInventory();loadUsers();loadMessages();
   }catch(e){showToast('Error',e.message)}
 }
-async function toggleBadge(index){
-  let badge=ownedBadges(me)[index];if(!badge)return;
-  let equipped=[...equippedBadges(me)],at=equipped.indexOf(badge);
-  if(at>=0)equipped.splice(at,1);else equipped.push(badge);
+async function changeBadge(encodedBadge,change){
+  let badge=decodeURIComponent(encodedBadge),owned=countItems(ownedBadges(me))[badge]||0,equipped=[...equippedBadges(me)],active=equipped.filter(b=>b===badge).length;
+  if(change>0&&(equipped.length>=3||active>=owned))return showToast('Badge limit','You can equip up to 3 badges.');
+  if(change<0&&active<1)return;
+  if(change>0)equipped.push(badge);else equipped.splice(equipped.lastIndexOf(badge),1);
   try{me=await request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify({equippedbadges:equipped})});localStorage.setItem(sessionKey,JSON.stringify(me));updateProfileBadges();renderInventory();loadUsers();loadMessages()}catch(e){showToast('Error',e.message)}
 }
 
@@ -790,19 +792,20 @@ function openGift(){
   let ranks=ownedRanks(me),badges=ownedBadges(me);
   $('#giftRankSelect').innerHTML=ranks.length?ranks.map(id=>`<option value="${id}">${esc(RANKS[id].name)}</option>`).join(''):'<option value="">No ranks available</option>';
   $('#giftBadgeSelect').innerHTML=badges.length?badges.map((badge,i)=>`<option value="${i}">${esc(badge)}</option>`).join(''):'<option value="">No badges available</option>';
-  $('#giftRecipient').value='';$('#giftCoinsAmount').value='';$('#giftAnonymous').checked=false;$('#giftNotice').textContent='';
+  $('#giftRecipient').value='';$('#giftCoinsAmount').value='';$('#giftAnonymous').checked=false;$('#giftNotice').textContent='';$('#giftKind').value='coins';updateGiftPanel();
   $('#giftModal').style.display='grid';
 }
+function updateGiftPanel(){let kind=$('#giftKind').value;['coins','rank','badge'].forEach(type=>$('#gift'+type[0].toUpperCase()+type.slice(1)+'Panel').classList.toggle('active',type===kind))}
 function giftDescription(gift){return gift.kind==='coins'?`${gift.value} 🪙`:gift.kind==='rank'?`${RANKS[gift.value]?.name||'a rank'}`:`${gift.value} badge`}
 async function sendGift(){
-  let recipientName=$('#giftRecipient').value.trim(),kind=document.querySelector('input[name="giftType"]:checked').value;
+  let recipientName=$('#giftRecipient').value.trim(),kind=$('#giftKind').value;
   if(!recipientName)return $('#giftNotice').textContent='Enter a recipient username.';
   try{
     let users=await request(API.users),recipient=users.find(u=>String(u.username).toLowerCase()===recipientName.toLowerCase());
     if(!recipient)return $('#giftNotice').textContent='That user was not found.';
     if(String(recipient.id)===String(me.id))return $('#giftNotice').textContent='You cannot gift yourself.';
     let value,coins=Number(me.coins||0),inventory=ownedRanks(me),badgeinventory=Array.isArray(me.badgeinventory)?[...me.badgeinventory]:[],equipped=[...equippedBadges(me)],equippedrank=me.equippedrank||'';
-    if(kind==='coins'){value=Math.floor(Number($('#giftCoinsAmount').value));if(!value||value<1||value>coins)return $('#giftNotice').textContent='Enter a coin amount you own.';coins-=value}
+    if(kind==='coins'){value=Math.floor(Number($('#giftCoinsAmount').value));if(!value||value<20||value>coins)return $('#giftNotice').textContent='Gift at least 20 coins and no more than you own.';coins-=value}
     if(kind==='rank'){value=$('#giftRankSelect').value;if(!inventory.includes(value))return $('#giftNotice').textContent='Choose an owned rank.';inventory=inventory.filter(id=>id!==value);if(equippedrank===value)equippedrank=''}
     if(kind==='badge'){let index=Number($('#giftBadgeSelect').value),all=ownedBadges(me);value=all[index];if(!value)return $('#giftNotice').textContent='Choose an owned badge.';let at=badgeinventory.indexOf(value);if(at<0)return $('#giftNotice').textContent='This legacy badge cannot be gifted.';badgeinventory.splice(at,1);equipped=equipped.filter(b=>b!==value)}
     let gift={id:crypto.randomUUID?.()||String(Date.now()),kind,value,sender:$('#giftAnonymous').checked?'Anonymous':displayNameOf(me),anonymous:$('#giftAnonymous').checked};
@@ -843,6 +846,20 @@ async function sendMessage(e){
   e?.preventDefault();
   let messeges=$('#text').value.trim();
   if((!messeges&&!pendingUploads.length)||!me||!canPost())return;
+  if(messeges.toLowerCase().startsWith('/mute ')){
+    if(!isStaff())return showToast('Staff only','Only staff and owners can mute members.');
+    let match=messeges.match(/^\/mute\s+(\S+)\s+(\d+)\s*$/i);
+    if(!match)return showToast('Usage','/mute [username] [number of minutes]');
+    try{
+      let users=await request(API.users),target=users.find(u=>String(u.username).toLowerCase()===match[1].toLowerCase());
+      if(!target)return showToast('Not found','That username does not exist.');
+      if(['staff','owner'].includes(String(target.rank).toLowerCase()))return showToast('Not allowed','Staff and owners cannot be muted.');
+      let minutes=Math.min(10080,Math.max(1,Number(match[2]))),until=new Date(Date.now()+minutes*60000).toISOString();
+      await request(API.users+'/'+target.id,{method:'PUT',body:JSON.stringify({muteduntil:until})});
+      $('#text').value='';autoResize();updateCharCount();showToast('Member muted',`${displayNameOf(target)} was muted for ${minutes} minute${minutes===1?'':'s'}.`);loadUsers();
+    }catch(err){showToast('Mute failed',err.message)}
+    return;
+  }
   if(!isStaff()&&messeges.length>CHAR_LIMIT){updateCharCount();return}
   if(checkSpam())return;
   try{
@@ -886,6 +903,7 @@ $('#closeInventory').onclick=()=>$('#inventoryModal').style.display='none';
 $('#gift').onclick=openGift;
 $('#closeGift').onclick=()=>$('#giftModal').style.display='none';
 $('#sendGiftBtn').onclick=sendGift;
+$('#giftKind').onchange=updateGiftPanel;
 $('#claimGiftBtn').onclick=claimGift;
 $('#brandIcon').onclick=()=>choose(document.querySelector('[data-chat="chat1"]'));
 $('#messageUrlBtn').onclick=()=>{
@@ -896,7 +914,6 @@ $('#messageUrlBtn').onclick=()=>{
   autoResize();el.focus();
   updateCharCount();
 };
-$('#attachBtn').onclick=()=>$('#messageUrlBtn').click();
 $('#messageUploadBtn').onclick=()=>$('#messageFileInput').click();
 $('#messageFileInput').onchange=e=>{
   let file=e.target.files[0];if(!file)return;
