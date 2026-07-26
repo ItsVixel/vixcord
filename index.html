@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Vixcord — MockAPI</title>
+<title>Vixcord</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -159,6 +159,8 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
 .shop-item small{color:var(--muted);display:block}
 .shop-price{color:var(--red);font-weight:700;margin-top:8px}
 .inventory-empty{color:var(--muted);padding:12px 0}.inventory-item{display:flex;align-items:center;justify-content:space-between;gap:12px}.inventory-item .join{width:auto;margin:0;padding:7px 11px}.equipped{font-size:11px;color:var(--online);font-weight:700}
+.upload-wrap{display:inline-block;position:relative;margin-left:6px}.upload-wrap>button{border:0;border-radius:50%;width:20px;height:20px;background:var(--red);color:#fff;cursor:pointer;font-weight:800;line-height:1}.upload-menu{display:none;position:absolute;z-index:5;top:24px;left:0;background:var(--side);border:1px solid #0006;border-radius:6px;box-shadow:0 7px 18px #0008;overflow:hidden}.upload-wrap:hover .upload-menu,.upload-wrap:focus-within .upload-menu{display:grid}.upload-menu button{border:0;background:transparent;color:var(--text);text-align:left;padding:7px 11px;cursor:pointer;font:inherit;font-size:12px}.upload-menu button:hover{background:var(--input)}
+.gift-option{margin:7px 0}.gift-option label{display:inline;margin-left:5px;color:var(--text)}.gift-option select,.gift-option input{width:100%;margin:5px 0}.claim-card{max-width:370px}.claim-card h1{font-size:22px}
 
 #toasts{position:fixed;top:16px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:8px;max-width:300px}
 .toast{background:var(--side);color:var(--text);border-left:4px solid var(--red);padding:10px 14px;border-radius:8px;box-shadow:0 10px 30px #0007;font-size:13px;animation:slideIn .25s ease}
@@ -179,6 +181,7 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
       <div class="brand" id="brandIcon" title="Vixcord">V</div>
       <button class="shopBtn" id="shop" title="Shop">🛒</button>
       <button class="inventoryBtn" id="inventory" title="Inventory">🎒</button>
+      <button class="inventoryBtn" id="gift" title="Send a gift">🎁</button>
     </div>
     <button class="settingsBtn" id="settings" title="Settings">⚙</button>
   </aside>
@@ -187,9 +190,10 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
     <div class="channelList">
       <div class="section">TEXT CHANNELS</div>
       <button class="channel active" data-chat="chat1" data-name="general"><b>#</b>general</button>
-      <button class="channel" data-chat="chat2" data-name="photos-files"><b>🖼</b>photos-files</button>
-      <button class="channel" data-chat="chat3" data-name="announcements"><b>#</b>announcements</button>
-      <button class="channel staff-only" data-chat="chat4" data-name="staff-chat"><b>#</b>staff-chat <span class="lock">🔒</span></button>
+      <button class="channel" data-chat="chat2" data-name="general2"><b>#</b>general 2</button>
+      <button class="channel" data-chat="chat3" data-name="announcements"><b>📣</b>announcements</button>
+      <button class="channel" data-chat="rules" data-name="rules"><b>#</b>rules</button>
+      <button class="channel staff-only" data-chat="chat4" data-name="staff-chat"><b>🔒</b>staff-chat <span class="lock">🔒</span></button>
     </div>
     <div class="profile">
       <span id="myAvatarWrap"></span>
@@ -208,7 +212,7 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
     <header><span>#</span><b id="title">general</b><small id="topic">Talk with everyone in Vixcord</small></header>
     <div class="messages" id="messages"></div>
     <div class="replybar" id="replybar">Replying to <b id="replyto"></b><button id="cancelReply">Cancel</button></div>
-    <form class="composer" id="composer"><button type="button" id="attachBtn" title="Attach a URL">+</button><textarea id="text" rows="1" autocomplete="off" placeholder="Message #general"></textarea><button type="submit" class="send">Send</button></form>
+    <form class="composer" id="composer"><span class="upload-wrap"><button type="button" id="attachBtn" title="Add attachment">+</button><span class="upload-menu"><button type="button" id="messageUrlBtn">URL</button><button type="button" id="messageUploadBtn">Upload</button></span></span><input id="messageFileInput" type="file" hidden><textarea id="text" rows="1" autocomplete="off" placeholder="Message #general"></textarea><button type="submit" class="send">Send</button></form>
     <div class="composerFoot" id="composerFoot"><span id="charCount">0/500</span><span id="coinReward">+2 🪙</span></div>
   </section>
   <aside class="members"><h2 id="count">MEMBERS — 0</h2><div id="membersList"></div></aside>
@@ -218,7 +222,7 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
   <h1>Appearance settings</h1>
   <p>Personalize your name, avatar and colors across Vixcord. Only you see these changes for your own client.</p>
   <label for="displayName">Display name</label><input id="displayName" maxlength="24" placeholder="Shown instead of your username">
-  <label for="avatarUrl">Avatar image URL (optional)</label><input id="avatarUrl" placeholder="https://example.com/avatar.png">
+  <label for="avatarUrl">Avatar image <span class="upload-wrap"><button type="button" title="Choose avatar source">+</button><span class="upload-menu"><button type="button" id="avatarUrlBtn">URL</button><button type="button" id="avatarUploadBtn">Upload</button></span></span></label><input id="avatarUrl" placeholder="https://example.com/avatar.png or uploaded image"><input id="avatarFileInput" type="file" accept="image/*" hidden>
   <div class="settingsGrid">
     <div>
       <label for="avatarColor">Avatar color</label><input id="avatarColor" type="color">
@@ -267,21 +271,33 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
 </section></div>
 
 <div class="modal" id="inventoryModal"><section class="card wide">
-  <h1>Rank Inventory 🎒</h1>
-  <p>Choose one owned rank to display next to your name.</p>
+  <h1>Inventory 🎒</h1>
+  <p>Equip one rank and any badges you want to display next to your name.</p>
   <div class="shop-container" id="inventoryContainer"></div>
   <button class="switch" id="closeInventory">Close</button>
 </section></div>
+
+<div class="modal" id="giftModal"><section class="card wide">
+  <h1>Send a gift 🎁</h1><p>Gift coins, an owned rank, or an owned badge. You earn 10 🪙 for every gift sent.</p>
+  <label for="giftRecipient">Recipient username</label><input id="giftRecipient" maxlength="24" placeholder="Username">
+  <div class="gift-option"><input type="radio" id="giftCoins" name="giftType" value="coins" checked><label for="giftCoins">Coins</label><input id="giftCoinsAmount" type="number" min="1" placeholder="Amount"></div>
+  <div class="gift-option"><input type="radio" id="giftRank" name="giftType" value="rank"><label for="giftRank">Rank</label><select id="giftRankSelect"></select></div>
+  <div class="gift-option"><input type="radio" id="giftBadge" name="giftType" value="badge"><label for="giftBadge">Badge</label><select id="giftBadgeSelect"></select></div>
+  <label><input id="giftAnonymous" type="checkbox"> Send anonymously</label><p class="notice" id="giftNotice"></p>
+  <button class="join" id="sendGiftBtn" type="button">Send gift</button><button class="switch" id="closeGift" type="button">Close</button>
+</section></div>
+<div class="modal" id="claimModal"><section class="card claim-card"><h1>🎁 You received a gift!</h1><p id="claimText"></p><button class="join" id="claimGiftBtn">Claim</button></section></div>
 
 <script>
 const API={users:'https://6a638812b30b52361e1a6b8d.mockapi.io/1/users',logins:'https://6a638812b30b52361e1a6b8d.mockapi.io/1/logins',chat1:'https://6a63dbd7b30b52361e1aab35.mockapi.io/2/chat1',chat2:'https://6a63dbd7b30b52361e1aab35.mockapi.io/2/chat2',chat3:'https://6a63dd06b30b52361e1aabe1.mockapi.io/3/chat3',chat4:'https://6a63dd06b30b52361e1aabe1.mockapi.io/3/chat4'};
 const $=s=>document.querySelector(s),sessionKey='vixcord-mockapi-user';
 let me=null,chat='chat1',chatName='general',reply=null,isSignup=false,usersList=[],lastMessagesData=[];
+let pendingUploads=[];
 const seenIds=new Map();
 const spamTracker=new Map();
 const SPAM_LIMIT=3;
 const SPAM_WINDOW=5000;
-const REACTION_EMOJIS=['👍','❤️','😂','😮','😢','🔥'];
+const REACTION_EMOJIS=['👍','❤️','😂','😮','😢','🔥','🤓','🐦‍⬛iq?','😭','🥀','💀','🗿'];
 const DEFAULTS={accentcolor:'#c4454a',deepcolor:'#0a0a0a',sidecolor:'#1a1a1d',chatcolor:'#131317',inputcolor:'#1f1f23',textcolor:'#f2f3f5',mutedcolor:'#9a9aad',onlinecolor:'#23a55a',coins:0};
 const CHAR_LIMIT=500;
 const COIN_REWARD=2;
@@ -301,9 +317,17 @@ const SHOP_ITEMS=[
   {id:'aura-vixel',name:'Aura Vixel',description:'A vivid Aura Vixel rank',cost:200,color:'#A11B4F'},
   {id:'aura-vixel-plus',name:'Aura Vixel+',description:'An enhanced Aura Vixel rank',cost:250,color:'#800635'},
   {id:'mega-vixel',name:'Mega Vixel',description:'The ultimate Vixel rank',cost:500,color:'#2568DB'},
-  {id:'crown',name:'💎 Badge',description:'Display a diamond badge next to your name',cost:150}
+  {id:'crown',name:'💎 Badge',description:'Add a diamond badge to your inventory',cost:150},
+  {id:'egg-common',name:'Common Badge Egg',description:'Open for one random common badge',cost:100,egg:'common'},
+  {id:'egg-rare',name:'Rare Badge Egg',description:'Open for one random rare badge',cost:250,egg:'rare'},
+  {id:'egg-legendary',name:'Legendary Badge Egg',description:'Open for one random legendary badge',cost:550,egg:'legendary'}
 ];
 const RANKS=Object.fromEntries(SHOP_ITEMS.filter(item=>item.color).map(item=>[item.id,item]));
+const BADGE_EGGS={
+  common:['😀','😂','😎','👺','🧠','®️','©️','🉐','🧿','🌏','🔆','🍾'],
+  rare:['🐦‍⬛','🗿','🔒','☢️','🔷','⚜️','🪙','🗽','🎈','™️','💸','🎌','🧩'],
+  legendary:['💀','😭','🥀','💶','🍀','💯','👑','🌟','⚽','🧊']
+};
 const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const escapeRegex=s=>String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 const initials=n=>String(n||'?').split(/\s+/).map(x=>x[0]).join('').slice(0,2).toUpperCase();
@@ -314,7 +338,9 @@ const displayNameOf=u=>safeText(u?.displayname)||safeText(u?.username)||'Unknown
 const ownedRanks=u=>Array.isArray(u?.inventory)?u.inventory.filter(id=>RANKS[id]):[];
 const equippedRank=u=>RANKS[u?.equippedrank]||null;
 const rankBadgeHTML=u=>{let rank=equippedRank(u);return rank?`<span class="rank-badge" style="color:${rank.color}">${esc(rank.name)}</span>`:''};
-const crownHTML=u=>Array.isArray(u?.badges)&&u.badges.includes('crown')?'<span class="crown-icon" title="Diamond badge">💎</span>':'';
+const ownedBadges=u=>[...(Array.isArray(u?.badgeinventory)?u.badgeinventory:[]),...(Array.isArray(u?.badges)&&u.badges.includes('crown')?['💎']:[])];
+const equippedBadges=u=>Array.isArray(u?.equippedbadges)?u.equippedbadges:((Array.isArray(u?.badges)&&u.badges.includes('crown'))?['💎']:[]);
+const crownHTML=u=>equippedBadges(u).map(b=>`<span class="crown-icon" title="Equipped badge">${esc(b)}</span>`).join('');
 const userByName=name=>usersList.find(u=>String(u.username).toLowerCase()===String(name||'').toLowerCase());
 function hashColor(str){let h=0;for(const c of String(str))h=(h*31+c.charCodeAt(0))%360;return `hsl(${h} 62% 44%)`}
 async function request(url,opts={}){let r=await fetch(url,{headers:{'Content-Type':'application/json'},...opts});if(!r.ok)throw Error(`API error (${r.status})`);return r.status===204?null:r.json()}
@@ -338,7 +364,7 @@ function checkSpam(){
 function avatarHTML(user,extraClass=''){
   let name=displayNameOf(user);
   let img=user?.avatar;
-  if(img&&/^https?:\/\//i.test(img)) return `<img class="avatar ${extraClass}" src="${esc(img)}" alt="${esc(name)}" onerror="this.outerHTML='<div class=\\'avatar ${extraClass}\\' style=\\'background:${esc(hashColor(user?.username||name))}\\'>$${esc(initials(name))}</div>'">`;
+  if(img&&(/^(https?:\/\/|data:image\/)/i.test(img))) return `<img class="avatar ${extraClass}" src="${esc(img)}" alt="${esc(name)}" onerror="this.outerHTML='<div class=\\'avatar ${extraClass}\\' style=\\'background:${esc(hashColor(user?.username||name))}\\'>$${esc(initials(name))}</div>'">`;
   let bg=color(user?.avatarcolor,'')||hashColor(user?.username||name);
   return `<div class="avatar ${extraClass}" style="background:${bg}">${esc(initials(name))}</div>`;
 }
@@ -371,7 +397,7 @@ function extractFileUrls(raw){
   let re=/https?:\/\/[^\s]+\.(?:pdf|docx?|xlsx?|zip|rar|7z|txt)(?:\?[^\s]*)?/gi;
   return [...new Set((String(raw||'').match(re))||[])];
 }
-function renderAttachmentsHTML(raw){
+function renderAttachmentsHTML(raw,attachments=[]){
   let imgs=extractImageUrls(raw);
   let files=extractFileUrls(raw);
   let html='';
@@ -380,6 +406,10 @@ function renderAttachmentsHTML(raw){
   }
   if(files.length){
     html+=`<div class="attachments">${files.map(u=>{let name=u.split('/').pop().split('?')[0];return `<a href="${esc(u)}" target="_blank" rel="noopener noreferrer"><div class="attachment-file">📄 ${esc(name)}</div></a>`}).join('')}</div>`;
+  }
+  for(const file of Array.isArray(attachments)?attachments:[]){
+    if(file?.type?.startsWith('image/'))html+=`<div class="attachments"><img class="attachment-img" src="${esc(file.data)}" alt="${esc(file.name||'uploaded image')}"></div>`;
+    else if(file?.data)html+=`<div class="attachments"><a href="${esc(file.data)}" download="${esc(file.name||'attachment')}"><div class="attachment-file">📎 ${esc(file.name||'attachment')}</div></a></div>`;
   }
   return html;
 }
@@ -419,7 +449,7 @@ async function submitAuth(){
     if(isSignup){
       if(existing)return setNotice('That username is already taken.');
       let salt=newSalt(),passwordHash=await hashPassword(password,salt);
-      let user=await request(API.users,{method:'POST',body:JSON.stringify({username,online:true,rank:'member',...DEFAULTS,namecolor:'#f2f3f5',displayname:'',avatar:'',avatarcolor:'',usernamechangedat:null,badges:[],inventory:[],equippedrank:''})});
+      let user=await request(API.users,{method:'POST',body:JSON.stringify({username,online:true,rank:'member',...DEFAULTS,namecolor:'#f2f3f5',displayname:'',avatar:'',avatarcolor:'',usernamechangedat:null,badges:[],badgeinventory:[],equippedbadges:[],inventory:[],equippedrank:'',pendinggifts:[]})});
       await request(API.logins,{method:'POST',body:JSON.stringify({username,password:`sha256$${salt}$${passwordHash}`})});
       finish(user);
     }else{
@@ -453,7 +483,7 @@ function finish(user){
   $('#myName').style.color=color(me.namecolor,'#fff');
   $('#myCoins').textContent=me.coins||0;
   updateProfileBadges();
-  applyTheme();syncChannels();applyCharLimit();requestNotifyPermission();loadUsers();loadMessages();
+  applyTheme();syncChannels();applyCharLimit();requestNotifyPermission();loadUsers();loadMessages();showGiftClaim();
 }
 
 function updateProfileBadges(){
@@ -462,6 +492,9 @@ function updateProfileBadges(){
   else if(me?.rank==='staff')badges+='<span class="badge-staff">⭐ Staff</span>';
   badges+=rankBadgeHTML(me)+crownHTML(me);
   $('#profileBadges').innerHTML=badges;
+  let rank=equippedRank(me);
+  $('#myRank').textContent=rank?.name||me?.rank||'member';
+  $('#myRank').style.color=rank?.color||'var(--muted)';
 }
 
 async function loadUsers(){
@@ -476,10 +509,11 @@ async function loadUsers(){
   }catch(e){console.warn(e)}
 }
 
-function canPost(){return chat!=='chat3'&&chat!=='chat4'||isStaff()}
+function canPost(){return chat!=='rules'&&(chat!=='chat3'&&chat!=='chat4'||isStaff())}
 function replyText(value){if(!value)return'';if(typeof value==='string')return value;return `${value.username||'Unknown'}: ${value.message||''}`}
 
 async function loadMessages(){
+  if(chat==='rules'){lastMessagesData=[];renderRules();return}
   try{
     let data=await request(API[chat]);
     let sorted=[...data].sort((a,b)=>new Date(a.time||a.createdAt||0)-new Date(b.time||b.createdAt||0));
@@ -531,11 +565,11 @@ function renderMessages(sorted){
     let sender=userByName(m.username);
     let senderRank=sender?.rank||m.rank;
     let {html,flags}=processContent(content,senderRank);
-    let messageUser=sender||{username:m.username,equippedrank:m.equippedrank,badges:m.badges,namecolor:m.namecolor};
+    let messageUser=sender||{username:m.username,equippedrank:m.equippedrank,badges:m.badges,equippedbadges:m.equippedbadges,namecolor:m.namecolor};
     let staff=['staff','owner'].includes(String(senderRank||'').toLowerCase());
     let when=new Date(m.time||m.createdAt);
     let dateLabel=Number.isNaN(when.getTime())?'Unknown date':when.toLocaleString(navigator.language,{dateStyle:'medium',timeStyle:'short'});
-    return `<article class="message ${flags.mentionsMe?'mentions-me':''}">${avatarHTML(messageUser)}<div><div class="meta"><span style="color:${color(messageUser.namecolor,'inherit')}">${esc(displayNameOf(messageUser))}</span>${rankBadgeHTML(messageUser)}${staff?`<span class="badge">${sender?.rank==='owner'?'💎 Owner':'⭐ Staff'}</span>`:''}${crownHTML(messageUser)}<time title="${esc(dateLabel)}">${esc(dateLabel)}</time></div>${m.reply?`<div class="reply">↳ ${replyText(m.reply)}</div>`:''}<div class="content">${html}</div>${renderAttachmentsHTML(content)}<div class="reactions">${renderReactionsHTML(m)}</div><div class="reactionPicker" id="picker-${m.id}">${REACTION_EMOJIS.map(e=>`<button data-id="${m.id}" data-emoji="${e}">${e}</button>`).join('')}</div><div class="msg-actions"><button class="reactBtn" data-id="${m.id}">React</button><button class="replybtn" data-user="${esc(m.username)}" data-message="${esc(content)}">Reply</button></div></div></article>`;
+    return `<article class="message ${flags.mentionsMe?'mentions-me':''}">${avatarHTML(messageUser)}<div><div class="meta"><span style="color:${color(messageUser.namecolor,'inherit')}">${esc(displayNameOf(messageUser))}</span>${rankBadgeHTML(messageUser)}${staff?`<span class="badge">${sender?.rank==='owner'?'💎 Owner':'⭐ Staff'}</span>`:''}${crownHTML(messageUser)}<time title="${esc(dateLabel)}">${esc(dateLabel)}</time></div>${m.reply?`<div class="reply">↳ ${replyText(m.reply)}</div>`:''}<div class="content">${html}</div>${renderAttachmentsHTML(content,m.attachments)}<div class="reactions">${renderReactionsHTML(m)}</div><div class="reactionPicker" id="picker-${m.id}">${REACTION_EMOJIS.map(e=>`<button data-id="${m.id}" data-emoji="${e}">${e}</button>`).join('')}</div><div class="msg-actions"><button class="reactBtn" data-id="${m.id}">React</button><button class="replybtn" data-user="${esc(m.username)}" data-message="${esc(content)}">Reply</button></div></div></article>`;
   }).join('');
   $('#composer').classList.toggle('disabled',locked);
   $('#text').placeholder=locked?'Only staff or owners can post here':`Message #${chatName}`;
@@ -556,6 +590,12 @@ function renderMessages(sorted){
     toggleReaction(b.dataset.id,b.dataset.emoji);
   });
   $('#messages').scrollTop=$('#messages').scrollHeight;
+}
+
+function renderRules(){
+  $('#messages').innerHTML=`<div class="welcome"><div class="circle">📜</div><h1>Welcome to #rules!</h1><p>These rules are written directly in this HTML file. Edit <code>renderRules()</code> to change them.</p></div><article class="message"><div class="avatar" style="background:var(--red)">V</div><div><div class="meta"><span>Vixcord Rules</span><time>Read before chatting</time></div><div class="content">1. Be respectful to everyone.\n2. Do not spam, harass, or post harmful content.\n3. Keep personal information private.\n4. Follow staff instructions.\n5. Have fun and keep Vixcord welcoming.</div></div></article>`;
+  $('#composer').classList.add('disabled');
+  $('#text').placeholder='Rules cannot be changed in chat';
 }
 
 async function toggleReaction(id,emoji){
@@ -580,8 +620,9 @@ document.addEventListener('click',e=>{
 });
 
 function topicFor(name){
-  return {general:'Talk with everyone in Vixcord','photos-files':'Share images and files — paste a link and it previews automatically',announcements:'Official announcements from staff and owners','staff-chat':'Staff-only discussion'};
+  return {general:'Talk with everyone in Vixcord','general2':'Share images and files — paste a link and it previews automatically',announcements:'Official announcements from staff and owners','staff-chat':'Staff-only discussion'};
 }
+function topicFor(name){return {general:'Talk with everyone in Vixcord',general2:'Share images and files',announcements:'Official announcements from staff and owners',rules:'Read-only server rules','staff-chat':'Staff-only discussion'}[name]||''}
 function choose(button){chat=button.dataset.chat;chatName=button.dataset.name;$('#title').textContent=chatName;$('#topic').textContent=topicFor(chatName);$('#text').placeholder=`Message #${chatName}`;document.querySelectorAll('.channel').forEach(b=>b.classList.remove('active'));button.classList.add('active');loadMessages()}
 
 /* ---------- settings ---------- */
@@ -598,8 +639,8 @@ function renderPresets(){
 }
 function settingsOpen(){
   if(!me)return;
-  $('#displayName').value=me.displayname||'';
-  $('#avatarUrl').value=me.avatar||'';
+  $('#displayName').value=safeText(me.displayname);
+  $('#avatarUrl').value=safeText(me.avatar);
   $('#avatarColor').value=color(me.avatarcolor,hashColor(me.username).match(/hsl\(([\d.]+)/)?'#888888':'#888888');
   $('#nameColor').value=color(me.namecolor,'#f2f3f5');
   $('#accentColor').value=color(me.accentcolor,DEFAULTS.accentcolor);
@@ -701,27 +742,33 @@ function openShop(){
 async function purchaseItem(index){
   if(!me)return;
   let item=SHOP_ITEMS[index];
-  let inventory=ownedRanks(me),badges=Array.isArray(me.badges)?[...me.badges]:[];
+  let inventory=ownedRanks(me),badgeinventory=Array.isArray(me.badgeinventory)?[...me.badgeinventory]:[];
   if(item.color&&inventory.includes(item.id))return showToast('Already owned','Open your inventory to equip this rank.');
-  if(item.id==='crown'&&badges.includes('crown'))return showToast('Already owned','Your 💎 badge is already equipped.');
+  if(item.id==='crown'&&ownedBadges(me).includes('💎'))return showToast('Already owned','Your 💎 badge is already in inventory.');
   if(me.coins<item.cost){
     showToast('Not enough coins','You need '+item.cost+' coins to buy this item');
     return;
   }
   try{
-    if(item.color)inventory.push(item.id);else badges.push('crown');
-    me=await request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify({coins:(me.coins||0)-item.cost,badges,inventory})});
+    let won='';
+    if(item.color)inventory.push(item.id);
+    else if(item.id==='crown'){badgeinventory.push('💎');won='💎'}
+    else {let pool=BADGE_EGGS[item.egg];won=pool[Math.floor(Math.random()*pool.length)];badgeinventory.push(won)}
+    me=await request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify({coins:(me.coins||0)-item.cost,badgeinventory,inventory})});
     localStorage.setItem(sessionKey,JSON.stringify(me));
     $('#myCoins').textContent=me.coins||0;
     updateProfileBadges();
-    showToast('Purchase complete!',item.color?'Rank added to your inventory.':'You bought the 💎 badge.');
+    showToast('Purchase complete!',item.color?'Rank added to your inventory.':item.egg?`You opened ${won}!`:`${won} added to your badge inventory.`);
     loadUsers();
   }catch(e){showToast('Error',e.message)}
 }
 
 function renderInventory(){
   let items=ownedRanks(me).map(id=>RANKS[id]);
-  $('#inventoryContainer').innerHTML=items.length?items.map(item=>`<div class="shop-item inventory-item"><div><strong style="color:${item.color}">${esc(item.name)}</strong><small>${me.equippedrank===item.id?'<span class="equipped">Equipped</span>':esc(item.description)}</small></div><button class="join" type="button" onclick="equipRank('${item.id}')">${me.equippedrank===item.id?'Unequip':'Equip'}</button></div>`).join(''):'<p class="inventory-empty">You do not own any ranks yet. Buy one in the shop to add it here.</p>';
+  let ranks=items.length?items.map(item=>`<div class="shop-item inventory-item"><div><strong style="color:${item.color}">${esc(item.name)}</strong><small>${me.equippedrank===item.id?'<span class="equipped">Equipped</span>':esc(item.description)}</small></div><button class="join" type="button" onclick="equipRank('${item.id}')">${me.equippedrank===item.id?'Unequip':'Equip'}</button></div>`).join(''):'<p class="inventory-empty">No ranks owned yet.</p>';
+  let badges=ownedBadges(me),equipped=equippedBadges(me);
+  let badgeList=badges.length?badges.map((badge,i)=>`<div class="shop-item inventory-item"><div><strong>${esc(badge)}</strong><small>${equipped.includes(badge)?'<span class="equipped">Equipped</span>':'Badge'}</small></div><button class="join" type="button" onclick="toggleBadge(${i})">${equipped.includes(badge)?'Unequip':'Equip'}</button></div>`).join(''):'<p class="inventory-empty">Open badge eggs in the shop to collect badges.</p>';
+  $('#inventoryContainer').innerHTML=`<h2>Ranks</h2>${ranks}<h2 style="margin-top:24px">Badges</h2>${badgeList}`;
 }
 function openInventory(){renderInventory();$('#inventoryModal').style.display='grid'}
 async function equipRank(id){
@@ -731,6 +778,53 @@ async function equipRank(id){
     localStorage.setItem(sessionKey,JSON.stringify(me));
     updateProfileBadges();renderInventory();loadUsers();loadMessages();
   }catch(e){showToast('Error',e.message)}
+}
+async function toggleBadge(index){
+  let badge=ownedBadges(me)[index];if(!badge)return;
+  let equipped=[...equippedBadges(me)],at=equipped.indexOf(badge);
+  if(at>=0)equipped.splice(at,1);else equipped.push(badge);
+  try{me=await request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify({equippedbadges:equipped})});localStorage.setItem(sessionKey,JSON.stringify(me));updateProfileBadges();renderInventory();loadUsers();loadMessages()}catch(e){showToast('Error',e.message)}
+}
+
+function openGift(){
+  let ranks=ownedRanks(me),badges=ownedBadges(me);
+  $('#giftRankSelect').innerHTML=ranks.length?ranks.map(id=>`<option value="${id}">${esc(RANKS[id].name)}</option>`).join(''):'<option value="">No ranks available</option>';
+  $('#giftBadgeSelect').innerHTML=badges.length?badges.map((badge,i)=>`<option value="${i}">${esc(badge)}</option>`).join(''):'<option value="">No badges available</option>';
+  $('#giftRecipient').value='';$('#giftCoinsAmount').value='';$('#giftAnonymous').checked=false;$('#giftNotice').textContent='';
+  $('#giftModal').style.display='grid';
+}
+function giftDescription(gift){return gift.kind==='coins'?`${gift.value} 🪙`:gift.kind==='rank'?`${RANKS[gift.value]?.name||'a rank'}`:`${gift.value} badge`}
+async function sendGift(){
+  let recipientName=$('#giftRecipient').value.trim(),kind=document.querySelector('input[name="giftType"]:checked').value;
+  if(!recipientName)return $('#giftNotice').textContent='Enter a recipient username.';
+  try{
+    let users=await request(API.users),recipient=users.find(u=>String(u.username).toLowerCase()===recipientName.toLowerCase());
+    if(!recipient)return $('#giftNotice').textContent='That user was not found.';
+    if(String(recipient.id)===String(me.id))return $('#giftNotice').textContent='You cannot gift yourself.';
+    let value,coins=Number(me.coins||0),inventory=ownedRanks(me),badgeinventory=Array.isArray(me.badgeinventory)?[...me.badgeinventory]:[],equipped=[...equippedBadges(me)],equippedrank=me.equippedrank||'';
+    if(kind==='coins'){value=Math.floor(Number($('#giftCoinsAmount').value));if(!value||value<1||value>coins)return $('#giftNotice').textContent='Enter a coin amount you own.';coins-=value}
+    if(kind==='rank'){value=$('#giftRankSelect').value;if(!inventory.includes(value))return $('#giftNotice').textContent='Choose an owned rank.';inventory=inventory.filter(id=>id!==value);if(equippedrank===value)equippedrank=''}
+    if(kind==='badge'){let index=Number($('#giftBadgeSelect').value),all=ownedBadges(me);value=all[index];if(!value)return $('#giftNotice').textContent='Choose an owned badge.';let at=badgeinventory.indexOf(value);if(at<0)return $('#giftNotice').textContent='This legacy badge cannot be gifted.';badgeinventory.splice(at,1);equipped=equipped.filter(b=>b!==value)}
+    let gift={id:crypto.randomUUID?.()||String(Date.now()),kind,value,sender:$('#giftAnonymous').checked?'Anonymous':displayNameOf(me),anonymous:$('#giftAnonymous').checked};
+    let pending=Array.isArray(recipient.pendinggifts)?recipient.pendinggifts:[];
+    await request(API.users+'/'+recipient.id,{method:'PUT',body:JSON.stringify({pendinggifts:[...pending,gift]})});
+    me=await request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify({coins:coins+10,inventory,badgeinventory,equippedbadges:equipped,equippedrank})});
+    localStorage.setItem(sessionKey,JSON.stringify(me));$('#myCoins').textContent=me.coins||0;updateProfileBadges();
+    $('#giftModal').style.display='none';showToast('Gift sent!',`You earned 10 🪙 for gifting ${giftDescription(gift)}.`);loadUsers();
+  }catch(e){$('#giftNotice').textContent=e.message}
+}
+function showGiftClaim(){
+  let gift=Array.isArray(me?.pendinggifts)?me.pendinggifts[0]:null;if(!gift)return;
+  $('#claimText').textContent=`${gift.anonymous?'Someone':gift.sender||'Someone'} sent you ${giftDescription(gift)}.`;
+  $('#claimModal').style.display='grid';
+}
+async function claimGift(){
+  let gifts=Array.isArray(me?.pendinggifts)?[...me.pendinggifts]:[],gift=gifts.shift();if(!gift)return;
+  let payload={pendinggifts:gifts};
+  if(gift.kind==='coins')payload.coins=(Number(me.coins)||0)+Number(gift.value);
+  if(gift.kind==='rank')payload.inventory=[...new Set([...ownedRanks(me),gift.value])];
+  if(gift.kind==='badge')payload.badgeinventory=[...(Array.isArray(me.badgeinventory)?me.badgeinventory:[]),gift.value];
+  try{me=await request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify(payload)});localStorage.setItem(sessionKey,JSON.stringify(me));$('#myCoins').textContent=me.coins||0;$('#claimModal').style.display='none';showToast('Gift claimed!',`You received ${giftDescription(gift)}.`);updateProfileBadges();loadUsers();showGiftClaim()}catch(e){showToast('Could not claim gift',e.message)}
 }
 
 /* ---------- composer: shift+enter newline, enter to send, char limit ---------- */
@@ -748,16 +842,16 @@ function updateCharCount(){
 async function sendMessage(e){
   e?.preventDefault();
   let messeges=$('#text').value.trim();
-  if(!messeges||!me||!canPost())return;
+  if((!messeges&&!pendingUploads.length)||!me||!canPost())return;
   if(!isStaff()&&messeges.length>CHAR_LIMIT){updateCharCount();return}
   if(checkSpam())return;
   try{
-    await request(API[chat],{method:'POST',body:JSON.stringify({messeges,time:new Date().toISOString(),username:me.username,rank:me.rank,equippedrank:me.equippedrank||'',namecolor:color(me.namecolor,''),badges:Array.isArray(me.badges)?me.badges:[],reply,reactions:{}})});
+    await request(API[chat],{method:'POST',body:JSON.stringify({messeges,time:new Date().toISOString(),username:me.username,rank:me.rank,equippedrank:me.equippedrank||'',namecolor:color(me.namecolor,''),badges:Array.isArray(me.badges)?me.badges:[],equippedbadges:equippedBadges(me),attachments:pendingUploads,reply,reactions:{}})});
     let newCoins=(me.coins||0)+COIN_REWARD;
     me=await request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify({coins:newCoins})});
     localStorage.setItem(sessionKey,JSON.stringify(me));
     $('#myCoins').textContent=me.coins||0;
-    $('#text').value='';autoResize();reply=null;$('#replybar').style.display='none';updateCharCount();
+    $('#text').value='';pendingUploads=[];autoResize();reply=null;$('#replybar').style.display='none';updateCharCount();
     showToast('Message sent!',`+${COIN_REWARD} coins`);
     loadMessages();
   }catch(e){alert(e.message)}
@@ -789,14 +883,30 @@ $('#shop').onclick=openShop;
 $('#closeShop').onclick=()=>$('#shopModal').style.display='none';
 $('#inventory').onclick=openInventory;
 $('#closeInventory').onclick=()=>$('#inventoryModal').style.display='none';
+$('#gift').onclick=openGift;
+$('#closeGift').onclick=()=>$('#giftModal').style.display='none';
+$('#sendGiftBtn').onclick=sendGift;
+$('#claimGiftBtn').onclick=claimGift;
 $('#brandIcon').onclick=()=>choose(document.querySelector('[data-chat="chat1"]'));
-$('#attachBtn').onclick=()=>{
+$('#messageUrlBtn').onclick=()=>{
   let url=prompt('Paste an image or file URL (https://...)');
   if(!url)return;
   let el=$('#text');
   el.value=(el.value?el.value+' ':'')+url.trim();
   autoResize();el.focus();
   updateCharCount();
+};
+$('#attachBtn').onclick=()=>$('#messageUrlBtn').click();
+$('#messageUploadBtn').onclick=()=>$('#messageFileInput').click();
+$('#messageFileInput').onchange=e=>{
+  let file=e.target.files[0];if(!file)return;
+  let reader=new FileReader();reader.onload=()=>{pendingUploads.push({name:file.name,type:file.type||'application/octet-stream',data:reader.result});showToast('Attachment ready',`${file.name} will send with your message.`)};reader.readAsDataURL(file);e.target.value='';
+};
+$('#avatarUrlBtn').onclick=()=>{let url=prompt('Paste an avatar image URL (https://...)');if(url)$('#avatarUrl').value=url.trim()};
+$('#avatarUploadBtn').onclick=()=>$('#avatarFileInput').click();
+$('#avatarFileInput').onchange=e=>{
+  let file=e.target.files[0];if(!file)return;
+  let reader=new FileReader();reader.onload=()=>{$('#avatarUrl').value=reader.result;showToast('Avatar ready','Save changes to use your uploaded avatar.')};reader.readAsDataURL(file);e.target.value='';
 };
 $('#logout').onclick=async()=>{
   if(me)try{await request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify({online:false})})}catch{}
