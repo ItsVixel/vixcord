@@ -292,7 +292,7 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
   <div class="gift-panel" id="giftRankPanel"><b>Send a rank</b><small>The selected rank leaves your inventory.</small><select id="giftRankSelect"></select></div>
   <div class="gift-panel" id="giftBadgePanel"><b>Send a badge</b><small>The selected badge leaves your inventory.</small><select id="giftBadgeSelect"></select></div>
   <label><input id="giftAnonymous" type="checkbox"> Send anonymously</label><p class="notice" id="giftNotice"></p>
-  <button class="join" id="sendGiftBtn" type="button">Send gift</button><button class="join" id="giftGambleBtn" type="button" style="margin-top:8px">🎰 Gamble</button><button class="switch" id="closeGift" type="button">Close</button>
+  <button class="join" id="sendGiftBtn" type="button">Send gift</button><button class="switch" id="closeGift" type="button">Close</button>
 </section></div>
 <div class="modal" id="claimModal"><section class="card claim-card"><h1>🎁 You received a gift!</h1><p id="claimText"></p><button class="join" id="claimGiftBtn">Claim</button></section></div>
 <div class="modal" id="gambleModal"><section class="card">
@@ -916,17 +916,17 @@ async function gambleCoins(){
   if(!amount||amount<1)return $('#gambleNotice').textContent='Enter a whole number of coins.';
   if(amount>coins)return $('#gambleNotice').textContent='You cannot gamble more coins than you have.';
   gamblePending=true;$('#gambleBtn').disabled=true;
-  for(let seconds=5;seconds>0;seconds--){$('#gambleNotice').textContent=`🎰 Spinning the reels… ${seconds}`;await new Promise(resolve=>setTimeout(resolve,1000));}
-  let won=Math.random()*100<winRate,payout=won?amount*multiplier:0,newCoins=coins-amount+payout;
+  let won=Math.random()*100<winRate,payout=won?Math.ceil(amount*multiplier):0,newCoins=coins-amount+payout;
   try{
     me=await request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify({coins:newCoins})});
     localStorage.setItem(sessionKey,JSON.stringify(me));$('#myCoins').textContent=me.coins||0;
-    let outcome=won?`won ${payout.toFixed(2)} coins (${multiplier.toFixed(2)}x) gambling ${amount} coins!`:`lost ${amount} coins gambling ${amount} coins!`;
+    let outcome=won?`won ${payout} coins (${multiplier.toFixed(2)}x) gambling ${amount} coins!`:`lost ${amount} coins gambling ${amount} coins!`;
     $('#gambleNotice').textContent=won?`🎉 JACKPOT! You ${outcome}`:`💥 Oof! You ${outcome}`;
     await request(API.chat1,{method:'POST',body:JSON.stringify({messeges:`🎰 @${me.username} ${outcome}`,time:new Date().toISOString(),username:'vixcord',to:null,rank:'system',equippedrank:'',namecolor:'#9ca3af',badges:[],equippedbadges:[],attachments:[],reply:null,reactions:{}})});
     await trimChatMessages('chat1');
-    showToast(won?'You won!':'Better luck next time',won?`You received ${payout.toFixed(2)} coins.`:`${amount} coins were lost.`);loadUsers();if(chat==='chat1')loadMessages();
-  }catch(e){$('#gambleNotice').textContent=e.message}finally{gamblePending=false;$('#gambleBtn').disabled=false}
+    showToast(won?'You won!':'Better luck next time',won?`You received ${payout} coins.`:`${amount} coins were lost.`);loadUsers();if(chat==='chat1')loadMessages();
+    for(let seconds=3;seconds>0;seconds--){$('#gambleBtn').textContent=`Play again in ${seconds}s`;await new Promise(resolve=>setTimeout(resolve,1000));}
+  }catch(e){$('#gambleNotice').textContent=e.message}finally{gamblePending=false;$('#gambleBtn').disabled=false;$('#gambleBtn').textContent='Gamble'}
 }
 
 /* ---------- composer: shift+enter newline, enter to send, char limit ---------- */
@@ -1088,7 +1088,6 @@ $('#closeGift').onclick=()=>$('#giftModal').style.display='none';
 $('#sendGiftBtn').onclick=sendGift;
 $('#giftKind').onchange=updateGiftPanel;
 $('#gamble').onclick=openGamble;
-$('#giftGambleBtn').onclick=()=>{$('#giftModal').style.display='none';openGamble()};
 $('#closeGamble').onclick=()=>$('#gambleModal').style.display='none';
 $('#gambleRisk').oninput=updateGambleOdds;
 $('#gambleBtn').onclick=gambleCoins;
