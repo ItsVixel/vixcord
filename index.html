@@ -49,7 +49,7 @@ body{margin:0;background:var(--bg);color:var(--text);height:100vh;overflow:hidde
 .badge-owner{background:var(--red);color:#fff;padding:1px 4px;border-radius:3px;font-weight:700;filter:brightness(1.2)}
 .badge-crown,.crown-icon{color:#67b7ff;font-weight:800}
 .coins-display{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--red);font-weight:700}
-.avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;flex:none;font-size:13px;object-fit:cover;color:#fff}
+.avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;flex:none;font-size:13px;object-fit:cover;object-position:center;color:#fff}
 .profile small{display:block;color:var(--muted);font-size:11px}
 .logout{border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:18px;margin-left:auto;transition:.15s}
 .logout:hover{color:var(--red)}
@@ -164,7 +164,7 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
 .shop-price{color:var(--red);font-weight:700;margin-top:8px}.shop-price.affordable{color:var(--online)}
 .inventory-empty{color:var(--muted);padding:12px 0}.inventory-item{display:flex;align-items:center;justify-content:space-between;gap:12px}.inventory-item .join{width:auto;margin:0;padding:7px 11px}.equipped{font-size:11px;color:var(--online);font-weight:700}
 .attachment-controls,.avatar-controls{display:flex;gap:5px;align-items:center}.attachment-controls button,.avatar-controls button{border:0;border-radius:6px;background:var(--side);color:var(--text);cursor:pointer;padding:6px 9px;font:600 12px 'Inter',sans-serif}.attachment-controls button:hover,.avatar-controls button:hover{background:var(--red)}.avatar-controls{margin:5px 0}.gift-panel{display:none;margin-top:10px;padding:10px;border:1px solid color-mix(in srgb,var(--red) 28%,transparent);border-radius:8px}.gift-panel.active{display:block}.gift-panel select,.gift-panel input{width:100%;margin-top:5px}.claim-card{max-width:370px}.claim-card h1{font-size:22px}
-#giftModal select,#giftModal input:not([type=checkbox]),#gambleModal input[type=number]{width:100%;margin-top:6px;background:var(--input);color:var(--text);border:1px solid color-mix(in srgb,var(--muted) 55%,transparent);border-radius:7px;padding:9px;font:inherit}#giftModal select:focus,#giftModal input:focus,#gambleModal input:focus{outline:0;border-color:var(--red);box-shadow:0 0 0 2px color-mix(in srgb,var(--red) 25%,transparent)}#giftModal label:has(input[type=checkbox]){display:flex;gap:8px;align-items:center;cursor:pointer;color:var(--text)}#giftModal input[type=checkbox]{appearance:none;width:18px;height:18px;border-radius:5px;border:1px solid var(--muted);background:var(--input);display:grid;place-items:center;cursor:pointer}#giftModal input[type=checkbox]:checked{background:var(--red);border-color:var(--red)}#giftModal input[type=checkbox]:checked::after{content:'✓';font-size:13px;font-weight:800;color:white}.gamble-scale{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:7px}.gamble-risk{color:var(--text);font-weight:700;margin:14px 0 4px}.gamble-slider{width:100%;appearance:none;height:10px;border-radius:20px;background:linear-gradient(90deg,var(--online),#f3c24e,var(--red));outline:none}.gamble-slider::-webkit-slider-thumb{appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;border:4px solid var(--red);box-shadow:0 2px 8px #0008;cursor:pointer}.gamble-slider::-moz-range-thumb{width:15px;height:15px;border-radius:50%;background:#fff;border:4px solid var(--red);cursor:pointer}.gamble-result{min-height:20px;margin-top:10px;color:var(--muted);font-size:12px}
+#giftModal select,#giftModal input:not([type=checkbox]),#gambleModal input[type=number]{width:100%;margin-top:6px;background:var(--input);color:var(--text);border:1px solid color-mix(in srgb,var(--muted) 55%,transparent);border-radius:7px;padding:9px;font:inherit}#giftModal select:focus,#giftModal input:focus,#gambleModal input:focus{outline:0;border-color:var(--red);box-shadow:0 0 0 2px color-mix(in srgb,var(--red) 25%,transparent)}#giftModal label:has(input[type=checkbox]){display:flex;gap:8px;align-items:center;cursor:pointer;color:var(--text)}#giftModal input[type=checkbox]{appearance:none;width:18px;height:18px;border-radius:5px;border:1px solid var(--muted);background:var(--input);display:grid;place-items:center;cursor:pointer}#giftModal input[type=checkbox]:checked{background:var(--red);border-color:var(--red)}#giftModal input[type=checkbox]:checked::after{content:'✓';font-size:13px;font-weight:800;color:white}.gamble-scale{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:7px}.gamble-risk{color:var(--text);font-weight:700;margin:14px 0 4px}.gamble-slider{width:100%;appearance:none;height:10px;border-radius:20px;background:linear-gradient(90deg,#ff4d4d,#ffbe3d,#f6f669,#46dc6b,#3eb6ff,#8060ff,#e35bee);outline:none}.gamble-slider::-webkit-slider-thumb{appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;border:4px solid var(--red);box-shadow:0 2px 8px #0008;cursor:pointer}.gamble-slider::-moz-range-thumb{width:15px;height:15px;border-radius:50%;background:#fff;border:4px solid var(--red);cursor:pointer}.gamble-result{min-height:30px;margin-top:14px;color:var(--text);font-size:18px;font-weight:800;text-align:center}
 
 #toasts{position:fixed;top:16px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:8px;max-width:300px}
 .toast{background:var(--side);color:var(--text);border-left:4px solid var(--red);padding:10px 14px;border-radius:8px;box-shadow:0 10px 30px #0007;font-size:13px;animation:slideIn .25s ease}
@@ -286,7 +286,7 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
 
 <div class="modal" id="giftModal"><section class="card wide">
   <h1>Send a gift 🎁</h1><p>Gift coins, an owned rank, or an owned badge. You earn 10 🪙 for every gift sent.</p>
-  <label for="giftRecipient">Recipient username</label><input id="giftRecipient" maxlength="24" placeholder="Username">
+  <label for="giftRecipient">Recipient</label><select id="giftRecipient"><option value="">Choose a member…</option></select>
   <label for="giftKind">What would you like to send?</label><select id="giftKind"><option value="coins">Coins</option><option value="rank">Rank</option><option value="badge">Badge</option></select>
   <div class="gift-panel active" id="giftCoinsPanel"><b>Send coins</b><small>Minimum gift: 20 🪙</small><input id="giftCoinsAmount" type="number" min="20" placeholder="20 or more coins"></div>
   <div class="gift-panel" id="giftRankPanel"><b>Send a rank</b><small>The selected rank leaves your inventory.</small><select id="giftRankSelect"></select></div>
@@ -320,14 +320,15 @@ const COIN_REWARD=2;
 const CHAT_MESSAGE_LIMIT=90;
 const COMMANDS=[
   {name:'/msg',usage:'/msg [username] [message]',description:'Send a private message to a member.',role:'everyone',template:'/msg '},
-  {name:'/vanish',usage:'/vanish',description:'Appear offline to other members.',role:'staff',template:'/vanish'},
-  {name:'/unvanish',usage:'/unvanish',description:'Appear online to other members.',role:'staff',template:'/unvanish'},
-  {name:'/mute',usage:'/mute [username] [minutes] [reason]',description:'Mute a member for a set time.',role:'staff',template:'/mute '},
-  {name:'/unmute',usage:'/unmute [username]',description:'Remove a member mute.',role:'staff',template:'/unmute '},
-  {name:'/staff',usage:'/staff [username]',description:'Grant staff rank to a member.',role:'owner',template:'/staff '},
-  {name:'/unstaff',usage:'/unstaff [username]',description:'Remove staff rank from a member.',role:'owner',template:'/unstaff '}
+  {name:'/vanish',usage:'/vanish',description:'Appear offline to other members.',role:'mod+',template:'/vanish'},
+  {name:'/unvanish',usage:'/unvanish',description:'Appear online to other members.',role:'mod+',template:'/unvanish'},
+  {name:'/mute',usage:'/mute [username] [minutes] [reason]',description:'Mute a member for a set time.',role:'junior mod+',template:'/mute '},
+  {name:'/unmute',usage:'/unmute [username]',description:'Remove a member mute.',role:'junior mod+',template:'/unmute '},
+  {name:'/staff',usage:'/staff [username] [rank]',description:'Grant junior-mod, mod, or admin rank.',role:'owner',template:'/staff '},
+  {name:'/unstaff',usage:'/unstaff [username] [rank]',description:'Remove a matching moderation rank.',role:'owner',template:'/unstaff '}
 ];
 let muteRefreshTimer=null;
+let gamblePending=false;
 const PRESETS=[
   {name:'Vixcord Classic',accentcolor:'#c4454a',deepcolor:'#0a0a0a',sidecolor:'#1a1a1d',chatcolor:'#131317',inputcolor:'#1f1f23',textcolor:'#f2f3f5',mutedcolor:'#9a9aad',onlinecolor:'#23a55a'},
   {name:'Deep Red',accentcolor:'#b33a3a',deepcolor:'#330000',sidecolor:'#4d0000',chatcolor:'#660000',inputcolor:'#800000',textcolor:'#ffcccc',mutedcolor:'#ff6666',onlinecolor:'#ff3333'},
@@ -358,8 +359,17 @@ const BADGE_EGGS={
 const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const escapeRegex=s=>String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 const initials=n=>String(n||'?').split(/\s+/).map(x=>x[0]).join('').slice(0,2).toUpperCase();
-const isStaff=()=>['staff','owner'].includes(String(me?.rank||'').toLowerCase());
+function normalizeRole(u){
+  let role=String(String(u?.username||'').toLowerCase()==='vixcord'?'system':u?.rank||'member').toLowerCase().replace(/_/g,'-');
+  return role==='staff'?'mod':role;
+}
+const MOD_RANKS=['junior-mod','mod','admin'];
+const isStaff=()=>[...MOD_RANKS,'owner'].includes(normalizeRole(me));
+const isStaffUser=u=>[...MOD_RANKS,'owner'].includes(normalizeRole(u));
 const isOwner=()=>String(me?.rank||'').toLowerCase()==='owner';
+const canVanish=()=>['mod','admin','owner'].includes(normalizeRole(me));
+const muteMax=()=>normalizeRole(me)==='junior-mod'?2:normalizeRole(me)==='mod'?20:normalizeRole(me)==='admin'||isOwner()?Infinity:0;
+const roleLabel=u=>({system:'System','junior-mod':'Junior Mod',mod:'Mod',admin:'Admin',owner:'Owner',member:'Member'}[normalizeRole(u)]||'Member');
 const isMuted=u=>new Date(u?.muteduntil||0).getTime()>Date.now();
 const color=(v,fallback)=>/^#[0-9a-f]{6}$/i.test(v||'')?v:fallback;
 const safeText=v=>typeof v==='string'?v.trim():'';
@@ -371,7 +381,7 @@ const ownedBadges=u=>[...(Array.isArray(u?.badgeinventory)?u.badgeinventory:[]),
 const equippedBadges=u=>(Array.isArray(u?.equippedbadges)?u.equippedbadges:((Array.isArray(u?.badges)&&u.badges.includes('crown'))?['💎']:[])).slice(0,3);
 const countItems=list=>list.reduce((out,item)=>(out[item]=(out[item]||0)+1,out),{});
 const crownHTML=u=>Object.entries(countItems(equippedBadges(u))).map(([badge,count])=>`<span class="crown-icon" title="Equipped badge">${esc(badge)}${count>1?`<sup class="badge-stack">×${count}</sup>`:''}</span>`).join('');
-const roleBadgeHTML=u=>u?.rank==='owner'?'<span class="role-badge owner">💎 Owner</span>':u?.rank==='staff'?'<span class="role-badge staff">Staff</span>':'';
+const roleBadgeHTML=u=>{let r=normalizeRole(u);return r==='owner'?'<span class="role-badge owner">💎 Owner</span>':r==='system'?'<span class="role-badge" style="color:#9ca3af">System</span>':r==='junior-mod'?'<span class="role-badge" style="color:#29c0f2">Junior Mod</span>':r==='mod'?'<span class="role-badge" style="color:#73f229">Mod</span>':r==='admin'?'<span class="role-badge" style="color:#9b29f2">Admin</span>':''};
 const userByName=name=>usersList.find(u=>String(u.username).toLowerCase()===String(name||'').toLowerCase());
 function hashColor(str){let h=0;for(const c of String(str))h=(h*31+c.charCodeAt(0))%360;return `hsl(${h} 62% 44%)`}
 async function request(url,opts={}){let r=await fetch(url,{headers:{'Content-Type':'application/json'},...opts});if(!r.ok)throw Error(`API error (${r.status})`);return r.status===204?null:r.json()}
@@ -541,7 +551,7 @@ function updateProfileBadges(){
   let badges=roleBadgeHTML(me)+rankBadgeHTML(me)+crownHTML(me);
   $('#profileBadges').innerHTML=badges;
   let rank=equippedRank(me);
-  $('#myRank').textContent=rank?.name||me?.rank||'member';
+  $('#myRank').textContent=rank?.name||roleLabel(me);
   $('#myRank').style.color=rank?.color||'var(--muted)';
 }
 
@@ -558,7 +568,7 @@ async function loadUsers(){
     $('#count').textContent=`MEMBERS — ${users.length}`;
     $('#membersList').innerHTML=users.sort((a,b)=>Boolean(b.online)-Boolean(a.online)).map(u=>{
       let rank=equippedRank(u);
-      return `<div class="member" data-username="@${esc(safeText(u.username)||'unknown')}" title="@${esc(safeText(u.username)||'unknown')}">${avatarHTML(u)}<i class="dot ${u.online&&!u.vanished?'on':''}"></i><div class="member-info"><div class="member-name" style="color:${color(u.namecolor,'var(--text)')}">${esc(displayNameOf(u))} ${roleBadgeHTML(u)} ${rankBadgeHTML(u)} ${crownHTML(u)}</div><div class="member-coins">🪙 ${u.coins||0}</div><small style="color:${rank?.color||'var(--muted)'}">${esc(rank?.name||u.rank||'member')}</small></div></div>`;
+      return `<div class="member" data-username="@${esc(safeText(u.username)||'unknown')}" title="@${esc(safeText(u.username)||'unknown')}">${avatarHTML(u)}<i class="dot ${u.online&&!u.vanished?'on':''}"></i><div class="member-info"><div class="member-name" style="color:${color(u.namecolor,'var(--text)')}">${esc(displayNameOf(u))} ${roleBadgeHTML(u)} ${rankBadgeHTML(u)} ${crownHTML(u)}</div><div class="member-coins">🪙 ${u.coins||0}</div><small style="color:${rank?.color||'var(--muted)'}">${esc(rank?.name||roleLabel(u))}</small></div></div>`;
     }).join('');
   }catch(e){console.warn(e)}
 }
@@ -848,6 +858,7 @@ async function changeBadge(encodedBadge,change){
 
 function openGift(){
   let ranks=ownedRanks(me),badges=ownedBadges(me);
+  $('#giftRecipient').innerHTML='<option value="">Choose a member…</option>'+usersList.filter(u=>String(u.id)!==String(me?.id)).sort((a,b)=>displayNameOf(a).localeCompare(displayNameOf(b))).map(u=>`<option value="${esc(u.username)}">${esc(displayNameOf(u))} (@${esc(u.username)})</option>`).join('');
   $('#giftRankSelect').innerHTML=ranks.length?ranks.map(id=>`<option value="${id}">${esc(RANKS[id].name)}</option>`).join(''):'<option value="">No ranks available</option>';
   $('#giftBadgeSelect').innerHTML=badges.length?badges.map((badge,i)=>`<option value="${i}">${esc(badge)}</option>`).join(''):'<option value="">No badges available</option>';
   $('#giftRecipient').value='';$('#giftCoinsAmount').value='';$('#giftAnonymous').checked=false;$('#giftNotice').textContent='';$('#giftKind').value='coins';updateGiftPanel();
@@ -857,7 +868,7 @@ function updateGiftPanel(){let kind=$('#giftKind').value;['coins','rank','badge'
 function giftDescription(gift){return gift.kind==='coins'?`${gift.value} 🪙`:gift.kind==='rank'?`${RANKS[gift.value]?.name||'a rank'}`:`${gift.value} badge`}
 async function sendGift(){
   let recipientName=$('#giftRecipient').value.trim(),kind=$('#giftKind').value;
-  if(!recipientName)return $('#giftNotice').textContent='Enter a recipient username.';
+  if(!recipientName)return $('#giftNotice').textContent='Choose a recipient.';
   try{
     let users=await request(API.users),recipient=users.find(u=>String(u.username).toLowerCase()===recipientName.toLowerCase());
     if(!recipient)return $('#giftNotice').textContent='That user was not found.';
@@ -900,19 +911,22 @@ function openGamble(){
   $('#gambleAmount').value='';$('#gambleRisk').value=50;$('#gambleNotice').textContent='';updateGambleOdds();$('#gambleModal').style.display='grid';
 }
 async function gambleCoins(){
+  if(gamblePending)return;
   let amount=Math.floor(Number($('#gambleAmount').value)),coins=Number(me?.coins||0),{winRate,multiplier}=gambleOdds();
   if(!amount||amount<1)return $('#gambleNotice').textContent='Enter a whole number of coins.';
   if(amount>coins)return $('#gambleNotice').textContent='You cannot gamble more coins than you have.';
+  gamblePending=true;$('#gambleBtn').disabled=true;
+  for(let seconds=5;seconds>0;seconds--){$('#gambleNotice').textContent=`🎰 Spinning the reels… ${seconds}`;await new Promise(resolve=>setTimeout(resolve,1000));}
   let won=Math.random()*100<winRate,payout=won?amount*multiplier:0,newCoins=coins-amount+payout;
   try{
     me=await request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify({coins:newCoins})});
     localStorage.setItem(sessionKey,JSON.stringify(me));$('#myCoins').textContent=me.coins||0;
-    let outcome=won?`won ${payout.toFixed(2)} 🪙 (${multiplier.toFixed(2)}x payout)`:`lost ${amount} 🪙`;
-    $('#gambleNotice').textContent=`You ${outcome}.`;
-    await request(API.chat1,{method:'POST',body:JSON.stringify({messeges:`🎰 ${displayNameOf(me)} ${outcome} in the coin gamble!`,time:new Date().toISOString(),username:me.username,to:null,rank:me.rank,equippedrank:me.equippedrank||'',namecolor:color(me.namecolor,''),badges:Array.isArray(me.badges)?me.badges:[],equippedbadges:equippedBadges(me),attachments:[],reply:null,reactions:{}})});
+    let outcome=won?`won ${payout.toFixed(2)} coins (${multiplier.toFixed(2)}x) gambling ${amount} coins!`:`lost ${amount} coins gambling ${amount} coins!`;
+    $('#gambleNotice').textContent=won?`🎉 JACKPOT! You ${outcome}`:`💥 Oof! You ${outcome}`;
+    await request(API.chat1,{method:'POST',body:JSON.stringify({messeges:`🎰 @${me.username} ${outcome}`,time:new Date().toISOString(),username:'vixcord',to:null,rank:'system',equippedrank:'',namecolor:'#9ca3af',badges:[],equippedbadges:[],attachments:[],reply:null,reactions:{}})});
     await trimChatMessages('chat1');
     showToast(won?'You won!':'Better luck next time',won?`You received ${payout.toFixed(2)} coins.`:`${amount} coins were lost.`);loadUsers();if(chat==='chat1')loadMessages();
-  }catch(e){$('#gambleNotice').textContent=e.message}
+  }catch(e){$('#gambleNotice').textContent=e.message}finally{gamblePending=false;$('#gambleBtn').disabled=false}
 }
 
 /* ---------- composer: shift+enter newline, enter to send, char limit ---------- */
@@ -936,11 +950,22 @@ function showNewDirectMessages(user){
   fresh.forEach(m=>notify(`Private message from ${m.from}`,m.message));
   localStorage.setItem(key,JSON.stringify(messages.map(m=>m.id).slice(-100)));
 }
-function commandAllowed(command){return command.role==='everyone'||(command.role==='staff'&&isStaff())||(command.role==='owner'&&isOwner())}
+function commandAllowed(command){
+  if(command.role==='everyone'||command.role==='owner'&&isOwner())return true;
+  if(command.name==='/mute'||command.name==='/unmute')return muteMax()>0;
+  if(command.name==='/vanish'||command.name==='/unvanish')return canVanish();
+  return false;
+}
 function renderCommandMenu(){
   let value=$('#text').value.trimStart().toLowerCase();
+  let msgMatch=$('#text').value.trimStart().match(/^\/msg\s+([^\s]*)$/i);
   let matches=COMMANDS.filter(c=>!value||c.name.startsWith(value.split(/\s+/)[0]||'/'));
   let menu=$('#commandMenu');
+  if(msgMatch){
+    let query=msgMatch[1].toLowerCase(),members=usersList.filter(u=>String(u.id)!==String(me?.id)&&(displayNameOf(u).toLowerCase().includes(query)||String(u.username).toLowerCase().includes(query))).slice(0,8);
+    menu.innerHTML=members.map(u=>`<button type="button" class="command-item" data-user="${esc(u.username)}"><b>${avatarHTML(u)} ${esc(displayNameOf(u))}</b><small>@${esc(u.username)}</small></button>`).join('')||'<div class="command-item"><small>No members found</small></div>';
+    menu.classList.add('show');menu.querySelectorAll('[data-user]').forEach(b=>b.onclick=()=>{$('#text').value='/msg '+b.dataset.user+' ';autoResize();renderCommandMenu();$('#text').focus()});return;
+  }
   if(!$('#text').value.trimStart().startsWith('/')||!matches.length){menu.classList.remove('show');return}
   menu.innerHTML=matches.map(c=>`<button type="button" class="command-item ${commandAllowed(c)?'':'disabled'}" data-command="${c.name}"><b>${c.usage}</b><span class="command-role">${c.role}</span><small>${c.description}</small></button>`).join('');
   menu.classList.add('show');
@@ -978,8 +1003,9 @@ async function runCommand(input){
     if(command.name==='/mute'){
       let minutes=Number(args.shift()),reason=args.join(' ');
       if(!Number.isInteger(minutes)||minutes<1||!reason){showToast('Usage',command.usage);return true}
-      if(['staff','owner'].includes(String(target.rank).toLowerCase())){showToast('Not allowed','Staff and owners cannot be muted.');return true}
-      minutes=Math.min(10080,minutes);let until=new Date(Date.now()+minutes*60000).toISOString();
+      if(isStaffUser(target)||normalizeRole(target)==='system'){showToast('Not allowed','Moderators, owners, and the system cannot be muted.');return true}
+      if(minutes>muteMax()){showToast('Mute limit',`${normalizeRole(me)==='junior-mod'?'Junior mods can mute for up to 2 minutes.':'Mods can mute for up to 20 minutes.'}`);return true}
+      let until=new Date(Date.now()+minutes*60000).toISOString();
       await request(API.users+'/'+target.id,{method:'PUT',body:JSON.stringify({muteduntil:until,mutereason:reason})});
       showToast('Member muted',`${displayNameOf(target)} was muted for ${minutes} minute${minutes===1?'':'s'}.`);
     }
@@ -987,12 +1013,16 @@ async function runCommand(input){
       await request(API.users+'/'+target.id,{method:'PUT',body:JSON.stringify({muteduntil:null,mutereason:''})});showToast('Member unmuted',`${displayNameOf(target)} can send messages again.`);
     }
     if(command.name==='/staff'){
-      if(String(target.rank).toLowerCase()==='owner'){showToast('Not allowed','The owner rank cannot be changed.');return true}
-      await request(API.users+'/'+target.id,{method:'PUT',body:JSON.stringify({rank:'staff'})});showToast('Staff granted',`${displayNameOf(target)} is now staff.`);
+      let rank=(args.join('-')||'').toLowerCase().replace(/_/g,'-');
+      if(!MOD_RANKS.includes(rank)){showToast('Usage','/staff [username] [junior-mod | mod | admin]');return true}
+      if(['owner','system'].includes(normalizeRole(target))){showToast('Not allowed','That rank cannot be changed.');return true}
+      await request(API.users+'/'+target.id,{method:'PUT',body:JSON.stringify({rank})});showToast('Rank granted',`${displayNameOf(target)} is now ${rank}.`);
     }
     if(command.name==='/unstaff'){
-      if(String(target.rank).toLowerCase()!=='staff'){showToast('Not allowed','Only staff members can be unstaffed.');return true}
-      await request(API.users+'/'+target.id,{method:'PUT',body:JSON.stringify({rank:'member'})});showToast('Staff removed',`${displayNameOf(target)} is now a member.`);
+      let rank=(args.join('-')||'').toLowerCase().replace(/_/g,'-');
+      if(!MOD_RANKS.includes(rank)){showToast('Usage','/unstaff [username] [junior-mod | mod | admin]');return true}
+      if(normalizeRole(target)!==rank){showToast('Rank mismatch',`${displayNameOf(target)} is not a ${rank}.`);return true}
+      await request(API.users+'/'+target.id,{method:'PUT',body:JSON.stringify({rank:'member'})});showToast('Rank removed',`${displayNameOf(target)} is now a member.`);
     }
     clearComposer();loadUsers();return true;
   }catch(err){showToast('Command failed',err.message);return true}
