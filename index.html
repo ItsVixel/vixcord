@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Vixcord</title>
+<link rel="manifest" href="./manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -65,11 +66,11 @@ header small{padding-left:10px;border-left:1px solid color-mix(in srgb,var(--mut
 .circle{height:68px;width:68px;border-radius:50%;background:var(--input);display:grid;place-items:center;font-size:38px}
 h1{margin:10px 0 3px;font-size:28px;font-family:'Sora',sans-serif}
 .welcome p{color:var(--muted);margin:0}QA
-.message{position:relative;display:grid;grid-template-columns:40px minmax(0,1fr);gap:10px;padding:8px 10px 14px;border-radius:8px;transition:background .12s}
+.message{position:relative;display:grid;grid-template-columns:40px minmax(0,1fr);align-items:start;gap:10px;padding:8px 10px 14px;border-radius:8px;transition:background .12s}
 .message:hover{background:color-mix(in srgb,#000 12%,transparent)}
 .message.mentions-me{background:color-mix(in srgb,var(--red) 14%,transparent)}
 .message.mentions-me:hover{background:color-mix(in srgb,var(--red) 20%,transparent)}
-.message .avatar{width:40px;height:40px;font-size:14px}
+.message .avatar{width:40px;height:40px;font-size:14px;margin-top:1px}.message-body{min-width:0}
 .meta{font-weight:800;display:flex;align-items:center;gap:6px}
 .meta .badge{font-size:10px;font-weight:800;color:var(--red);border:1px solid var(--red);border-radius:4px;padding:1px 5px;text-transform:uppercase;letter-spacing:.3px}
 .meta .badge-crown,.meta .crown-icon{font-size:14px}
@@ -194,12 +195,13 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
   <aside class="channels">
     <div class="server">Vixcord⌄</div>
     <div class="channelList">
-      <div class="section">-=TEXT CHANNELS=-</div>
-      <button class="channel active" data-chat="chat1" data-name="general"><b>#</b>general</button>
-      <button class="channel" data-chat="chat2" data-name="general2"><b>#</b>general 2</button>
       <div class="section">-=IMPORTANT=-</div>
       <button class="channel" data-chat="chat3" data-name="announcements"><b>📣</b>announcements</button>
       <button class="channel" data-chat="rules" data-name="rules"><b>#</b>rules</button>
+      <div class="section">-=TEXT CHANNELS=-</div>
+      <button class="channel active" data-chat="chat1" data-name="general"><b>#</b>general</button>
+      <button class="channel" data-chat="chat2" data-name="general2"><b>#</b>general 2</button>
+      <div class="section staff-only">-=STAFF CHANNELS=-</div>
       <button class="channel staff-only" data-chat="chat4" data-name="staff-chat"><b>🔒</b>staff-chat <span class="lock">🔒</span></button>
       <div class="section">-=VOICE CHANNELS=-</div>
       <button class="voice-channel" data-voice-room="general-voice" type="button">🔊 General Voice</button>
@@ -262,6 +264,11 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
   <p class="notice" id="settingsNotice"></p>
   <button class="join" id="saveSettings">Save changes</button>
   <button class="switch" id="closeSettings">Cancel</button>
+
+  <h1 style="margin-top:28px">Notifications</h1>
+  <p>Enable notifications for mentions, replies, and private messages. On iPhone, add Vixcord to your Home Screen first, then enable notifications here.</p>
+  <button class="join" id="enableNotificationsBtn" type="button">Enable phone notifications</button>
+  <p class="notice" id="notificationsNotice"></p>
 
   <h1 style="margin-top:28px">Account</h1>
   <p>Change your password or username. Both require your current password.</p>
@@ -341,7 +348,8 @@ const COMMANDS=[
   {name:'/mute',usage:'/mute [username] [minutes] [reason]',description:'Mute a member for a set time.',role:'junior mod+',template:'/mute '},
   {name:'/unmute',usage:'/unmute [username]',description:'Remove a member mute.',role:'junior mod+',template:'/unmute '},
   {name:'/staff',usage:'/staff [username] [rank]',description:'Grant junior-mod, mod, or admin rank.',role:'owner',template:'/staff '},
-  {name:'/unstaff',usage:'/unstaff [username] [rank]',description:'Remove a matching moderation rank.',role:'owner',template:'/unstaff '}
+  {name:'/unstaff',usage:'/unstaff [username] [rank]',description:'Remove a matching moderation rank.',role:'owner',template:'/unstaff '},
+  {name:'/clear',usage:'/clear',description:'Clear every message in the current channel.',role:'admin + owner',template:'/clear'}
 ];
 let muteRefreshTimer=null;
 let gamblePending=false;
@@ -389,6 +397,10 @@ const roleLabel=u=>({system:'System','junior-mod':'Junior Mod',mod:'Mod',admin:'
 const isMuted=u=>new Date(u?.muteduntil||0).getTime()>Date.now();
 const color=(v,fallback)=>/^#[0-9a-f]{6}$/i.test(v||'')?v:fallback;
 const safeText=v=>typeof v==='string'?v.trim():'';
+const validUsername=value=>{
+  let username=String(value||'');
+  return username.length>=2&&username.length<=24&&!/[\s'‘’;,:"“”`]/.test(username);
+};
 const displayNameOf=u=>safeText(u?.displayname)||safeText(u?.username)||'Unknown';
 const ownedRanks=u=>Array.isArray(u?.inventory)?u.inventory.filter(id=>RANKS[id]):[];
 const equippedRank=u=>RANKS[u?.equippedrank]||null;
@@ -536,12 +548,43 @@ function showToast(title,body){
 function notify(title,body){
   showToast(title,body);
   if(window.Notification&&Notification.permission==='granted'&&document.visibilityState!=='visible'){
-    try{new Notification(title,{body})}catch{}
+    showDeviceNotification(title,body);
   }
 }
-function requestNotifyPermission(){
-  if('Notification' in window && Notification.permission==='default'){
-    Notification.requestPermission().catch(()=>{});
+function notificationStatus(message=''){
+  let el=$('#notificationsNotice');if(!el)return;
+  if(message){el.textContent=message;return}
+  if(!('Notification' in window))el.textContent='This browser does not support notifications.';
+  else if(!window.isSecureContext)el.textContent='Notifications require an HTTPS website.';
+  else if(Notification.permission==='granted')el.textContent='Notifications are enabled on this device.';
+  else if(Notification.permission==='denied')el.textContent='Notifications are blocked. Enable them in your browser or iPhone settings.';
+  else el.textContent='Notifications are not enabled yet.';
+}
+function showDeviceNotification(title,body){
+  try{
+    if(navigator.serviceWorker){
+      navigator.serviceWorker.getRegistration().then(registration=>{
+        if(registration)registration.showNotification(title,{body,tag:'vixcord-message',renotify:true});
+        else new Notification(title,{body});
+      }).catch(()=>new Notification(title,{body}));
+    }else new Notification(title,{body});
+  }catch{}
+}
+async function requestNotifyPermission(){
+  if(!('Notification' in window))return notificationStatus('This browser does not support notifications.');
+  if(!window.isSecureContext)return notificationStatus('Notifications require an HTTPS website.');
+  try{
+    let permission=Notification.permission;
+    if(permission==='default')permission=await Notification.requestPermission();
+    if(permission==='granted'){
+      notificationStatus('Notifications are enabled on this device.');
+      showDeviceNotification('Vixcord notifications enabled','You will be notified about mentions, replies, and private messages.');
+    }else notificationStatus(permission==='denied'?'Notifications are blocked. Enable them in your browser or iPhone settings.':'Notifications were not enabled.');
+  }catch{notificationStatus('Could not enable notifications on this device.');}
+}
+function registerServiceWorker(){
+  if(window.isSecureContext&&'serviceWorker' in navigator){
+    navigator.serviceWorker.register('./sw.js').then(()=>notificationStatus()).catch(()=>notificationStatus('Notifications are available while Vixcord is open.'));
   }
 }
 
@@ -601,6 +644,7 @@ function authMode(){let action=isSignup?'Create account':'Sign in';$('#authTitle
 async function submitAuth(){
   let username=$('#username').value.trim(),password=$('#password').value;
   if(!username||password.length<4)return setNotice('Use a username and a password of at least 4 characters.');
+  if(!validUsername(username))return setNotice('Usernames cannot contain spaces, quotes, commas, semicolons, colons, or backticks.');
   try{
     let [users,logins]=await Promise.all([request(API.users),request(API.logins)]),existing=users.find(u=>String(u.username).toLowerCase()===username.toLowerCase());
     if(isSignup){
@@ -630,7 +674,7 @@ function applyTheme(){
   r.setProperty('--muted',color(me?.mutedcolor,DEFAULTS.mutedcolor));
   r.setProperty('--online',color(me?.onlinecolor,DEFAULTS.onlinecolor));
 }
-function syncChannels(){document.querySelector('.staff-only').style.display=isStaff()?'block':'none';if(!isStaff()&&chat==='chat4')choose(document.querySelector('[data-chat="chat1"]'))}
+function syncChannels(){document.querySelectorAll('.staff-only').forEach(element=>element.style.display=isStaff()?'block':'none');if(!isStaff()&&chat==='chat4')choose(document.querySelector('[data-chat="chat1"]'))}
 
 function finish(user){
   me=user;localStorage.setItem(sessionKey,JSON.stringify(user));
@@ -640,7 +684,7 @@ function finish(user){
   $('#myName').style.color=color(me.namecolor,'#fff');
   $('#myCoins').textContent=me.coins||0;
   updateProfileBadges();
-  applyTheme();syncChannels();applyCharLimit();requestNotifyPermission();scheduleMuteRefresh();loadUsers();loadMessages();showGiftClaim();ensureVoiceSocket().catch(()=>{});
+  applyTheme();syncChannels();applyCharLimit();registerServiceWorker();notificationStatus();scheduleMuteRefresh();loadUsers();loadMessages();showGiftClaim();ensureVoiceSocket().catch(()=>{});
 }
 
 function scheduleMuteRefresh(){
@@ -748,7 +792,7 @@ function renderMessages(sorted){
     let staff=['staff','owner'].includes(String(senderRank||'').toLowerCase());
     let when=new Date(m.time||m.createdAt);
     let dateLabel=Number.isNaN(when.getTime())?'Unknown date':when.toLocaleString(navigator.language,{dateStyle:'medium',timeStyle:'short'});
-    return `<article class="message ${flags.mentionsMe?'mentions-me':''}">${avatarHTML(messageUser)}<div><div class="meta"><span style="color:${color(messageUser.namecolor,'inherit')}">${esc(displayNameOf(messageUser))}</span>${roleBadgeHTML(sender||{rank:m.rank})}${rankBadgeHTML(messageUser)}${crownHTML(messageUser)}<time title="${esc(dateLabel)}">${esc(dateLabel)}</time></div>${m.reply?`<div class="reply">↳ ${replyText(m.reply)}</div>`:''}<div class="content">${html}</div>${renderAttachmentsHTML(content,m.attachments)}<div class="reactions">${renderReactionsHTML(m)}</div><div class="reactionPicker" id="picker-${m.id}">${REACTION_EMOJIS.map(e=>`<button data-id="${m.id}" data-emoji="${e}">${e}</button>`).join('')}</div><div class="msg-actions"><button class="reactBtn" data-id="${m.id}">React</button><button class="replybtn" data-user="${esc(m.username)}" data-message="${esc(content)}">Reply</button></div></div></article>`;
+    return `<article class="message ${flags.mentionsMe?'mentions-me':''}">${avatarHTML(messageUser)}<div class="message-body"><div class="meta"><span style="color:${color(messageUser.namecolor,'inherit')}">${esc(displayNameOf(messageUser))}</span>${roleBadgeHTML(sender||{rank:m.rank})}${rankBadgeHTML(messageUser)}${crownHTML(messageUser)}<time title="${esc(dateLabel)}">${esc(dateLabel)}</time></div>${m.reply?`<div class="reply">↳ ${replyText(m.reply)}</div>`:''}<div class="content">${html}</div>${renderAttachmentsHTML(content,m.attachments)}<div class="reactions">${renderReactionsHTML(m)}</div><div class="reactionPicker" id="picker-${m.id}">${REACTION_EMOJIS.map(e=>`<button data-id="${m.id}" data-emoji="${e}">${e}</button>`).join('')}</div><div class="msg-actions"><button class="reactBtn" title="Add reaction" aria-label="Add reaction" data-id="${m.id}">😊 React</button><button class="replybtn" title="Reply to this message" aria-label="Reply to this message" data-user="${esc(m.username)}" data-message="${esc(content)}">↩ Reply</button></div></div></article>`;
   }).join('');
   $('#messages').querySelectorAll('.message').forEach((el,index)=>{
     let m=sorted[index];
@@ -865,7 +909,7 @@ async function changePassword(){
 async function changeUsername(){
   let cur=$('#curPasswordUn').value,newUsername=$('#newUsername').value.trim();
   if(!cur||!newUsername)return setAccountNotice('Fill in your current password and a new username.');
-  if(newUsername.length<2)return setAccountNotice('Username must be at least 2 characters.');
+  if(!validUsername(newUsername))return setAccountNotice('Usernames cannot contain spaces, quotes, commas, semicolons, colons, or backticks.');
   let weekMs=7*24*60*60*1000,last=me.usernamechangedat?new Date(me.usernamechangedat).getTime():0;
   if(last&&Date.now()-last<weekMs){
     let daysLeft=Math.ceil((weekMs-(Date.now()-last))/(24*60*60*1000));
@@ -1066,6 +1110,7 @@ function showNewDirectMessages(user){
 }
 function commandAllowed(command){
   if(command.role==='everyone'||command.role==='owner'&&isOwner())return true;
+  if(command.name==='/clear')return ['admin','owner'].includes(normalizeRole(me));
   if(command.name==='/mute'||command.name==='/unmute')return muteMax()>0;
   if(command.name==='/vanish'||command.name==='/unvanish')return canVanish();
   return false;
@@ -1109,6 +1154,13 @@ async function runCommand(input){
       let vanish=command.name==='/vanish';
       me=await request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify({vanished:vanish,online:!vanish})});
       localStorage.setItem(sessionKey,JSON.stringify(me));loadUsers();showToast(vanish?'You vanished':'You are visible',vanish?'You now appear offline.':'You now appear online.');clearComposer();return true;
+    }
+    if(command.name==='/clear'){
+      if(chat==='rules'||!API[chat]){showToast('Cannot clear','This channel does not store chat messages.');return true}
+      let messages=await request(API[chat]);
+      if(!messages.length){showToast('Nothing to clear',`#${chatName} has no messages.`);clearComposer();return true}
+      await Promise.all(messages.map(message=>request(API[chat]+'/'+message.id,{method:'DELETE'})));
+      clearComposer();showToast('Chat cleared',`Removed ${messages.length} message${messages.length===1?'':'s'} from #${chatName}.`);loadMessages();return true;
     }
     let username=args.shift();
     if(!username){showToast('Usage',command.usage);return true}
@@ -1195,6 +1247,7 @@ $('#text').addEventListener('keydown',e=>{
 $('#settings').onclick=settingsOpen;
 $('#closeSettings').onclick=()=>$('#settingsModal').style.display='none';
 $('#saveSettings').onclick=settingsSave;
+$('#enableNotificationsBtn').onclick=requestNotifyPermission;
 $('#changePasswordBtn').onclick=changePassword;
 $('#changeUsernameBtn').onclick=changeUsername;
 $('#shop').onclick=openShop;
