@@ -1,8 +1,11 @@
 {
   "name": "Vixcord",
   "short_name": "Vixcord",
+  "id": "./",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "background_color": "#0a0a0a",
   "theme_color": "#c4454a",
   "description": "Vixcord chat"

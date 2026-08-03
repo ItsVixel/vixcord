@@ -7,6 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked@18.0.7/lib/marked.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.4.13/dist/purify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/highlight.min.js"></script>
 <style>
 :root{
   --red:#c4454a;--deep:#0a0a0a;--side:#1a1a1d;--bg:#131317;--input:#1f1f23;
@@ -81,6 +84,7 @@ h1{margin:10px 0 3px;font-size:28px;font-family:'Sora',sans-serif}
 .content{color:var(--text)}
 .reply{font-size:12px;color:var(--muted);margin-bottom:4px;padding-left:8px;border-left:2px solid var(--red)}
 .vixia-typing .content{display:flex;align-items:center;gap:4px;color:#ff9aa3;font-weight:700}.typing-dot{width:6px;height:6px;border-radius:50%;background:#ff7b86;animation:vixiaTyping 1.1s infinite ease-in-out}.typing-dot:nth-child(2){animation-delay:.15s}.typing-dot:nth-child(3){animation-delay:.3s}@keyframes vixiaTyping{0%,60%,100%{transform:translateY(0);opacity:.45}30%{transform:translateY(-4px);opacity:1}}
+.vixia-markdown{line-height:1.55}.vixia-markdown>:first-child{margin-top:0}.vixia-markdown>:last-child{margin-bottom:0}.vixia-markdown h1,.vixia-markdown h2,.vixia-markdown h3,.vixia-markdown h4{font-family:'Sora',sans-serif;color:#ffd7da;margin:16px 0 7px;line-height:1.25}.vixia-markdown h1{font-size:23px}.vixia-markdown h2{font-size:20px}.vixia-markdown h3{font-size:17px}.vixia-markdown h4{font-size:15px}.vixia-markdown p{margin:7px 0}.vixia-markdown ul,.vixia-markdown ol{margin:7px 0;padding-left:25px}.vixia-markdown li{margin:3px 0}.vixia-markdown blockquote{margin:10px 0;padding:7px 12px;border-left:3px solid #ff7b86;background:#ff7b8612;color:#ffd0d4}.vixia-markdown pre{overflow:auto;background:#09090c;border:1px solid #ffffff14;border-radius:8px;padding:12px;margin:10px 0}.vixia-markdown code{font:12px/1.5 Consolas,Monaco,monospace;background:#09090c;color:#ffc0c6;border-radius:4px;padding:2px 5px}.vixia-markdown pre code{padding:0;background:transparent;color:#f4f4f5}.vixia-markdown table{border-collapse:collapse;display:block;max-width:100%;overflow-x:auto;margin:10px 0}.vixia-markdown th,.vixia-markdown td{border:1px solid #ffffff24;padding:6px 9px;text-align:left}.vixia-markdown th{background:#ff7b861b;color:#ffd7da}.vixia-markdown hr{border:0;border-top:1px solid #ff7b8655;margin:16px 0}.vixia-markdown a{color:#ff9aa3;text-decoration:underline}.vixia-markdown del{color:var(--muted)}.hljs-keyword,.hljs-selector-tag,.hljs-literal{color:#ff7b86}.hljs-string,.hljs-title,.hljs-section{color:#a8e6a3}.hljs-number,.hljs-variable,.hljs-attr{color:#9ecbff}.hljs-comment{color:#747481;font-style:italic}
 .mention{background:color-mix(in srgb,var(--red) 22%,transparent);color:var(--red);padding:0 4px;border-radius:4px;font-weight:700}
 .mention-self{background:color-mix(in srgb,var(--red) 55%,transparent);color:#fff}
 .mention-everyone{background:color-mix(in srgb,var(--red) 40%,transparent);color:#fff}
@@ -267,7 +271,9 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
   <button class="switch" id="closeSettings">Cancel</button>
 
   <h1 style="margin-top:28px">Notifications</h1>
-  <p>Enable notifications for mentions, replies, and private messages. On iPhone, add Vixcord to your Home Screen first, then enable notifications here.</p>
+  <p>Enable background notifications for mentions, replies, private messages, and Vixia answers. On iPhone, install Vixcord using Safari's Share → Add to Home Screen—not the Shortcuts app.</p>
+  <button class="join" id="installAppBtn" type="button">Install Vixcord app</button>
+  <p class="notice" id="installNotice">Share this website URL with anyone. Each person can install their own copy.</p>
   <button class="join" id="enableNotificationsBtn" type="button">Enable phone notifications</button>
   <p class="notice" id="notificationsNotice"></p>
 
@@ -327,11 +333,14 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
 const API={users:'https://6a638812b30b52361e1a6b8d.mockapi.io/1/users',logins:'https://6a638812b30b52361e1a6b8d.mockapi.io/1/logins',chat1:'https://6a63dbd7b30b52361e1aab35.mockapi.io/2/chat1',chat2:'https://6a63dbd7b30b52361e1aab35.mockapi.io/2/chat2',chat3:'https://6a63dd06b30b52361e1aabe1.mockapi.io/3/chat3',chat4:'https://6a63dd06b30b52361e1aabe1.mockapi.io/3/chat4'};
 const VIXIA_API='https://plain-pine-b32a.mrviktor2426.workers.dev/';
 const VIXIA_USER={username:'Vixia',displayname:'Vixia',avatar:'',avatarcolor:'#d94b57',namecolor:'#ff8f98',rank:'vixia'};
+const VIXIA_SYSTEM_PROMPT='You are Vixia, Vixcord’s helpful AI. Use safe GitHub-flavored Markdown when it improves the answer. You can use H1-H4 headings, bold, italic, bold-italic, strikethrough, ordered and unordered nested lists, inline code, fenced Python or JavaScript code, blockquotes, links, tables, horizontal rules, emojis, and readable math symbols. Keep simple answers simple.';
 // Change this one value if your Socket.IO signaling server runs elsewhere.
 const VOICE_SERVER_URL='https://vixcord.onrender.com';
+const PUSH_SERVER_URL=VOICE_SERVER_URL;
 const VOICE_ROOMS={'general-voice':'General Voice','general-voice-2':'General Voice 2'};
 const $=s=>document.querySelector(s),sessionKey='vixcord-mockapi-user';
 let me=null,chat='chat1',chatName='general',reply=null,isSignup=false,usersList=[],lastMessagesData=[];
+let installPromptEvent=null;
 let pendingUploads=[];
 let voiceSocket=null,voiceRoom=null,localVoiceStream=null,voiceMuted=false,voiceDeafened=false,voiceMutedBeforeDeafen=false,voiceJoinPending=false,voiceAudioContext=null,localVoiceSpeaking=false;
 const voicePeers=new Map(),voicePresence={'general-voice':[],'general-voice-2':[]},voiceSpeaking=new Set(),voiceAnalysers=new Map();
@@ -340,6 +349,8 @@ const spamTracker=new Map();
 const vixiaThinkingChats=new Set();
 const SPAM_LIMIT=3;
 const SPAM_WINDOW=5000;
+const BAD_WORD_MUTE_MS=30000;
+const BAD_WORDS=['fuck','fucker','fucking','motherfucker','shit','shitty','bitch','bitches','asshole','bastard','cunt','dick','pussy','nigger','nigga','faggot','retard'];
 const REACTION_EMOJIS=['👍','❤️','😂','😮','😢','🔥','🤓','🐦‍⬛','😭','🥀','💀','🗿'];
 const DEFAULTS={accentcolor:'#c4454a',deepcolor:'#0a0a0a',sidecolor:'#1a1a1d',chatcolor:'#131317',inputcolor:'#1f1f23',textcolor:'#f2f3f5',mutedcolor:'#9a9aad',onlinecolor:'#23a55a',coins:0};
 const CHAR_LIMIT=500;
@@ -405,6 +416,23 @@ const validUsername=value=>{
   let username=String(value||'');
   return username.length>=2&&username.length<=24&&!/[\s'‘’;,:"“”`]/.test(username);
 };
+function normalizeForBadWordFilter(value){
+  const replacements={'0':'o','1':'i','3':'e','4':'a','5':'s','7':'t','@':'a','$':'s'};
+  return String(value||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[013457@$]/g,character=>replacements[character]);
+}
+function containsBadWord(value){
+  const normalized=normalizeForBadWordFilter(value);
+  return BAD_WORDS.some(word=>new RegExp(`(?:^|[^a-z0-9])${word.split('').join('[^a-z0-9]*')}(?=$|[^a-z0-9])`,'i').test(normalized));
+}
+async function muteForBadLanguage(){
+  const muteduntil=new Date(Date.now()+BAD_WORD_MUTE_MS).toISOString();
+  try{
+    me=await request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify({muteduntil,mutereason:'Automatic bad-word filter'})});
+    localStorage.setItem(sessionKey,JSON.stringify(me));
+    scheduleMuteRefresh();
+    showToast('Message blocked','Bad language is not allowed. You have been muted for 30 seconds.');
+  }catch(error){showToast('Message blocked','Bad language is not allowed.');}
+}
 const displayNameOf=u=>safeText(u?.displayname)||safeText(u?.username)||'Unknown';
 const ownedRanks=u=>Array.isArray(u?.inventory)?u.inventory.filter(id=>RANKS[id]):[];
 const equippedRank=u=>RANKS[u?.equippedrank]||null;
@@ -551,7 +579,7 @@ function showToast(title,body){
 }
 function notify(title,body){
   showToast(title,body);
-  if(window.Notification&&Notification.permission==='granted'&&document.visibilityState!=='visible'){
+  if(window.Notification&&Notification.permission==='granted'&&document.visibilityState!=='visible'&&localStorage.getItem('vixcord-push-connected')!=='1'){
     showDeviceNotification(title,body);
   }
 }
@@ -560,7 +588,7 @@ function notificationStatus(message=''){
   if(message){el.textContent=message;return}
   if(!('Notification' in window))el.textContent='This browser does not support notifications.';
   else if(!window.isSecureContext)el.textContent='Notifications require an HTTPS website.';
-  else if(Notification.permission==='granted')el.textContent='Notifications are enabled on this device.';
+  else if(Notification.permission==='granted')el.textContent='Notification permission is enabled. Vixcord will connect this device to background push.';
   else if(Notification.permission==='denied')el.textContent='Notifications are blocked. Enable them in your browser or iPhone settings.';
   else el.textContent='Notifications are not enabled yet.';
 }
@@ -574,22 +602,79 @@ function showDeviceNotification(title,body){
     }else new Notification(title,{body});
   }catch{}
 }
+function urlBase64ToBytes(value){
+  const padded=(value+'='.repeat((4-value.length%4)%4)).replace(/-/g,'+').replace(/_/g,'/');
+  return Uint8Array.from(atob(padded),character=>character.charCodeAt(0));
+}
+function samePushKey(subscription,key){
+  const current=subscription?.options?.applicationServerKey;
+  if(!current)return false;
+  const left=new Uint8Array(current),right=urlBase64ToBytes(key);
+  return left.length===right.length&&left.every((value,index)=>value===right[index]);
+}
+async function registerServiceWorker(){
+  if(!window.isSecureContext||!('serviceWorker' in navigator))throw Error('This device requires an HTTPS installable web app.');
+  return navigator.serviceWorker.register('./sw.js',{scope:'./'});
+}
+async function subscribeToPush(){
+  if(!me)throw Error('Sign in before enabling notifications.');
+  const registration=await registerServiceWorker();
+  if(!registration.pushManager)throw Error('Push notifications are unavailable. On iPhone, install Vixcord with Safari → Share → Add to Home Screen.');
+  const keyResponse=await fetch(PUSH_SERVER_URL+'/push/vapid-public-key');
+  if(!keyResponse.ok)throw Error('The Vixcord push server is unavailable.');
+  const {publicKey}=await keyResponse.json();
+  let subscription=await registration.pushManager.getSubscription();
+  if(subscription&&!samePushKey(subscription,publicKey)){await subscription.unsubscribe();subscription=null}
+  subscription=subscription||await registration.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToBytes(publicKey)});
+  const serialized=subscription.toJSON();
+  const response=await fetch(PUSH_SERVER_URL+'/push/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:me.username,subscription:serialized})});
+  if(!response.ok)throw Error('Could not register this device with Vixcord.');
+  try{
+    const latest=await request(API.users+'/'+me.id),saved=(Array.isArray(latest.pushsubscriptions)?latest.pushsubscriptions:[]).filter(item=>item?.endpoint&&item.endpoint!==serialized.endpoint);
+    saved.push(serialized);
+    me=await request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify({pushsubscriptions:saved.slice(-5)})});
+    localStorage.setItem(sessionKey,JSON.stringify(me));
+  }catch{}
+  localStorage.setItem('vixcord-push-connected','1');
+  notificationStatus('Background notifications are connected on this device.');
+  return subscription;
+}
 async function requestNotifyPermission(){
-  if(!('Notification' in window))return notificationStatus('This browser does not support notifications.');
+  if(!('Notification' in window))return notificationStatus('This browser does not support notifications. On iPhone, use Safari → Share → Add to Home Screen first.');
   if(!window.isSecureContext)return notificationStatus('Notifications require an HTTPS website.');
   try{
     let permission=Notification.permission;
     if(permission==='default')permission=await Notification.requestPermission();
-    if(permission==='granted'){
-      notificationStatus('Notifications are enabled on this device.');
-      showDeviceNotification('Vixcord notifications enabled','You will be notified about mentions, replies, and private messages.');
-    }else notificationStatus(permission==='denied'?'Notifications are blocked. Enable them in your browser or iPhone settings.':'Notifications were not enabled.');
-  }catch{notificationStatus('Could not enable notifications on this device.');}
+    if(permission!=='granted')return notificationStatus(permission==='denied'?'Notifications are blocked. Enable them in your browser or iPhone settings.':'Notifications were not enabled.');
+    await subscribeToPush();
+    showDeviceNotification('Vixcord notifications enabled','Background push is connected for this device.');
+  }catch(error){notificationStatus(error.message||'Could not enable notifications on this device.');}
 }
-function registerServiceWorker(){
-  if(window.isSecureContext&&'serviceWorker' in navigator){
-    navigator.serviceWorker.register('./sw.js').then(()=>notificationStatus()).catch(()=>notificationStatus('Notifications are available while Vixcord is open.'));
+function sendPushNotification(recipients,title,body,includeCurrent=false){
+  const unique=[...new Set((recipients||[]).map(name=>String(name||'').trim()).filter(name=>name&&(includeCurrent||name.toLowerCase()!==String(me?.username||'').toLowerCase())))];
+  if(!unique.length)return;
+  fetch(PUSH_SERVER_URL+'/push/send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({recipients:unique,title,body:String(body||'').slice(0,240),url:'/index.html'})}).catch(()=>{});
+}
+function pushRecipientsForMessage(message,replyData){
+  const recipients=new Set();
+  if(replyData?.username)recipients.add(replyData.username);
+  for(const user of usersList){
+    if(new RegExp('@'+escapeRegex(user.username)+'\\b','i').test(message))recipients.add(user.username);
   }
+  if(isStaff()&&/@everyone\b/i.test(message))usersList.forEach(user=>recipients.add(user.username));
+  return [...recipients];
+}
+async function installVixcordApp(){
+  const notice=$('#installNotice');
+  if(matchMedia('(display-mode: standalone)').matches||navigator.standalone){notice.textContent='Vixcord is already installed as an app on this device.';return}
+  if(installPromptEvent){
+    installPromptEvent.prompt();
+    const result=await installPromptEvent.userChoice;
+    notice.textContent=result.outcome==='accepted'?'Vixcord was installed.':'Installation was cancelled.';
+    installPromptEvent=null;return;
+  }
+  if(/iphone|ipad|ipod/i.test(navigator.userAgent))notice.textContent='Open this URL in Safari, tap Share, then Add to Home Screen. A Shortcuts icon does not support iPhone Web Push.';
+  else notice.textContent='Use your browser menu and choose Install app or Add to Home Screen.';
 }
 
 /* ---------- attachments: image & file previews ---------- */
@@ -642,6 +727,17 @@ function processContent(raw,senderRank){
   return {html,flags};
 }
 
+function renderVixiaMarkdown(raw){
+  if(!window.marked||!window.DOMPurify)return processContent(raw,'vixia').html;
+  const rendered=window.marked.parse(String(raw||''),{gfm:true,breaks:true});
+  return window.DOMPurify.sanitize(rendered,{USE_PROFILES:{html:true}});
+}
+
+function highlightVixiaCode(){
+  if(!window.hljs)return;
+  document.querySelectorAll('.vixia-markdown pre code:not(.hljs)').forEach(block=>window.hljs.highlightElement(block));
+}
+
 /* ---------- auth ---------- */
 function setNotice(text=''){$('#notice').textContent=text}
 function authMode(){let action=isSignup?'Create account':'Sign in';$('#authTitle').textContent=isSignup?'Join Vixcord':'Welcome back';$('#authCopy').textContent=isSignup?'Your password is stored securely.':'Sign in to Vixcord.';$('#authButton').textContent=action;$('#switch').textContent=isSignup?'Sign in instead':'Create account instead'}
@@ -689,7 +785,7 @@ function finish(user){
   $('#myName').style.color=color(me.namecolor,'#fff');
   $('#myCoins').textContent=me.coins||0;
   updateProfileBadges();
-  applyTheme();syncChannels();applyCharLimit();registerServiceWorker();notificationStatus();scheduleMuteRefresh();loadUsers();loadMessages();showGiftClaim();ensureVoiceSocket().catch(()=>{});
+  applyTheme();syncChannels();applyCharLimit();notificationStatus();registerServiceWorker().then(()=>{if('Notification' in window&&Notification.permission==='granted')subscribeToPush().catch(error=>notificationStatus(error.message))}).catch(error=>notificationStatus(error.message));scheduleMuteRefresh();loadUsers();loadMessages();showGiftClaim();ensureVoiceSocket().catch(()=>{});
 }
 
 function scheduleMuteRefresh(){
@@ -793,12 +889,12 @@ function renderMessages(sorted){
     let content=m.messeges??m.messages??'';
     let sender=m.isvixia?null:userByName(m.username);
     let senderRank=m.isvixia?'vixia':sender?.rank||m.rank;
-    let {html,flags}=processContent(content,senderRank);
+    let processed=m.isvixia?{html:renderVixiaMarkdown(content),flags:{}}:processContent(content,senderRank),{html,flags}=processed;
     let messageUser=m.isvixia?VIXIA_USER:sender||{username:m.username,displayname:m.displayname,avatar:m.avatar,avatarcolor:m.avatarcolor,equippedrank:m.equippedrank,badges:m.badges,equippedbadges:m.equippedbadges,namecolor:m.namecolor};
     let staff=['staff','owner'].includes(String(senderRank||'').toLowerCase());
     let when=new Date(m.time||m.createdAt);
     let dateLabel=Number.isNaN(when.getTime())?'Unknown date':when.toLocaleString(navigator.language,{dateStyle:'medium',timeStyle:'short'});
-    return `<article class="message ${flags.mentionsMe?'mentions-me':''}">${avatarHTML(messageUser)}<div class="message-body"><div class="meta"><span style="color:${color(messageUser.namecolor,'inherit')}">${esc(displayNameOf(messageUser))}</span>${roleBadgeHTML(sender||{rank:m.rank})}${rankBadgeHTML(messageUser)}${crownHTML(messageUser)}<time title="${esc(dateLabel)}">${esc(dateLabel)}</time></div>${m.reply?`<div class="reply">↳ ${replyText(m.reply)}</div>`:''}<div class="content">${html}</div>${renderAttachmentsHTML(content,m.attachments)}<div class="reactions">${renderReactionsHTML(m)}</div><div class="reactionPicker" id="picker-${m.id}">${REACTION_EMOJIS.map(e=>`<button data-id="${m.id}" data-emoji="${e}">${e}</button>`).join('')}</div><div class="msg-actions"><button class="reactBtn" title="Add reaction" aria-label="Add reaction" data-id="${m.id}">😊 React</button><button class="replybtn" title="Reply to this message" aria-label="Reply to this message" data-user="${esc(m.username)}" data-message="${esc(content)}">↩ Reply</button></div></div></article>`;
+    return `<article class="message ${flags.mentionsMe?'mentions-me':''}">${avatarHTML(messageUser)}<div class="message-body"><div class="meta"><span style="color:${color(messageUser.namecolor,'inherit')}">${esc(displayNameOf(messageUser))}</span>${roleBadgeHTML(sender||{rank:m.rank})}${rankBadgeHTML(messageUser)}${crownHTML(messageUser)}<time title="${esc(dateLabel)}">${esc(dateLabel)}</time></div>${m.reply?`<div class="reply">↳ ${esc(replyText(m.reply))}</div>`:''}<div class="content ${m.isvixia?'vixia-markdown':''}">${html}</div>${renderAttachmentsHTML(content,m.attachments)}<div class="reactions">${renderReactionsHTML(m)}</div><div class="reactionPicker" id="picker-${m.id}">${REACTION_EMOJIS.map(e=>`<button data-id="${m.id}" data-emoji="${e}">${e}</button>`).join('')}</div><div class="msg-actions"><button class="reactBtn" title="Add reaction" aria-label="Add reaction" data-id="${m.id}">😊 React</button><button class="replybtn" title="Reply to this message" aria-label="Reply to this message" data-user="${esc(m.username)}" data-message="${esc(content)}">↩ Reply</button></div></div></article>`;
   }).join('');
   if(vixiaThinkingChats.has(chat))$('#messages').insertAdjacentHTML('beforeend',`<article class="message vixia-typing">${avatarHTML(VIXIA_USER)}<div class="message-body"><div class="meta"><span style="color:${VIXIA_USER.namecolor}">Vixia</span><time>thinking…</time></div><div class="content"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div></div></article>`);
   $('#messages').querySelectorAll('.message').forEach((el,index)=>{
@@ -823,6 +919,7 @@ function renderMessages(sorted){
     e.stopPropagation();
     toggleReaction(b.dataset.id,b.dataset.emoji);
   });
+  highlightVixiaCode();
   $('#messages').scrollTop=$('#messages').scrollHeight;
 }
 
@@ -1154,12 +1251,15 @@ async function runCommand(input){
   if(!commandAllowed(command)){showToast('Permission denied',`You don't have permission for ${command.name}.`);return true}
   try{
     if(command.name==='/msg'){
+      if(isMuted(me)){showToast('Cannot send','You are muted.');return true}
       let username=args.shift(),message=args.join(' ');
       if(!username||!message){showToast('Usage',command.usage);return true}
+      if(containsBadWord(message)){await muteForBadLanguage();clearComposer();return true}
       let target=(await request(API.users)).find(u=>String(u.username).toLowerCase()===username.toLowerCase());
       if(!target){showToast('Not found','That username does not exist.');return true}
       let targetChat=chat==='rules'?'chat1':chat;
       await request(API[targetChat],{method:'POST',body:JSON.stringify({messeges:message,time:new Date().toISOString(),username:me.username,to:target.username,rank:me.rank,equippedrank:me.equippedrank||'',namecolor:color(me.namecolor,''),badges:Array.isArray(me.badges)?me.badges:[],equippedbadges:equippedBadges(me),attachments:[],reply:null,reactions:{}})});
+      sendPushNotification([target.username],`Private message from ${displayNameOf(me)}`,message);
       notify('Private message sent',`Your message was sent to ${displayNameOf(target)} in #${targetChat===chat?'': 'general'}${targetChat===chat?chatName:''}.`);clearComposer();if(targetChat===chat)loadMessages();return true;
     }
     if(command.name==='/vanish'||command.name==='/unvanish'){
@@ -1217,12 +1317,13 @@ async function requestVixiaReply(question,targetChat,askerName,promptMessage){
   vixiaThinkingChats.add(targetChat);
   if(chat===targetChat)loadMessages();
   try{
-    let response=await fetch(VIXIA_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:question}]})});
+    let response=await fetch(VIXIA_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'system',content:VIXIA_SYSTEM_PROMPT},{role:'user',content:question}]})});
     let data=await response.json().catch(()=>({}));
     if(!response.ok)throw Error(data.error||`Vixia API error (${response.status})`);
-    let answer=safeText(data.output_text).slice(0,4000);
+    let answer=safeText(data.output_text).slice(0,8000);
     if(!answer)throw Error('Vixia returned an empty answer.');
     await request(API[targetChat],{method:'POST',body:JSON.stringify({messeges:answer,time:new Date().toISOString(),username:'Vixia',displayname:'Vixia',isvixia:true,to:null,rank:'vixia',equippedrank:'',namecolor:VIXIA_USER.namecolor,avatar:'',avatarcolor:VIXIA_USER.avatarcolor,badges:[],equippedbadges:[],attachments:[],reply:{username:askerName,message:promptMessage},reactions:{}})});
+    sendPushNotification([askerName],'Vixia replied to you',answer,true);
     await trimChatMessages(targetChat);
   }catch(error){
     showToast('Vixia could not answer',error.message);
@@ -1241,10 +1342,12 @@ async function sendMessage(e){
   let vixiaMatch=messeges.match(/^#vixia(?:\s+([\s\S]+))?$/i);
   if(vixiaMatch&&!safeText(vixiaMatch[1])){showToast('Ask Vixia','Use #vixia followed by your question.');return}
   if(vixiaMatch&&vixiaThinkingChats.has(chat)){showToast('Vixia is thinking','Wait for Vixia to finish answering in this channel.');return}
+  if(containsBadWord(messeges)){await muteForBadLanguage();clearComposer();return}
   if(checkSpam())return;
   try{
-    let targetChat=chat,askerName=me.username,promptMessage=messeges;
-    await request(API[targetChat],{method:'POST',body:JSON.stringify({messeges,time:new Date().toISOString(),username:me.username,to:null,rank:me.rank,equippedrank:me.equippedrank||'',namecolor:color(me.namecolor,''),badges:Array.isArray(me.badges)?me.badges:[],equippedbadges:equippedBadges(me),attachments:pendingUploads,reply,reactions:{}})});
+    let targetChat=chat,askerName=me.username,promptMessage=messeges,messageReply=reply;
+    await request(API[targetChat],{method:'POST',body:JSON.stringify({messeges,time:new Date().toISOString(),username:me.username,to:null,rank:me.rank,equippedrank:me.equippedrank||'',namecolor:color(me.namecolor,''),badges:Array.isArray(me.badges)?me.badges:[],equippedbadges:equippedBadges(me),attachments:pendingUploads,reply:messageReply,reactions:{}})});
+    sendPushNotification(pushRecipientsForMessage(messeges,messageReply),`${displayNameOf(me)} sent you a Vixcord message`,messeges);
     let newCoins=(me.coins||0)+COIN_REWARD;
     me=await request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify({coins:newCoins})});
     localStorage.setItem(sessionKey,JSON.stringify(me));
@@ -1264,6 +1367,8 @@ document.addEventListener('visibilitychange',()=>{
 });
 
 /* ---------- wiring ---------- */
+window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();installPromptEvent=event;let notice=$('#installNotice');if(notice)notice.textContent='Vixcord is ready to install on this device.'});
+window.addEventListener('appinstalled',()=>{installPromptEvent=null;let notice=$('#installNotice');if(notice)notice.textContent='Vixcord is installed.'});
 $('#authButton').onclick=submitAuth;
 $('#switch').onclick=()=>{isSignup=!isSignup;authMode()};
 $('#password').onkeydown=e=>{if(e.key==='Enter')submitAuth()};
@@ -1282,6 +1387,7 @@ $('#text').addEventListener('keydown',e=>{
 $('#settings').onclick=settingsOpen;
 $('#closeSettings').onclick=()=>$('#settingsModal').style.display='none';
 $('#saveSettings').onclick=settingsSave;
+$('#installAppBtn').onclick=installVixcordApp;
 $('#enableNotificationsBtn').onclick=requestNotifyPermission;
 $('#changePasswordBtn').onclick=changePassword;
 $('#changeUsernameBtn').onclick=changeUsername;
