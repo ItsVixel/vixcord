@@ -8,17 +8,17 @@ const { Server } = require('socket.io');
 const PORT = Number(process.env.PORT) || 3000;
 const HOST = process.env.HOST || '0.0.0.0';
 const PUBLIC_URL = process.env.RENDER_EXTERNAL_URL || 'https://vixcord.onrender.com';
-const VIXCORD_HTML = path.resolve(__dirname, '..', 'vixcord-enhanced.html');
+const VIXCORD_HTML = path.resolve(__dirname, '..', 'index.html');
 const VOICE_ROOMS = new Set(['general-voice', 'general-voice-2']);
 const roomMembers = new Map([...VOICE_ROOMS].map(roomId => [roomId, new Map()]));
 
 const httpServer = http.createServer((request, response) => {
   const requestPath = new URL(request.url, PUBLIC_URL).pathname;
-  if (requestPath === '/' || requestPath === '/vixcord-enhanced.html') {
+  if (requestPath === '/' || requestPath === '/index.html') {
     fs.readFile(VIXCORD_HTML, (error, html) => {
       if (error) {
         response.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
-        response.end('Could not load vixcord-enhanced.html. Keep voice-server beside the HTML file.');
+        response.end('Could not load index.html. Keep voice-server beside the HTML file.');
         return;
       }
       response.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
