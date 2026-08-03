@@ -65,7 +65,7 @@ header small{padding-left:10px;border-left:1px solid color-mix(in srgb,var(--mut
 .welcome{border-bottom:1px solid color-mix(in srgb,var(--muted) 25%,transparent);padding-bottom:20px;margin-bottom:16px}
 .circle{height:68px;width:68px;border-radius:50%;background:var(--input);display:grid;place-items:center;font-size:38px}
 h1{margin:10px 0 3px;font-size:28px;font-family:'Sora',sans-serif}
-.welcome p{color:var(--muted);margin:0}QA
+.welcome p{color:var(--muted);margin:0}
 .message{position:relative;display:grid;grid-template-columns:40px minmax(0,1fr);align-items:start;gap:10px;padding:8px 10px 14px;border-radius:8px;transition:background .12s}
 .message:hover{background:color-mix(in srgb,#000 12%,transparent)}
 .message.mentions-me{background:color-mix(in srgb,var(--red) 14%,transparent)}
@@ -80,6 +80,7 @@ h1{margin:10px 0 3px;font-size:28px;font-family:'Sora',sans-serif}
 .content,.reply{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
 .content{color:var(--text)}
 .reply{font-size:12px;color:var(--muted);margin-bottom:4px;padding-left:8px;border-left:2px solid var(--red)}
+.vixia-typing .content{display:flex;align-items:center;gap:4px;color:#ff9aa3;font-weight:700}.typing-dot{width:6px;height:6px;border-radius:50%;background:#ff7b86;animation:vixiaTyping 1.1s infinite ease-in-out}.typing-dot:nth-child(2){animation-delay:.15s}.typing-dot:nth-child(3){animation-delay:.3s}@keyframes vixiaTyping{0%,60%,100%{transform:translateY(0);opacity:.45}30%{transform:translateY(-4px);opacity:1}}
 .mention{background:color-mix(in srgb,var(--red) 22%,transparent);color:var(--red);padding:0 4px;border-radius:4px;font-weight:700}
 .mention-self{background:color-mix(in srgb,var(--red) 55%,transparent);color:#fff}
 .mention-everyone{background:color-mix(in srgb,var(--red) 40%,transparent);color:#fff}
@@ -324,6 +325,8 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
 
 <script>
 const API={users:'https://6a638812b30b52361e1a6b8d.mockapi.io/1/users',logins:'https://6a638812b30b52361e1a6b8d.mockapi.io/1/logins',chat1:'https://6a63dbd7b30b52361e1aab35.mockapi.io/2/chat1',chat2:'https://6a63dbd7b30b52361e1aab35.mockapi.io/2/chat2',chat3:'https://6a63dd06b30b52361e1aabe1.mockapi.io/3/chat3',chat4:'https://6a63dd06b30b52361e1aabe1.mockapi.io/3/chat4'};
+const VIXIA_API='https://plain-pine-b32a.mrviktor2426.workers.dev/';
+const VIXIA_USER={username:'Vixia',displayname:'Vixia',avatar:'',avatarcolor:'#d94b57',namecolor:'#ff8f98',rank:'vixia'};
 // Change this one value if your Socket.IO signaling server runs elsewhere.
 const VOICE_SERVER_URL='https://vixcord.onrender.com';
 const VOICE_ROOMS={'general-voice':'General Voice','general-voice-2':'General Voice 2'};
@@ -334,9 +337,10 @@ let voiceSocket=null,voiceRoom=null,localVoiceStream=null,voiceMuted=false,voice
 const voicePeers=new Map(),voicePresence={'general-voice':[],'general-voice-2':[]},voiceSpeaking=new Set(),voiceAnalysers=new Map();
 const seenIds=new Map();
 const spamTracker=new Map();
+const vixiaThinkingChats=new Set();
 const SPAM_LIMIT=3;
 const SPAM_WINDOW=5000;
-const REACTION_EMOJIS=['👍','❤️','😂','😮','😢','🔥','🤓','🐦‍⬛iq?','😭','🥀','💀','🗿'];
+const REACTION_EMOJIS=['👍','❤️','😂','😮','😢','🔥','🤓','🐦‍⬛','😭','🥀','💀','🗿'];
 const DEFAULTS={accentcolor:'#c4454a',deepcolor:'#0a0a0a',sidecolor:'#1a1a1d',chatcolor:'#131317',inputcolor:'#1f1f23',textcolor:'#f2f3f5',mutedcolor:'#9a9aad',onlinecolor:'#23a55a',coins:0};
 const CHAR_LIMIT=500;
 const COIN_REWARD=2;
@@ -645,6 +649,7 @@ async function submitAuth(){
   let username=$('#username').value.trim(),password=$('#password').value;
   if(!username||password.length<4)return setNotice('Use a username and a password of at least 4 characters.');
   if(!validUsername(username))return setNotice('Usernames cannot contain spaces, quotes, commas, semicolons, colons, or backticks.');
+  if(isSignup&&username.toLowerCase()==='vixia')return setNotice('Vixia is reserved for the Vixcord AI.');
   try{
     let [users,logins]=await Promise.all([request(API.users),request(API.logins)]),existing=users.find(u=>String(u.username).toLowerCase()===username.toLowerCase());
     if(isSignup){
@@ -759,15 +764,16 @@ function checkNotifications(sorted){
     if(String(m.username).toLowerCase()===String(me.username).toLowerCase())continue;
     let content=m.messeges??m.messages??'';
     let sender=userByName(m.username);
+    let senderName=sender?displayNameOf(sender):safeText(m.username)||'Unknown';
     let senderRank=sender?.rank||m.rank;
     let staffSender=['staff','owner'].includes(String(senderRank||'').toLowerCase());
     let mentionsMe=new RegExp('@'+escapeRegex(me.username)+'\\b','i').test(content);
     let mentionsEveryone=staffSender&&/@everyone\b/i.test(content);
     let repliedToMe=m.reply&&typeof m.reply==='object'&&String(m.reply.username||'').toLowerCase()===me.username.toLowerCase();
     if(mentionsMe||mentionsEveryone){
-      notify(`${displayNameOf(sender)||m.username} mentioned ${mentionsEveryone?'@everyone':'you'} in #${chatName}`,content.slice(0,120));
+      notify(`${senderName} mentioned ${mentionsEveryone?'@everyone':'you'} in #${chatName}`,content.slice(0,120));
     }else if(repliedToMe){
-      notify(`${displayNameOf(sender)||m.username} replied to you in #${chatName}`,content.slice(0,120));
+      notify(`${senderName} replied to you in #${chatName}`,content.slice(0,120));
     }
   }
 }
@@ -785,15 +791,16 @@ function renderMessages(sorted){
   let welcomeIcon=chat==='chat3'?'📣':chat==='chat4'?'🔒':chat==='chat2'?'🖼️':'#';
   $('#messages').innerHTML=`<div class="welcome"><div class="circle">${welcomeIcon}</div><h1>Welcome to #${esc(chatName)}!</h1><p>${desc}</p></div>`+sorted.map(m=>{
     let content=m.messeges??m.messages??'';
-    let sender=userByName(m.username);
-    let senderRank=sender?.rank||m.rank;
+    let sender=m.isvixia?null:userByName(m.username);
+    let senderRank=m.isvixia?'vixia':sender?.rank||m.rank;
     let {html,flags}=processContent(content,senderRank);
-    let messageUser=sender||{username:m.username,equippedrank:m.equippedrank,badges:m.badges,equippedbadges:m.equippedbadges,namecolor:m.namecolor};
+    let messageUser=m.isvixia?VIXIA_USER:sender||{username:m.username,displayname:m.displayname,avatar:m.avatar,avatarcolor:m.avatarcolor,equippedrank:m.equippedrank,badges:m.badges,equippedbadges:m.equippedbadges,namecolor:m.namecolor};
     let staff=['staff','owner'].includes(String(senderRank||'').toLowerCase());
     let when=new Date(m.time||m.createdAt);
     let dateLabel=Number.isNaN(when.getTime())?'Unknown date':when.toLocaleString(navigator.language,{dateStyle:'medium',timeStyle:'short'});
     return `<article class="message ${flags.mentionsMe?'mentions-me':''}">${avatarHTML(messageUser)}<div class="message-body"><div class="meta"><span style="color:${color(messageUser.namecolor,'inherit')}">${esc(displayNameOf(messageUser))}</span>${roleBadgeHTML(sender||{rank:m.rank})}${rankBadgeHTML(messageUser)}${crownHTML(messageUser)}<time title="${esc(dateLabel)}">${esc(dateLabel)}</time></div>${m.reply?`<div class="reply">↳ ${replyText(m.reply)}</div>`:''}<div class="content">${html}</div>${renderAttachmentsHTML(content,m.attachments)}<div class="reactions">${renderReactionsHTML(m)}</div><div class="reactionPicker" id="picker-${m.id}">${REACTION_EMOJIS.map(e=>`<button data-id="${m.id}" data-emoji="${e}">${e}</button>`).join('')}</div><div class="msg-actions"><button class="reactBtn" title="Add reaction" aria-label="Add reaction" data-id="${m.id}">😊 React</button><button class="replybtn" title="Reply to this message" aria-label="Reply to this message" data-user="${esc(m.username)}" data-message="${esc(content)}">↩ Reply</button></div></div></article>`;
   }).join('');
+  if(vixiaThinkingChats.has(chat))$('#messages').insertAdjacentHTML('beforeend',`<article class="message vixia-typing">${avatarHTML(VIXIA_USER)}<div class="message-body"><div class="meta"><span style="color:${VIXIA_USER.namecolor}">Vixia</span><time>thinking…</time></div><div class="content"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div></div></article>`);
   $('#messages').querySelectorAll('.message').forEach((el,index)=>{
     let m=sorted[index];
     if(m?.to){let tag=document.createElement('span');tag.className='badge';tag.style.color='var(--red)';tag.textContent='to @'+m.to;el.querySelector('.meta')?.insertBefore(tag,el.querySelector('time'));}
@@ -910,6 +917,7 @@ async function changeUsername(){
   let cur=$('#curPasswordUn').value,newUsername=$('#newUsername').value.trim();
   if(!cur||!newUsername)return setAccountNotice('Fill in your current password and a new username.');
   if(!validUsername(newUsername))return setAccountNotice('Usernames cannot contain spaces, quotes, commas, semicolons, colons, or backticks.');
+  if(newUsername.toLowerCase()==='vixia')return setAccountNotice('Vixia is reserved for the Vixcord AI.');
   let weekMs=7*24*60*60*1000,last=me.usernamechangedat?new Date(me.usernamechangedat).getTime():0;
   if(last&&Date.now()-last<weekMs){
     let daysLeft=Math.ceil((weekMs-(Date.now()-last))/(24*60*60*1000));
@@ -1116,10 +1124,14 @@ function commandAllowed(command){
   return false;
 }
 function renderCommandMenu(){
-  let value=$('#text').value.trimStart().toLowerCase();
-  let msgMatch=$('#text').value.trimStart().match(/^\/msg\s+([^\s]*)$/i);
+  let rawValue=$('#text').value.trimStart(),value=rawValue.toLowerCase();
+  let msgMatch=rawValue.match(/^\/msg\s+([^\s]*)$/i);
   let matches=COMMANDS.filter(c=>!value||c.name.startsWith(value.split(/\s+/)[0]||'/'));
   let menu=$('#commandMenu');
+  if(/^#[^\s]*$/.test(rawValue)&&'#vixia'.startsWith(value)){
+    menu.innerHTML='<button type="button" class="command-item" data-vixia><b>#vixia [question]</b><span class="command-role">AI</span><small>Ask Vixia a question in this channel.</small></button>';
+    menu.classList.add('show');menu.querySelector('[data-vixia]').onclick=()=>{$('#text').value='#vixia ';autoResize();updateCharCount();renderCommandMenu();$('#text').focus()};return;
+  }
   if(msgMatch){
     let query=msgMatch[1].toLowerCase(),members=usersList.filter(u=>String(u.id)!==String(me?.id)&&(displayNameOf(u).toLowerCase().includes(query)||String(u.username).toLowerCase().includes(query))).slice(0,8);
     menu.innerHTML=members.map(u=>`<button type="button" class="command-item" data-user="${esc(u.username)}"><b>${avatarHTML(u)} ${esc(displayNameOf(u))}</b><small>@${esc(u.username)}</small></button>`).join('')||'<div class="command-item"><small>No members found</small></div>';
@@ -1201,6 +1213,24 @@ async function trimChatMessages(chatId=chat){
   let label=document.querySelector(`[data-chat="${chatId}"]`)?.dataset.name||chatName;
   showToast('Chat cleared',`#${label} reached ${CHAT_MESSAGE_LIMIT} messages and was cleared.`);
 }
+async function requestVixiaReply(question,targetChat,askerName,promptMessage){
+  vixiaThinkingChats.add(targetChat);
+  if(chat===targetChat)loadMessages();
+  try{
+    let response=await fetch(VIXIA_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:question}]})});
+    let data=await response.json().catch(()=>({}));
+    if(!response.ok)throw Error(data.error||`Vixia API error (${response.status})`);
+    let answer=safeText(data.output_text).slice(0,4000);
+    if(!answer)throw Error('Vixia returned an empty answer.');
+    await request(API[targetChat],{method:'POST',body:JSON.stringify({messeges:answer,time:new Date().toISOString(),username:'Vixia',displayname:'Vixia',isvixia:true,to:null,rank:'vixia',equippedrank:'',namecolor:VIXIA_USER.namecolor,avatar:'',avatarcolor:VIXIA_USER.avatarcolor,badges:[],equippedbadges:[],attachments:[],reply:{username:askerName,message:promptMessage},reactions:{}})});
+    await trimChatMessages(targetChat);
+  }catch(error){
+    showToast('Vixia could not answer',error.message);
+  }finally{
+    vixiaThinkingChats.delete(targetChat);
+    if(chat===targetChat)loadMessages();
+  }
+}
 async function sendMessage(e){
   e?.preventDefault();
   let messeges=$('#text').value.trim();
@@ -1208,17 +1238,22 @@ async function sendMessage(e){
   if(messeges.startsWith('/')){await runCommand(messeges);return}
   if(!canPost()){showToast('Cannot send',isMuted(me)?'You are muted.':'You cannot send messages in this channel.');return}
   if(!isStaff()&&messeges.length>CHAR_LIMIT){updateCharCount();return}
+  let vixiaMatch=messeges.match(/^#vixia(?:\s+([\s\S]+))?$/i);
+  if(vixiaMatch&&!safeText(vixiaMatch[1])){showToast('Ask Vixia','Use #vixia followed by your question.');return}
+  if(vixiaMatch&&vixiaThinkingChats.has(chat)){showToast('Vixia is thinking','Wait for Vixia to finish answering in this channel.');return}
   if(checkSpam())return;
   try{
-    await request(API[chat],{method:'POST',body:JSON.stringify({messeges,time:new Date().toISOString(),username:me.username,to:null,rank:me.rank,equippedrank:me.equippedrank||'',namecolor:color(me.namecolor,''),badges:Array.isArray(me.badges)?me.badges:[],equippedbadges:equippedBadges(me),attachments:pendingUploads,reply,reactions:{}})});
+    let targetChat=chat,askerName=me.username,promptMessage=messeges;
+    await request(API[targetChat],{method:'POST',body:JSON.stringify({messeges,time:new Date().toISOString(),username:me.username,to:null,rank:me.rank,equippedrank:me.equippedrank||'',namecolor:color(me.namecolor,''),badges:Array.isArray(me.badges)?me.badges:[],equippedbadges:equippedBadges(me),attachments:pendingUploads,reply,reactions:{}})});
     let newCoins=(me.coins||0)+COIN_REWARD;
     me=await request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify({coins:newCoins})});
     localStorage.setItem(sessionKey,JSON.stringify(me));
     $('#myCoins').textContent=me.coins||0;
     clearComposer();
-    showToast('Message sent!',`+${COIN_REWARD} coins`);
-    await trimChatMessages();
+    showToast(vixiaMatch?'Vixia is thinking…':'Message sent!',vixiaMatch?'Your question was posted in this channel.':`+${COIN_REWARD} coins`);
+    await trimChatMessages(targetChat);
     loadMessages();
+    if(vixiaMatch)requestVixiaReply(safeText(vixiaMatch[1]),targetChat,askerName,promptMessage);
   }catch(e){alert(e.message)}
 }
 
