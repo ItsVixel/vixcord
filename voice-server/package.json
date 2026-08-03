@@ -1,0 +1,13 @@
+{
+  "name": "vixcord-voice-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Socket.IO signaling and presence server for Vixcord voice channels",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "socket.io": "^4.8.1"
+  }
+}

@@ -36,11 +36,12 @@ body{margin:0;background:var(--bg);color:var(--text);height:100vh;overflow:hidde
 .server{height:49px;flex:none;padding:14px 16px;font-weight:800;font-family:'Sora',sans-serif;border-bottom:1px solid color-mix(in srgb,var(--red) 25%,#000 65%);letter-spacing:.2px}
 .channelList{flex:1;min-height:0;overflow-y:auto;padding-bottom:8px}
 .section{padding:18px 9px 4px;font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.6px}
-.channel{display:block;width:calc(100% - 16px);margin:1px 8px;border:0;border-radius:6px;padding:8px 10px;text-align:left;background:transparent;color:var(--muted);cursor:pointer;transition:.12s ease}
-.channel:hover{background:color-mix(in srgb,var(--red) 10%,transparent);color:#fff}
-.channel.active{background:color-mix(in srgb,var(--red) 22%,transparent);color:#fff;box-shadow:inset 3px 0 0 var(--red)}
+.channel,.voice-channel{display:block;width:calc(100% - 16px);margin:1px 8px;border:0;border-radius:6px;padding:8px 10px;text-align:left;background:transparent;color:var(--muted);cursor:pointer;transition:.12s ease}
+.channel:hover,.voice-channel:hover{background:color-mix(in srgb,var(--red) 10%,transparent);color:#fff}
+.channel.active,.voice-channel.connected{background:color-mix(in srgb,var(--red) 22%,transparent);color:#fff;box-shadow:inset 3px 0 0 var(--red)}
 .channel b{font-size:18px;font-weight:400;margin-right:8px;color:var(--muted)}
 .lock{float:right;font-size:12px;margin-top:3px}
+.voice-users{padding:1px 8px 4px 31px}.voice-user{display:flex;align-items:center;gap:6px;padding:3px 4px;color:var(--muted);font-size:11px;min-width:0}.voice-user .avatar{width:20px;height:20px;font-size:8px}.voice-user-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.voice-speaking{color:var(--online);filter:drop-shadow(0 0 5px var(--online))}.voice-controls{display:none;flex:none;padding:9px 10px;background:color-mix(in srgb,var(--deep) 58%,var(--side));border-top:1px solid color-mix(in srgb,#000 30%,transparent)}.voice-controls.show{display:block}.voice-status{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;font-size:11px;color:var(--online)}.voice-status b{color:var(--text)}.voice-control-buttons{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px}.voice-control-buttons button{border:0;border-radius:6px;background:var(--input);color:var(--muted);padding:7px 4px;cursor:pointer;font:600 10px 'Inter',sans-serif}.voice-control-buttons button:hover,.voice-control-buttons button.active{background:var(--red);color:#fff}.voice-control-buttons .leave-voice:hover{background:#ed4245}.voice-connecting{opacity:.65;pointer-events:none}
 .profile{flex:none;padding:10px;background:color-mix(in srgb,var(--deep) 55%,var(--side));display:flex;gap:9px;align-items:center;border-top:1px solid color-mix(in srgb,#000 30%,transparent)}
 .profileInfo{flex:1;min-width:0}
 .profileTop{display:flex;gap:8px;align-items:center;margin-bottom:4px}
@@ -200,6 +201,15 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
       <button class="channel" data-chat="chat3" data-name="announcements"><b>📣</b>announcements</button>
       <button class="channel" data-chat="rules" data-name="rules"><b>#</b>rules</button>
       <button class="channel staff-only" data-chat="chat4" data-name="staff-chat"><b>🔒</b>staff-chat <span class="lock">🔒</span></button>
+      <div class="section">-=VOICE CHANNELS=-</div>
+      <button class="voice-channel" data-voice-room="general-voice" type="button">🔊 General Voice</button>
+      <div class="voice-users" id="voiceUsers-general-voice"></div>
+      <button class="voice-channel" data-voice-room="general-voice-2" type="button">🔊 General Voice 2</button>
+      <div class="voice-users" id="voiceUsers-general-voice-2"></div>
+    </div>
+    <div class="voice-controls" id="voiceControls">
+      <div class="voice-status"><b id="voiceRoomLabel">Voice connected</b><span>Voice connected</span></div>
+      <div class="voice-control-buttons"><button id="voiceMuteBtn" type="button">🎤 Mute</button><button id="voiceDeafenBtn" type="button">🔊 Deafen</button><button class="leave-voice" id="voiceLeaveBtn" type="button">📞 Leave</button></div>
     </div>
     <div class="profile">
       <span id="myAvatarWrap"></span>
@@ -224,6 +234,7 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
   </section>
   <aside class="members"><h2 id="count">MEMBERS — 0</h2><div id="membersList"></div></aside>
 </main>
+<div id="voiceAudio" hidden></div>
 
 <div class="modal" id="settingsModal"><section class="card wide">
   <h1>Appearance settings</h1>
@@ -306,9 +317,14 @@ textarea#text{flex:1;min-width:0;padding:3px 0;border:0;outline:0;background:tra
 
 <script>
 const API={users:'https://6a638812b30b52361e1a6b8d.mockapi.io/1/users',logins:'https://6a638812b30b52361e1a6b8d.mockapi.io/1/logins',chat1:'https://6a63dbd7b30b52361e1aab35.mockapi.io/2/chat1',chat2:'https://6a63dbd7b30b52361e1aab35.mockapi.io/2/chat2',chat3:'https://6a63dd06b30b52361e1aabe1.mockapi.io/3/chat3',chat4:'https://6a63dd06b30b52361e1aabe1.mockapi.io/3/chat4'};
+// Change this one value if your Socket.IO signaling server runs elsewhere.
+const VOICE_SERVER_URL='https://vixcord.onrender.com';
+const VOICE_ROOMS={'general-voice':'General Voice','general-voice-2':'General Voice 2'};
 const $=s=>document.querySelector(s),sessionKey='vixcord-mockapi-user';
 let me=null,chat='chat1',chatName='general',reply=null,isSignup=false,usersList=[],lastMessagesData=[];
 let pendingUploads=[];
+let voiceSocket=null,voiceRoom=null,localVoiceStream=null,voiceMuted=false,voiceDeafened=false,voiceMutedBeforeDeafen=false,voiceJoinPending=false,voiceAudioContext=null,localVoiceSpeaking=false;
+const voicePeers=new Map(),voicePresence={'general-voice':[],'general-voice-2':[]},voiceSpeaking=new Set(),voiceAnalysers=new Map();
 const seenIds=new Map();
 const spamTracker=new Map();
 const SPAM_LIMIT=3;
@@ -410,6 +426,104 @@ function avatarHTML(user,extraClass=''){
   if(img&&(/^(https?:\/\/|data:image\/)/i.test(img))) return `<img class="avatar ${extraClass}" src="${esc(img)}" alt="${esc(name)}" onerror="this.outerHTML='<div class=\\'avatar ${extraClass}\\' style=\\'background:${esc(hashColor(user?.username||name))}\\'>$${esc(initials(name))}</div>'">`;
   let bg=color(user?.avatarcolor,'')||hashColor(user?.username||name);
   return `<div class="avatar ${extraClass}" style="background:${bg}">${esc(initials(name))}</div>`;
+}
+
+/* ---------- Discord-style voice chat (Socket.IO signaling + WebRTC audio) ---------- */
+function loadSocketIoClient(){
+  if(window.io)return Promise.resolve();
+  return new Promise((resolve,reject)=>{
+    let existing=document.querySelector('script[data-vixcord-voice-client]');
+    if(existing){existing.addEventListener('load',resolve,{once:true});existing.addEventListener('error',()=>reject(Error('Could not load the voice client.')),{once:true});return}
+    let script=document.createElement('script');script.dataset.vixcordVoiceClient='true';script.src=VOICE_SERVER_URL+'/socket.io/socket.io.js';script.onload=resolve;script.onerror=()=>{script.remove();reject(Error('Voice server is unavailable. Start server.js, then try again.'))};document.head.appendChild(script);
+  });
+}
+function voiceUserPayload(){
+  let avatar=String(me?.avatar||'');if(avatar.startsWith('data:')&&avatar.length>50000)avatar='';
+  return {username:me.username,displayName:displayNameOf(me),avatar,avatarcolor:me.avatarcolor||'',namecolor:me.namecolor||'',rank:normalizeRole(me)};
+}
+async function ensureVoiceSocket(){
+  await loadSocketIoClient();
+  if(!voiceSocket){
+    voiceSocket=window.io(VOICE_SERVER_URL,{transports:['websocket','polling'],reconnection:true});
+    voiceSocket.on('connect',()=>{if(voiceRoom&&localVoiceStream)voiceSocket.emit('voice:join',{roomId:voiceRoom,user:voiceUserPayload()})});
+    voiceSocket.on('voice:presence',({roomId,users})=>{if(VOICE_ROOMS[roomId]){voicePresence[roomId]=Array.isArray(users)?users:[];renderVoicePresence()}});
+    voiceSocket.on('voice:existing-users',async users=>{for(const user of users||[])if(user.socketId!==voiceSocket.id)await createVoicePeer(user.socketId,true)});
+    voiceSocket.on('voice:offer',async({from,description})=>{try{let peer=await createVoicePeer(from,false);await peer.pc.setRemoteDescription(description);await flushVoiceCandidates(peer);let answer=await peer.pc.createAnswer();await peer.pc.setLocalDescription(answer);voiceSocket.emit('voice:answer',{target:from,description:peer.pc.localDescription})}catch(e){console.warn('Voice offer failed',e)}});
+    voiceSocket.on('voice:answer',async({from,description})=>{let peer=voicePeers.get(from);if(!peer)return;try{await peer.pc.setRemoteDescription(description);await flushVoiceCandidates(peer)}catch(e){console.warn('Voice answer failed',e)}});
+    voiceSocket.on('voice:ice',async({from,candidate})=>{let peer=voicePeers.get(from)||await createVoicePeer(from,false);if(!candidate)return;try{if(peer.pc.remoteDescription)await peer.pc.addIceCandidate(candidate);else peer.candidates.push(candidate)}catch(e){console.warn('ICE candidate failed',e)}});
+    voiceSocket.on('voice:user-left',({socketId})=>closeVoicePeer(socketId));
+    voiceSocket.on('disconnect',()=>{closeAllVoicePeers();updateVoiceControls('Reconnecting…')});
+    voiceSocket.on('voice:error',message=>showToast('Voice chat',message));
+  }
+  if(voiceSocket.connected)return;
+  await new Promise((resolve,reject)=>{
+    let timer=setTimeout(()=>{cleanup();reject(Error('Could not connect to the voice server.'))},8000);
+    let connected=()=>{cleanup();resolve()},failed=()=>{cleanup();reject(Error('Could not connect to the voice server.'))};
+    function cleanup(){clearTimeout(timer);voiceSocket.off('connect',connected);voiceSocket.off('connect_error',failed)}
+    voiceSocket.on('connect',connected);voiceSocket.on('connect_error',failed);
+  });
+}
+async function createVoicePeer(peerId,initiator){
+  if(voicePeers.has(peerId))return voicePeers.get(peerId);
+  let pc=new RTCPeerConnection({iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]});
+  let peer={pc,candidates:[],audio:null};voicePeers.set(peerId,peer);
+  localVoiceStream?.getTracks().forEach(track=>pc.addTrack(track,localVoiceStream));
+  pc.onicecandidate=e=>{if(e.candidate&&voiceSocket?.connected)voiceSocket.emit('voice:ice',{target:peerId,candidate:e.candidate})};
+  pc.ontrack=e=>{
+    let stream=e.streams[0]||new MediaStream([e.track]);
+    if(!peer.audio){peer.audio=document.createElement('audio');peer.audio.autoplay=true;peer.audio.playsInline=true;peer.audio.dataset.peerId=peerId;$('#voiceAudio').appendChild(peer.audio)}
+    peer.audio.srcObject=stream;peer.audio.muted=voiceDeafened;peer.audio.play().catch(()=>showToast('Voice audio blocked','Click anywhere on the page, then rejoin voice chat.'));startVoiceAnalysis(peerId,stream);
+  };
+  pc.onconnectionstatechange=()=>{if(['failed','closed'].includes(pc.connectionState))closeVoicePeer(peerId);if(pc.connectionState==='disconnected')setTimeout(()=>{if(pc.connectionState==='disconnected')closeVoicePeer(peerId)},5000)};
+  if(initiator){let offer=await pc.createOffer();await pc.setLocalDescription(offer);voiceSocket.emit('voice:offer',{target:peerId,description:pc.localDescription})}
+  return peer;
+}
+async function flushVoiceCandidates(peer){let pending=peer.candidates.splice(0);for(const candidate of pending)try{await peer.pc.addIceCandidate(candidate)}catch(e){console.warn(e)}}
+function closeVoicePeer(peerId){
+  let peer=voicePeers.get(peerId);if(!peer)return;stopVoiceAnalysis(peerId);peer.pc.ontrack=null;peer.pc.onicecandidate=null;peer.pc.close();peer.audio?.remove();voicePeers.delete(peerId);voiceSpeaking.delete(peerId);renderVoicePresence();
+}
+function closeAllVoicePeers(){for(const peerId of [...voicePeers.keys()])closeVoicePeer(peerId)}
+function startVoiceAnalysis(key,stream){
+  stopVoiceAnalysis(key);if(!stream?.getAudioTracks().length)return;
+  try{
+    voiceAudioContext=voiceAudioContext||new (window.AudioContext||window.webkitAudioContext)();voiceAudioContext.resume().catch(()=>{});
+    let source=voiceAudioContext.createMediaStreamSource(stream),analyser=voiceAudioContext.createAnalyser(),data=new Uint8Array(256),silentFrames=0,raf=0,last=false;analyser.fftSize=512;source.connect(analyser);
+    let tick=()=>{analyser.getByteTimeDomainData(data);let sum=0;for(let value of data){let n=(value-128)/128;sum+=n*n}let loud=Math.sqrt(sum/data.length)>.035;if(loud)silentFrames=0;else silentFrames++;let speaking=loud||silentFrames<8;if(speaking!==last){last=speaking;if(key==='local')localVoiceSpeaking=speaking;else speaking?voiceSpeaking.add(key):voiceSpeaking.delete(key);renderVoicePresence()}raf=requestAnimationFrame(tick)};tick();
+    voiceAnalysers.set(key,()=>{cancelAnimationFrame(raf);source.disconnect();if(key==='local')localVoiceSpeaking=false;else voiceSpeaking.delete(key)});
+  }catch(e){console.warn('Speaking indicator unavailable',e)}
+}
+function stopVoiceAnalysis(key){let stop=voiceAnalysers.get(key);if(stop){stop();voiceAnalysers.delete(key)}}
+function renderVoicePresence(){
+  for(const [roomId,label] of Object.entries(VOICE_ROOMS)){
+    let users=voicePresence[roomId]||[],container=$('#voiceUsers-'+roomId);
+    container.innerHTML=users.map(user=>{let speaking=voiceSpeaking.has(user.socketId)||(user.socketId===voiceSocket?.id&&localVoiceSpeaking);let avatarUser={username:user.username,displayname:user.displayName,avatar:user.avatar,avatarcolor:user.avatarcolor};return `<div class="voice-user" title="@${esc(user.username)}"><span class="${speaking?'voice-speaking':''}">${speaking?'🟢':'👤'}</span>${avatarHTML(avatarUser)}<span class="voice-user-name">${esc(user.displayName||user.username)}${user.socketId===voiceSocket?.id?' (you)':''}</span></div>`}).join('');
+    document.querySelector(`[data-voice-room="${roomId}"]`)?.classList.toggle('connected',voiceRoom===roomId);
+  }
+}
+function updateVoiceControls(status='Voice connected'){
+  let connected=Boolean(voiceRoom&&localVoiceStream),controls=$('#voiceControls');controls.classList.toggle('show',connected);$('#voiceRoomLabel').textContent=voiceRoom?VOICE_ROOMS[voiceRoom]:'';controls.querySelector('.voice-status span').textContent=status;
+  $('#voiceMuteBtn').classList.toggle('active',voiceMuted);$('#voiceMuteBtn').textContent=voiceMuted?'🔇 Unmute':'🎤 Mute';$('#voiceDeafenBtn').classList.toggle('active',voiceDeafened);$('#voiceDeafenBtn').textContent=voiceDeafened?'🔈 Undeafen':'🔊 Deafen';renderVoicePresence();
+}
+function setVoiceMuted(muted){voiceMuted=muted;localVoiceStream?.getAudioTracks().forEach(track=>track.enabled=!muted);updateVoiceControls()}
+function toggleVoiceMute(){if(voiceDeafened)return showToast('Voice chat','Undeafen before unmuting.');setVoiceMuted(!voiceMuted)}
+function toggleVoiceDeafen(){
+  voiceDeafened=!voiceDeafened;if(voiceDeafened){voiceMutedBeforeDeafen=voiceMuted;setVoiceMuted(true)}else setVoiceMuted(voiceMutedBeforeDeafen);voicePeers.forEach(peer=>{if(peer.audio)peer.audio.muted=voiceDeafened});updateVoiceControls();
+}
+async function joinVoice(roomId){
+  if(!me)return showToast('Voice chat','Sign in before joining voice chat.');if(!VOICE_ROOMS[roomId]||voiceJoinPending||voiceRoom===roomId)return;
+  voiceJoinPending=true;document.querySelectorAll('.voice-channel').forEach(b=>b.classList.add('voice-connecting'));
+  try{
+    if(voiceRoom)await leaveVoice(true);
+    await ensureVoiceSocket();
+    localVoiceStream=await navigator.mediaDevices.getUserMedia({video:false,audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+    voiceRoom=roomId;voiceMuted=false;voiceDeafened=false;voiceSocket.emit('voice:join',{roomId,user:voiceUserPayload()});startVoiceAnalysis('local',localVoiceStream);updateVoiceControls();showToast('Voice connected',`Joined ${VOICE_ROOMS[roomId]}.`);
+  }catch(e){await leaveVoice(true);showToast('Could not join voice',e.message||'Check microphone permission and the voice server.')}
+  finally{voiceJoinPending=false;document.querySelectorAll('.voice-channel').forEach(b=>b.classList.remove('voice-connecting'))}
+}
+async function leaveVoice(silent=false){
+  let oldRoom=voiceRoom;if(oldRoom&&voiceSocket?.connected)voiceSocket.emit('voice:leave');voiceRoom=null;closeAllVoicePeers();stopVoiceAnalysis('local');localVoiceStream?.getTracks().forEach(track=>track.stop());localVoiceStream=null;localVoiceSpeaking=false;voiceMuted=false;voiceDeafened=false;
+  if(voiceSocket?.id)for(const roomId of Object.keys(voicePresence))voicePresence[roomId]=voicePresence[roomId].filter(user=>user.socketId!==voiceSocket.id);
+  if(voiceAudioContext){voiceAudioContext.close().catch(()=>{});voiceAudioContext=null}updateVoiceControls();if(oldRoom&&!silent)showToast('Voice disconnected',`Left ${VOICE_ROOMS[oldRoom]}.`);
 }
 
 /* ---------- toasts / notifications ---------- */
@@ -526,7 +640,7 @@ function finish(user){
   $('#myName').style.color=color(me.namecolor,'#fff');
   $('#myCoins').textContent=me.coins||0;
   updateProfileBadges();
-  applyTheme();syncChannels();applyCharLimit();requestNotifyPermission();scheduleMuteRefresh();loadUsers();loadMessages();showGiftClaim();
+  applyTheme();syncChannels();applyCharLimit();requestNotifyPermission();scheduleMuteRefresh();loadUsers();loadMessages();showGiftClaim();ensureVoiceSocket().catch(()=>{});
 }
 
 function scheduleMuteRefresh(){
@@ -1067,6 +1181,10 @@ $('#authButton').onclick=submitAuth;
 $('#switch').onclick=()=>{isSignup=!isSignup;authMode()};
 $('#password').onkeydown=e=>{if(e.key==='Enter')submitAuth()};
 document.querySelectorAll('.channel').forEach(b=>b.onclick=()=>choose(b));
+document.querySelectorAll('.voice-channel').forEach(b=>b.onclick=()=>joinVoice(b.dataset.voiceRoom));
+$('#voiceMuteBtn').onclick=toggleVoiceMute;
+$('#voiceDeafenBtn').onclick=toggleVoiceDeafen;
+$('#voiceLeaveBtn').onclick=()=>leaveVoice();
 $('#cancelReply').onclick=()=>{reply=null;$('#replybar').style.display='none'};
 $('#composer').addEventListener('submit',sendMessage);
 $('#text').addEventListener('input',()=>{autoResize();updateCharCount();renderCommandMenu()});
@@ -1113,10 +1231,12 @@ $('#avatarFileInput').onchange=e=>{
   let reader=new FileReader();reader.onload=()=>{$('#avatarUrl').value=reader.result;showToast('Avatar ready','Save changes to use your uploaded avatar.')};reader.readAsDataURL(file);e.target.value='';
 };
 $('#logout').onclick=async()=>{
+  await leaveVoice(true);voiceSocket?.disconnect();
   if(me)try{await request(API.users+'/'+me.id,{method:'PUT',body:JSON.stringify({online:false})})}catch{}
   localStorage.removeItem(sessionKey);location.reload();
 };
 addEventListener('beforeunload',()=>{
+  if(voiceRoom&&voiceSocket?.connected)voiceSocket.emit('voice:leave');localVoiceStream?.getTracks().forEach(track=>track.stop());
   if(me)fetch(API.users+'/'+me.id,{method:'PUT',keepalive:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({online:false})});
 });
 (async()=>{
