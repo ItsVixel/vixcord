@@ -30,6 +30,25 @@ const VOICE_SERVER_URL='https://vixcord.onrender.com';
 
 The Render deployment is now the production default. Keep this as an HTTPS URL so browsers permit microphone access and do not block mixed content.
 
+## Background phone notifications
+
+The same server now provides Web Push subscriptions and delivery. For stable subscriptions across Render restarts, generate a VAPID key pair once:
+
+```powershell
+npx web-push generate-vapid-keys
+```
+
+Add the generated values to the Render service environment as `VAPID_PUBLIC_KEY` and `VAPID_PRIVATE_KEY`. You may also set `VAPID_SUBJECT` to a `mailto:` address you control. If the variables are missing, the server creates temporary keys so testing still works, but users must reopen Vixcord and reconnect notifications after a server restart.
+
+On iPhone or iPad, Web Push requires iOS/iPadOS 16.4 or newer and a real Home Screen web app:
+
+1. Open the Vixcord URL in Safari.
+2. Tap **Share**, then **Add to Home Screen**. Do not use the Shortcuts app.
+3. Open Vixcord from its new Home Screen icon and sign in.
+4. Open Vixcord settings and tap **Enable phone notifications**.
+
+Other people can install Vixcord by opening the same HTTPS URL and following those steps. Android and desktop browsers can use the **Install Vixcord app** button when supported.
+
 ## Test both rooms
 
 1. Open `https://vixcord.onrender.com` in two different browser profiles or one normal window and one private window.
