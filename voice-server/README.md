@@ -1,6 +1,6 @@
 # Vixcord voice server
 
-This folder contains the Socket.IO signaling and presence server used by the two WebRTC voice channels in `vixcord-enhanced.html`. Audio travels directly between browsers through WebRTC; the server never stores or relays voice audio.
+This folder contains the Socket.IO signaling and presence server used by the two WebRTC voice channels in `index.html`. Audio travels directly between browsers through WebRTC; the server never stores or relays voice audio.
 
 ## Install and run
 
@@ -22,7 +22,7 @@ Open Vixcord through the HTTPS Render URL so browsers can grant microphone acces
 
 ## Voice server setting
 
-The frontend setting is near the top of the JavaScript in `vixcord-enhanced.html`:
+The frontend setting is near the top of the JavaScript in `index.html`:
 
 ```js
 const VOICE_SERVER_URL='https://vixcord.onrender.com';
