@@ -1,13 +1,13 @@
-# Vixcord voice server
+# Vixcord realtime server
 
-This folder contains the Socket.IO signaling and presence server used by the two WebRTC voice channels in `index.html`. Audio travels directly between browsers through WebRTC; the server never stores or relays voice audio.
+This folder contains the Socket.IO signaling and presence server used by the two WebRTC voice channels in `index.html`. It also delivers Web Push notifications and coordinates authenticated coin flips. Audio travels directly between browsers through WebRTC; the server never stores or relays voice audio.
 
 ## Install and run
 
 Open PowerShell and run:
 
 ```powershell
-cd "C:\Users\abdal\Documents\Codex\2026-07-25\make-when-it-reaches-90-messages\outputs\voice-server"
+cd voice-server
 npm install
 npm start
 ```
@@ -39,6 +39,12 @@ npx web-push generate-vapid-keys
 ```
 
 Add the generated values to the Render service environment as `VAPID_PUBLIC_KEY` and `VAPID_PRIVATE_KEY`. You may also set `VAPID_SUBJECT` to a `mailto:` address you control. If the variables are missing, the server creates temporary keys so testing still works, but users must reopen Vixcord and reconnect notifications after a server restart.
+
+Also add a long random `SESSION_SECRET` environment value. Vixcord uses it to sign coin-flip sessions; without it, users must sign in again whenever Render restarts. For example, generate one locally with:
+
+```powershell
+node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
+```
 
 On iPhone or iPad, Web Push requires iOS/iPadOS 16.4 or newer and a real Home Screen web app:
 
